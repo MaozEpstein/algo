@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased;
+    margin: 0;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* English code / arrays / formulas embedded in an RTL page */
+  .ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+}
+
+@layer components {
+  /* The dark visualization canvas */
+  .viz-canvas {
+    @apply bg-canvas rounded-3xl shadow-card;
+    background-image: radial-gradient(
+      circle at 50% 0%,
+      rgba(56, 189, 248, 0.08),
+      transparent 60%
+    );
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Accessibility: honor the OS "reduce motion" setting (CSS transitions/animations).
+   Framer Motion is handled separately via <MotionConfig reducedMotion="user">.
+   Applies ONLY to users who enabled the setting — no effect otherwise. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* PDF export: print only the summary content, on a clean white page. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  @page {
+    margin: 14mm;
+  }
+}
