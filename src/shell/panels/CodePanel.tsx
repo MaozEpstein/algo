@@ -55,20 +55,22 @@ export default function CodePanel({ blocks, frame, mainBlockId, mainTitleHe }: P
         <RoutineBadge kind={block.kind} calledFromHe={calledFrom} size="sm" />
       </div>
 
-      <pre className="ltr m-0 flex-1 overflow-auto p-3 font-mono text-[13px] leading-relaxed">
+      <pre className="ltr m-0 flex-1 overflow-auto p-3 font-mono text-[15px] leading-7">
         {lines.map((line, idx) => {
           const lineNo = idx + 1
           const active = frame.codeLine === lineNo
           return (
             <div
               key={lineNo}
-              className={`flex gap-3 rounded-md px-2 py-0.5 transition-colors ${
-                active ? 'bg-sky-100 text-slate-900' : 'text-slate-600'
+              className={`flex gap-3 rounded-md px-2 transition-colors ${
+                active
+                  ? 'bg-sky-100 font-semibold text-slate-900'
+                  : 'font-medium text-slate-700'
               }`}
             >
               <span
-                className={`w-5 shrink-0 select-none text-right text-[11px] ${
-                  active ? 'text-sky-600' : 'text-slate-300'
+                className={`w-6 shrink-0 select-none text-right text-xs tabular-nums ${
+                  active ? 'font-bold text-sky-600' : 'text-slate-400'
                 }`}
               >
                 {lineNo}

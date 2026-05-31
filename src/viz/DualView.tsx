@@ -8,6 +8,8 @@ interface Props {
   instant?: boolean
   onCellClick?: (index: number) => void
   clickable?: boolean
+  /** Reserve bottom padding so a floating control doesn't overlap content. */
+  reserveBottomSpace?: boolean
 }
 
 /**
@@ -15,12 +17,23 @@ interface Props {
  * same transition, so a value's motion in the tree and in the array happen in
  * parallel — the core "see it" moment.
  */
-export default function DualView({ frame, views, instant, onCellClick, clickable }: Props) {
+export default function DualView({
+  frame,
+  views,
+  instant,
+  onCellClick,
+  clickable,
+  reserveBottomSpace,
+}: Props) {
   const showTree = views.includes('tree')
   const showArray = views.includes('array')
 
   return (
-    <div className="viz-canvas flex h-full w-full flex-col gap-2 p-4 sm:p-6">
+    <div
+      className={`viz-canvas flex h-full w-full flex-col gap-2 p-4 sm:p-6 ${
+        reserveBottomSpace ? 'pb-20 sm:pb-20' : ''
+      }`}
+    >
       {showTree && (
         <div className="flex min-h-0 flex-1 items-center justify-center">
           <TreeView frame={frame} instant={instant} />

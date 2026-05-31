@@ -1,12 +1,15 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { AlgorithmSpec, Frame, ViewKind } from '@/engine/types'
 import DualView from '@/viz/DualView'
 import CodePanel from './panels/CodePanel'
 import NarrationBar from './panels/NarrationBar'
 import CostMeter from './panels/CostMeter'
 import StepTimeline from './panels/StepTimeline'
-import PlayerControls from './player/PlayerControls'
+import TransportControls from './player/TransportControls'
+import Scrubber from './player/Scrubber'
+import KeyboardHelp from './player/KeyboardHelp'
 import { usePlayback } from './player/usePlayback'
+import { usePlayerHotkeys } from './player/usePlayerHotkeys'
 import { selectCurrentFrame, usePlayerStore } from './player/usePlayerStore'
 
 interface Props {
@@ -21,7 +24,10 @@ interface Props {
 export default function PlaybackStage({ frames, algorithm, views, seekTo }: Props) {
   const load = usePlayerStore((s) => s.load)
   const seek = usePlayerStore((s) => s.seek)
+  const [helpOpen, setHelpOpen] = useState(false)
+  const toggleHelp = useCallback(() => setHelpOpen((o) => !o), [])
   usePlayback()
+  usePlayerHotkeys(toggleHelp)
 
   useEffect(() => {
     load(frames)
@@ -38,8 +44,14 @@ export default function PlaybackStage({ frames, algorithm, views, seekTo }: Prop
     <div className="flex flex-col gap-4">
       <NarrationBar frame={frame} />
       <div className="grid gap-4 lg:grid-cols-[1.7fr_1fr]">
-        <div className="min-w-0 min-h-[340px] sm:min-h-[460px]">
-          <DualView frame={frame} views={views} instant={jumped} />
+        <div className="relative min-h-[340px] min-w-0 sm:min-h-[460px]">
+          <DualView frame={frame} views={views} instant={jumped} reserveBottomSpace />
+          {/* floating transport, near the content */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
+            <div className="pointer-events-auto">
+              <TransportControls />
+            </div>
+          </div>
         </div>
         <CodePanel
           blocks={algorithm.pseudocode}
@@ -49,12 +61,21 @@ export default function PlaybackStage({ frames, algorithm, views, seekTo }: Prop
         />
       </div>
       <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+        <Scrubber />
         <StepTimeline />
-        <CostMeter />
-        <div className="border-t border-slate-100 pt-3">
-          <PlayerControls />
+        <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+          <CostMeter />
+          <button
+            onClick={() => setHelpOpen(true)}
+            className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            title="קיצורי מקלדת (?)"
+          >
+            ⌨ קיצורים
+          </button>
         </div>
       </div>
+      <KeyboardHelp open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }
+

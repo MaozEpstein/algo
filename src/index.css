@@ -43,6 +43,28 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Scrubber thumb — a clear, draggable knob over the two-tone track. */
+input[type='range'].scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid #0ea5e9;
+  box-shadow: 0 1px 5px rgba(2, 132, 199, 0.4);
+  cursor: pointer;
+}
+input[type='range'].scrubber::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid #0ea5e9;
+  box-shadow: 0 1px 5px rgba(2, 132, 199, 0.4);
+  cursor: pointer;
+}
+
 /* Accessibility: honor the OS "reduce motion" setting (CSS transitions/animations).
    Framer Motion is handled separately via <MotionConfig reducedMotion="user">.
    Applies ONLY to users who enabled the setting — no effect otherwise. */

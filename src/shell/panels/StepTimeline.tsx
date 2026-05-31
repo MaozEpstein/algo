@@ -1,46 +1,6 @@
 import { useMemo } from 'react'
-import type { Frame } from '@/engine/types'
 import { usePlayerStore } from '../player/usePlayerStore'
-
-interface Step {
-  label: string
-  index: number
-  /** Render the label left-to-right (for bracketed ranges like [1..5]). */
-  ltr?: boolean
-}
-
-function currentIndexOf(f: Frame): number | null {
-  const h = f.highlights.find((x) => x.role === 'current')
-  return h && h.indices.length === 1 ? h.indices[0] : null
-}
-
-/**
- * Derive high-level navigable steps from the frame stream: one chip per
- * Build-Max-Heap node visit, and one per HeapSort extraction. Lets the user
- * jump straight to a phase in long runs instead of dragging the scrubber.
- */
-function deriveSteps(frames: Frame[]): Step[] {
-  const steps: Step[] = []
-  let extract = 0
-  frames.forEach((f, i) => {
-    if (f.codeBlock === 'buildMaxHeap' && f.codeLine === 3) {
-      const node = currentIndexOf(f)
-      steps.push({ label: node != null ? `צומת ${node}` : 'בנייה', index: i })
-    } else if (f.codeBlock === 'heapSort' && f.codeLine === 3) {
-      extract += 1
-      steps.push({ label: `שליפה ${extract}`, index: i })
-    } else if (f.codeBlock === 'hoarePartition' && f.codeLine === 2) {
-      // Quicksort: one chip per Partition call, labeled by its active range.
-      const active = f.highlights.find((h) => h.role === 'active')
-      if (active && active.indices.length) {
-        const lo = Math.min(...active.indices)
-        const hi = Math.max(...active.indices)
-        steps.push({ label: `[${lo}..${hi}]`, index: i, ltr: true })
-      }
-    }
-  })
-  return steps
-}
+import { deriveSteps } from '../player/steps'
 
 export default function StepTimeline() {
   const frames = usePlayerStore((s) => s.frames)
