@@ -171,7 +171,7 @@ export default function HeapsortSummary() {
         <div className="grid grid-cols-1 gap-x-4 gap-y-3.5 sm:grid-cols-[auto_auto_1fr] sm:items-center">
           {ALGOS.map((a) => (
             <Fragment key={a.id}>
-              <span className="whitespace-nowrap font-mono text-sm font-semibold text-slate-800">
+              <span dir="ltr" className="whitespace-nowrap font-mono text-sm font-semibold text-slate-800">
                 {a.titleEn}
               </span>
               <div className="justify-self-start">
@@ -225,7 +225,7 @@ export default function HeapsortSummary() {
             <tbody>
               {TABLE.map(({ spec, descHe, noteHe }) => (
                 <tr key={spec.id} className="border-b border-slate-100">
-                  <td className="py-2.5 pe-3 font-mono text-sm font-semibold text-slate-800">
+                  <td dir="ltr" className="py-2.5 pe-3 text-start font-mono text-sm font-semibold text-slate-800">
                     {spec.titleEn}
                   </td>
                   <td className="py-2.5 pe-3">
@@ -262,11 +262,12 @@ export default function HeapsortSummary() {
               key={a.id}
               className="flex flex-wrap items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm"
             >
-              <span className="font-mono font-semibold text-slate-700">{a.titleEn}</span>
+              <span dir="ltr" className="font-mono font-semibold text-slate-700">{a.titleEn}</span>
               <span className="text-slate-400">קורא ל־</span>
               {a.usesHe!.map((u) => (
                 <span
                   key={u}
+                  dir="ltr"
                   className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 font-mono text-xs text-violet-700"
                 >
                   🔧 {u}
@@ -294,17 +295,19 @@ export default function HeapsortSummary() {
       </CollapsibleSection>
 
       {/* navigation links — useful on screen, excluded from the exported PDF */}
-      <div className="no-print">
-        <CollapsibleSection title="ראו בעיניים" open={open.see} onToggle={() => toggle('see')}>
-          <div className="flex flex-wrap gap-2">
-            <DeepLink tour="maxHeapify">Max-Heapify</DeepLink>
-            <DeepLink tour="buildMaxHeap">בניית ערימה</DeepLink>
-            <DeepLink tour="heapSort">מיון מלא</DeepLink>
-            <DeepLink tour="heapInsert">הכנסה</DeepLink>
-            <DeepLink tour="heapExtractMax">שליפת מקסימום</DeepLink>
-          </div>
-        </CollapsibleSection>
-      </div>
+      {!exporting && (
+        <div className="no-print">
+          <CollapsibleSection title="ראו בעיניים" open={open.see} onToggle={() => toggle('see')}>
+            <div className="flex flex-wrap gap-2">
+              <DeepLink tour="maxHeapify">Max-Heapify</DeepLink>
+              <DeepLink tour="buildMaxHeap">בניית ערימה</DeepLink>
+              <DeepLink tour="heapSort">מיון מלא</DeepLink>
+              <DeepLink tour="heapInsert">הכנסה</DeepLink>
+              <DeepLink tour="heapExtractMax">שליפת מקסימום</DeepLink>
+            </div>
+          </CollapsibleSection>
+        </div>
+      )}
 
       <CollapsibleSection
         title="טעויות נפוצות"

@@ -5,6 +5,8 @@ import { usePlayerStore } from '../player/usePlayerStore'
 interface Step {
   label: string
   index: number
+  /** Render the label left-to-right (for bracketed ranges like [1..5]). */
+  ltr?: boolean
 }
 
 function currentIndexOf(f: Frame): number | null {
@@ -27,6 +29,14 @@ function deriveSteps(frames: Frame[]): Step[] {
     } else if (f.codeBlock === 'heapSort' && f.codeLine === 3) {
       extract += 1
       steps.push({ label: `שליפה ${extract}`, index: i })
+    } else if (f.codeBlock === 'hoarePartition' && f.codeLine === 2) {
+      // Quicksort: one chip per Partition call, labeled by its active range.
+      const active = f.highlights.find((h) => h.role === 'active')
+      if (active && active.indices.length) {
+        const lo = Math.min(...active.indices)
+        const hi = Math.max(...active.indices)
+        steps.push({ label: `[${lo}..${hi}]`, index: i, ltr: true })
+      }
     }
   })
   return steps
@@ -56,7 +66,9 @@ export default function StepTimeline() {
               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
         >
-          {s.label}
+          <span dir={s.ltr ? 'ltr' : undefined} className="inline-block">
+            {s.label}
+          </span>
         </button>
       ))}
     </div>

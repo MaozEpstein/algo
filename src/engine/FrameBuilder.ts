@@ -1,4 +1,4 @@
-import type { ElementId, Frame, FrameAction, Highlight } from './types'
+import type { ElementId, Frame, FrameAction, Highlight, Marker } from './types'
 
 interface EmitInput {
   narration: string
@@ -8,6 +8,7 @@ interface EmitInput {
   action?: FrameAction
   phase?: string
   callDepth?: number
+  markers?: Marker[]
 }
 
 /**
@@ -43,6 +44,14 @@ export class FrameBuilder {
   // ---- accessors -----------------------------------------------------------
   value(i: number): number {
     return this.array[i]
+  }
+  /** The identity currently sitting at slot i (1-indexed). */
+  elementIdAt(i: number): ElementId {
+    return this.elementIds[i]
+  }
+  /** Current 1-indexed slot of a given identity (follows it through swaps). */
+  indexOfElement(id: ElementId): number {
+    return this.elementIds.indexOf(id)
   }
   get size(): number {
     return this.heapSize
@@ -106,6 +115,7 @@ export class FrameBuilder {
       action: input.action,
       phase: input.phase ?? this.currentPhase,
       callDepth: input.callDepth,
+      markers: input.markers?.map((m) => ({ ...m })),
     }
     deepFreeze(frame)
     this.frames.push(frame)
@@ -125,6 +135,10 @@ function deepFreeze(frame: Frame): void {
   })
   Object.freeze(frame.highlights)
   if (frame.action) Object.freeze(frame.action)
+  if (frame.markers) {
+    frame.markers.forEach((m) => Object.freeze(m))
+    Object.freeze(frame.markers)
+  }
   Object.freeze(frame)
 }
 

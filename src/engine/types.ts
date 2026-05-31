@@ -25,11 +25,23 @@ export type HighlightRole =
   | 'inserted' // freshly inserted element
   | 'extracted' // element being removed (e.g. ExtractMax)
   | 'path' // a path being traced (bubble up/down)
+  | 'pivot' // Quicksort: the chosen pivot element
+  | 'less' // Quicksort: region known to be ≤ pivot
+  | 'greater' // Quicksort: region known to be ≥ pivot
+  | 'active' // Quicksort: the subarray currently being partitioned
 
 export interface Highlight {
   role: HighlightRole
   /** 1-indexed positions this highlight applies to. */
   indices: number[]
+}
+
+/** A pointer/label drawn above a specific array cell (e.g. Quicksort i / j / pivot). */
+export interface Marker {
+  label: string
+  /** 1-indexed slot the marker points at. */
+  index: number
+  tone: 'pivot' | 'i' | 'j' | 'bound'
 }
 
 /** A structured description of what happens AT this frame.
@@ -72,6 +84,8 @@ export interface Frame {
   phase?: string
   /** Recursion depth — drives the call-stack breadcrumb. */
   callDepth?: number
+  /** Pointer markers above cells (e.g. Quicksort i / j / pivot / p / r). */
+  markers?: Marker[]
 }
 
 export type PseudocodeLang = 'pseudo' | 'python'

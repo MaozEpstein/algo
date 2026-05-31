@@ -23,3 +23,10 @@ export function toOneIndexed(values: number[]): number[] {
 export function toPlain(oneIndexed: number[]): number[] {
   return oneIndexed.slice(1)
 }
+
+/** Inclusive integer range [a..b] (empty if a > b). */
+export function rangeInclusive(a: number, b: number): number[] {
+  const out: number[] = []
+  for (let k = a; k <= b; k++) out.push(k)
+  return out
+}

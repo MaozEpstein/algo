@@ -4,12 +4,16 @@ import type { Highlight, HighlightRole } from '@/engine/types'
 const ROLE_PRIORITY: HighlightRole[] = [
   'swapping',
   'largest',
+  'pivot',
   'comparing',
   'inserted',
   'extracted',
   'current',
+  'less',
+  'greater',
   'path',
   'sorted',
+  'active',
 ]
 
 export interface RoleStyle {
@@ -42,6 +46,10 @@ const STYLES: Record<HighlightRole, RoleStyle> = {
   extracted: { ring: '#fb7185', fill: '#fff1f2', text: '#881337', glow: 'rgba(251,113,133,0.5)', labelHe: 'נשלף' },
   path: { ring: '#818cf8', fill: '#eef2ff', text: '#3730a3', glow: 'rgba(129,140,248,0.35)', labelHe: 'מסלול' },
   heapBoundary: { ring: '#64748b', fill: '#f1f5f9', text: '#334155', glow: 'rgba(100,116,139,0.3)', labelHe: 'גבול הערימה' },
+  pivot: { ring: '#a855f7', fill: '#faf5ff', text: '#581c87', glow: 'rgba(168,85,247,0.5)', labelHe: 'ציר (pivot)' },
+  less: { ring: '#38bdf8', fill: '#f0f9ff', text: '#0c4a6e', glow: 'rgba(56,189,248,0.3)', labelHe: '≤ ציר' },
+  greater: { ring: '#f59e0b', fill: '#fffbeb', text: '#78350f', glow: 'rgba(245,158,11,0.3)', labelHe: '≥ ציר' },
+  active: { ring: '#cbd5e1', fill: '#f8fafc', text: '#0f172a', glow: 'rgba(0,0,0,0)', labelHe: 'תת-מערך פעיל' },
 }
 
 /** Highest-priority role present at a 1-indexed slot, or null. */
