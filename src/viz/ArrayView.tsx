@@ -19,6 +19,7 @@ const TONE: Record<Marker['tone'], string> = {
   i: '#0284c7',
   j: '#f59e0b',
   bound: '#64748b',
+  k: '#10b981',
 }
 
 /**

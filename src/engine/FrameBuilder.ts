@@ -9,6 +9,11 @@ interface EmitInput {
   phase?: string
   callDepth?: number
   markers?: Marker[]
+  /** Highlights/markers for the auxiliary lane (Merge-Sort output). */
+  auxHighlights?: Highlight[]
+  auxMarkers?: Marker[]
+  /** Bespoke per-frame data for a custom view. */
+  scene?: unknown
 }
 
 /**
@@ -28,6 +33,9 @@ export class FrameBuilder {
   private idSeq = 0
   private currentBlock = ''
   private currentPhase: string | undefined
+  private currentScene: unknown
+  /** Open auxiliary lane (1-indexed, slot 0 sentinel) or null when closed. */
+  private aux: { array: number[]; elementIds: ElementId[]; labelHe?: string } | null = null
 
   /** @param values plain 0-indexed values. */
   constructor(values: number[]) {
@@ -73,6 +81,43 @@ export class FrameBuilder {
     this.heapSize = s
     return this
   }
+  /** Set bespoke per-frame data carried to the next emit()s (until changed). */
+  setScene(scene: unknown): this {
+    this.currentScene = scene
+    return this
+  }
+
+  // ---- auxiliary lane (e.g. Merge-Sort output) -----------------------------
+  /** Start an empty output lane. */
+  openAux(labelHe?: string): void {
+    this.aux = { array: [NaN], elementIds: [''], labelHe }
+  }
+  /** Discard the output lane without writing it back. */
+  closeAux(): void {
+    this.aux = null
+  }
+  /** Current number of elements placed in the aux lane. */
+  get auxLength(): number {
+    return this.aux ? this.aux.array.length - 1 : 0
+  }
+  /** Move the value+identity at main slot `src` into the next aux slot. The main
+   *  slot is blanked (consumed) so the element visually flies into the output. */
+  moveToAux(src: number): void {
+    if (!this.aux) return
+    this.aux.array.push(this.array[src])
+    this.aux.elementIds.push(this.elementIds[src])
+    this.array[src] = NaN
+    this.elementIds[src] = ''
+  }
+  /** Write the aux lane back into the main array starting at slot `p`, then close it. */
+  copyAuxBack(p: number): void {
+    if (!this.aux) return
+    for (let t = 1; t < this.aux.array.length; t++) {
+      this.array[p + t - 1] = this.aux.array[t]
+      this.elementIds[p + t - 1] = this.aux.elementIds[t]
+    }
+    this.aux = null
+  }
 
   /** Swap value AND identity at two 1-indexed slots. */
   swap(i: number, j: number): void {
@@ -116,6 +161,19 @@ export class FrameBuilder {
       phase: input.phase ?? this.currentPhase,
       callDepth: input.callDepth,
       markers: input.markers?.map((m) => ({ ...m })),
+      aux: this.aux
+        ? {
+            array: this.aux.array.slice(),
+            elementIds: this.aux.elementIds.slice(),
+            labelHe: this.aux.labelHe,
+            highlights: (input.auxHighlights ?? []).map((h) => ({
+              role: h.role,
+              indices: h.indices.slice(),
+            })),
+            markers: input.auxMarkers?.map((m) => ({ ...m })),
+          }
+        : undefined,
+      scene: input.scene ?? this.currentScene,
     }
     deepFreeze(frame)
     this.frames.push(frame)
@@ -139,6 +197,19 @@ function deepFreeze(frame: Frame): void {
     frame.markers.forEach((m) => Object.freeze(m))
     Object.freeze(frame.markers)
   }
+  if (frame.aux) {
+    Object.freeze(frame.aux.array)
+    Object.freeze(frame.aux.elementIds)
+    frame.aux.highlights?.forEach((h) => {
+      Object.freeze(h.indices)
+      Object.freeze(h)
+    })
+    if (frame.aux.highlights) Object.freeze(frame.aux.highlights)
+    frame.aux.markers?.forEach((m) => Object.freeze(m))
+    if (frame.aux.markers) Object.freeze(frame.aux.markers)
+    Object.freeze(frame.aux)
+  }
+  if (frame.scene) Object.freeze(frame.scene)
   Object.freeze(frame)
 }
 

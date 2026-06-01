@@ -20,6 +20,7 @@ function currentIndexOf(f: Frame): number | null {
 export function deriveSteps(frames: Frame[]): Step[] {
   const steps: Step[] = []
   let extract = 0
+  let move = 0
   frames.forEach((f, i) => {
     if (f.codeBlock === 'buildMaxHeap' && f.codeLine === 3) {
       const node = currentIndexOf(f)
@@ -34,6 +35,15 @@ export function deriveSteps(frames: Frame[]): Step[] {
         const hi = Math.max(...active.indices)
         steps.push({ label: `[${lo}..${hi}]`, index: i, ltr: true })
       }
+    } else if (f.codeBlock === 'mergeSort' && f.codeLine === 6) {
+      // one chip per Merge call — its range is the union of the two halves
+      const idxs = f.highlights.flatMap((h) => h.indices)
+      if (idxs.length) {
+        steps.push({ label: `[${Math.min(...idxs)}..${Math.max(...idxs)}]`, index: i, ltr: true })
+      }
+    } else if (f.codeBlock === 'hanoi' && f.codeLine === 4) {
+      move += 1
+      steps.push({ label: `מהלך ${move}`, index: i })
     }
   })
   return steps

@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import type { Frame, ViewKind } from '@/engine/types'
 import TreeView from './TreeView'
 import ArrayView from './ArrayView'
@@ -10,6 +11,8 @@ interface Props {
   clickable?: boolean
   /** Reserve bottom padding so a floating control doesn't overlap content. */
   reserveBottomSpace?: boolean
+  /** Bespoke renderer used when `views` includes 'custom' (Merge-Sort / Hanoi). */
+  customViz?: ComponentType<{ frame: Frame }>
 }
 
 /**
@@ -24,9 +27,23 @@ export default function DualView({
   onCellClick,
   clickable,
   reserveBottomSpace,
+  customViz: CustomViz,
 }: Props) {
   const showTree = views.includes('tree')
   const showArray = views.includes('array')
+  const showCustom = views.includes('custom') && !!CustomViz
+
+  if (showCustom && CustomViz) {
+    return (
+      <div
+        className={`viz-canvas flex h-full w-full flex-col items-center justify-center p-4 sm:p-6 ${
+          reserveBottomSpace ? 'pb-20 sm:pb-20' : ''
+        }`}
+      >
+        <CustomViz frame={frame} />
+      </div>
+    )
+  }
 
   return (
     <div

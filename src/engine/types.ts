@@ -42,7 +42,18 @@ export interface Marker {
   label: string
   /** 1-indexed slot the marker points at. */
   index: number
-  tone: 'pivot' | 'i' | 'j' | 'bound'
+  tone: 'pivot' | 'i' | 'j' | 'bound' | 'k'
+}
+
+/** An optional second array lane (e.g. the Merge-Sort output). Its `elementIds`
+ *  are shared with the main array, so a value animates as it flies between lanes. */
+export interface AuxLane {
+  /** Values, 1-indexed (slot 0 sentinel), like the main array. */
+  array: number[]
+  elementIds: ElementId[]
+  highlights?: Highlight[]
+  markers?: Marker[]
+  labelHe?: string
 }
 
 /** A structured description of what happens AT this frame.
@@ -87,6 +98,11 @@ export interface Frame {
   callDepth?: number
   /** Pointer markers above cells (e.g. Quicksort i / j / pivot / p / r). */
   markers?: Marker[]
+  /** Optional second array lane (e.g. Merge-Sort output). */
+  aux?: AuxLane
+  /** Free-form per-frame data for bespoke custom views (e.g. Hanoi pegs,
+   *  Merge-Sort recursion-tree state). Cast by the view that owns it. */
+  scene?: unknown
 }
 
 export type PseudocodeLang = 'pseudo' | 'python'
@@ -164,6 +180,11 @@ export interface AlgorithmSpec {
   /** Optional displayable complexity proof. */
   proof?: ComplexityProof
   pseudocode: PseudocodeBlock[]
+  /** Per-algorithm view override (falls back to the lecture's `views`). Lets one
+   *  lecture mix algorithms with different visualizations (e.g. array vs custom). */
+  views?: ViewKind[]
+  /** Per-algorithm bespoke renderer, used when `views` includes 'custom'. */
+  customViz?: ComponentType<{ frame: Frame }>
   /** Pure, deterministic, total. Same input → same frames. */
   run: (input: AlgorithmInput) => Frame[]
   /** Parse a raw user string from the sandbox into an input. */

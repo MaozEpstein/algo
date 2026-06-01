@@ -39,13 +39,20 @@ export default function PlaybackStage({ frames, algorithm, views, seekTo }: Prop
   if (!frame) return null
 
   const mainBlock = algorithm.pseudocode[0]
+  const effViews = algorithm.views ?? views
 
   return (
     <div className="flex flex-col gap-4">
       <NarrationBar frame={frame} />
       <div className="grid gap-4 lg:grid-cols-[1.7fr_1fr]">
         <div className="relative min-h-[340px] min-w-0 sm:min-h-[460px]">
-          <DualView frame={frame} views={views} instant={jumped} reserveBottomSpace />
+          <DualView
+            frame={frame}
+            views={effViews}
+            customViz={algorithm.customViz}
+            instant={jumped}
+            reserveBottomSpace
+          />
           {/* floating transport, near the content */}
           <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
             <div className="pointer-events-auto">
