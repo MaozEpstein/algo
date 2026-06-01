@@ -2,9 +2,11 @@ import type { LectureModule } from '@/engine/types'
 import { heapsortLecture } from '@/lectures/heapsort'
 import { quickSortLecture } from '@/lectures/quicksort'
 import { selectionLecture } from '@/lectures/selection'
+import { recurrencesLecture } from '@/lectures/recurrences'
 
 /** The single wiring point. Adding a lecture = import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
+  [recurrencesLecture.id]: recurrencesLecture,
   [heapsortLecture.id]: heapsortLecture,
   [quickSortLecture.id]: quickSortLecture,
   [selectionLecture.id]: selectionLecture,

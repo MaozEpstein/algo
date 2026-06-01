@@ -38,13 +38,13 @@ export default function Home() {
         {LECTURE_LIST.map((lec) => (
           <Link
             key={lec.id}
-            to={`/lecture/${lec.id}/guided`}
+            to={lec.explainer ? `/lecture/${lec.id}` : `/lecture/${lec.id}/guided`}
             className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-card transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-lg"
           >
             <div className="absolute -left-8 -top-8 h-24 w-24 rounded-full bg-sky-100 opacity-60 transition group-hover:scale-125" />
             <div className="relative">
               <span className="font-mono text-sm font-semibold text-sky-500">
-                שיעור {lec.number}
+                שיעור {lec.numberLabelHe ?? lec.number}
               </span>
               <h2 className="mt-1 text-2xl font-bold text-slate-900">{lec.titleHe}</h2>
               <p className="mt-0.5 font-mono text-sm text-slate-400">{lec.subtitleEn}</p>

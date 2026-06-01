@@ -192,6 +192,8 @@ export type ViewKind = 'array' | 'tree' | 'recursionTree' | 'custom'
 export interface LectureModule {
   id: string
   number: number
+  /** Display label for the lecture number, e.g. '3 · חלק ב׳'. Falls back to String(number). */
+  numberLabelHe?: string
   titleHe: string
   subtitleEn: string
   /** Which visual representations to render in the DualView. */
@@ -199,8 +201,12 @@ export interface LectureModule {
   /** Escape hatch for bespoke visualizations. */
   customViz?: ComponentType<{ frame: Frame }>
   algorithms: AlgorithmSpec[]
-  /** Hebrew summary + complexity table component. */
+  /** Hebrew summary + complexity table component. For an `explainer` lecture this
+   *  slot instead holds the whole 4-tab page (the shell renders it directly). */
   summary: ComponentType
+  /** Marks a non-algorithm "explainer" lecture: the shell renders `summary` as the
+   *  whole page (its own tabs) — no mode tabs, no guided player. `algorithms` is []. */
+  explainer?: boolean
 }
 
 export type LearningMode = 'guided' | 'summary'
