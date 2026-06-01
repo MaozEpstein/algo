@@ -160,7 +160,7 @@ const MISTAKES: Mistake[] = [
   },
 ]
 
-const TH = 'py-2.5 px-3 text-start font-semibold whitespace-nowrap'
+const TH = 'py-2.5 px-3 text-center font-semibold whitespace-nowrap'
 const TD = 'py-3 px-3 align-middle'
 
 export default function SummaryTab() {
@@ -207,7 +207,7 @@ export default function SummaryTab() {
 
       <Panel title="טבלת השוואה (המיונים הלינאריים)">
         <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full border-collapse text-start text-sm">
+          <table className="w-full border-collapse text-center text-sm">
             <thead>
               <tr className="bg-slate-50 text-slate-500">
                 <th className={TH}>אלגוריתם</th>
@@ -223,7 +223,7 @@ export default function SummaryTab() {
               {ROWS.map((r) => (
                 <tr key={r.spec.id} className="border-t border-slate-100 transition hover:bg-slate-50/70">
                   <td className={`${TD} whitespace-nowrap`}>
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center justify-center gap-2.5">
                       <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg text-base ${r.iconBg}`}>
                         {r.icon}
                       </span>

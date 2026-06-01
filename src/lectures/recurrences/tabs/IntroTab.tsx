@@ -161,29 +161,29 @@ export default function IntroTab() {
         <p className="mb-3 leading-relaxed text-slate-600">
           כמה נוסחאות נסיגה חוזרות שוב ושוב בקורס — שווה לזהות אותן ישר לפי הצורה:
         </p>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-start">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <table className="w-full border-collapse text-center text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-sm text-slate-500">
-                <th className="py-2 pe-3 text-start font-semibold">נוסחת נסיגה</th>
-                <th className="py-2 pe-3 text-start font-semibold">פתרון</th>
-                <th className="py-2 pe-3 text-start font-semibold">שיטות פתרון</th>
-                <th className="py-2 text-start font-semibold">דוגמה</th>
+              <tr className="bg-slate-50 text-slate-500">
+                <th className="py-2.5 px-3 text-center font-semibold">נוסחת נסיגה</th>
+                <th className="py-2.5 px-3 text-center font-semibold">פתרון</th>
+                <th className="py-2.5 px-3 text-center font-semibold">שיטות פתרון</th>
+                <th className="py-2.5 px-3 text-center font-semibold">דוגמה</th>
               </tr>
             </thead>
             <tbody>
               {KNOWN.map((row) => (
-                <tr key={row.recTex} className="border-b border-slate-100 align-middle">
-                  <td className="py-2.5 pe-3">
+                <tr key={row.recTex} className="border-t border-slate-100 align-middle transition hover:bg-slate-50/70">
+                  <td className="py-3 px-3">
                     <Tex>{row.recTex}</Tex>
                   </td>
-                  <td className="py-2.5 pe-3">
+                  <td className="py-3 px-3">
                     <span className="rounded-lg bg-slate-900 px-2.5 py-1 text-white">
                       <Tex>{row.solTex}</Tex>
                     </span>
                   </td>
-                  <td className="py-2.5 pe-3">
-                    <div className="flex flex-wrap gap-1">
+                  <td className="py-3 px-3">
+                    <div className="flex flex-wrap justify-center gap-1">
                       {row.methods.map((m) => (
                         <span
                           key={m}
@@ -194,7 +194,7 @@ export default function IntroTab() {
                       ))}
                     </div>
                   </td>
-                  <td className="py-2.5 text-sm leading-relaxed text-slate-600">{row.exHe}</td>
+                  <td className="py-3 px-3 text-sm leading-relaxed text-slate-600">{row.exHe}</td>
                 </tr>
               ))}
             </tbody>

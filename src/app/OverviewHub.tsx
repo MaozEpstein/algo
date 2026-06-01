@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Tex from '@/components/Tex'
+import ComplexityPill from '@/components/ComplexityPill'
 import { sortingAlgorithms } from './overview'
 import AlgorithmRace from './AlgorithmRace'
 
@@ -151,34 +152,34 @@ export default function OverviewHub() {
       </header>
 
       <Card title="טבלת השוואת מיונים">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-start text-sm">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <table className="w-full border-collapse text-center text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-slate-500">
-                <th className="py-2 pe-4 text-start font-semibold">אלגוריתם</th>
-                <th className="py-2 pe-4 text-start font-semibold whitespace-nowrap">גרוע</th>
-                <th className="py-2 pe-4 text-start font-semibold whitespace-nowrap">ממוצע</th>
-                <th className="py-2 pe-4 text-start font-semibold whitespace-nowrap">יציבות</th>
-                <th className="py-2 pe-4 text-start font-semibold whitespace-nowrap">זיכרון</th>
-                <th className="py-2 text-start font-semibold">מתי להשתמש</th>
+              <tr className="bg-slate-50 text-slate-500">
+                <th className="py-2.5 px-3 text-center font-semibold">אלגוריתם</th>
+                <th className="py-2.5 px-3 text-center font-semibold whitespace-nowrap">גרוע</th>
+                <th className="py-2.5 px-3 text-center font-semibold whitespace-nowrap">ממוצע</th>
+                <th className="py-2.5 px-3 text-center font-semibold whitespace-nowrap">יציבות</th>
+                <th className="py-2.5 px-3 text-center font-semibold whitespace-nowrap">זיכרון</th>
+                <th className="py-2.5 px-3 text-center font-semibold">מתי להשתמש</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.name} className="border-b border-slate-100 align-top">
-                  <td className="py-3 pe-4">
+                <tr key={r.name} className="border-t border-slate-100 align-top transition hover:bg-slate-50/70">
+                  <td className="py-3 px-3">
                     <span dir="ltr" className="font-mono font-semibold text-slate-800">
                       {r.name}
                     </span>
-                    <p className="mt-0.5 max-w-xs leading-relaxed text-slate-500">{r.ideaHe}</p>
+                    <p className="mx-auto mt-0.5 max-w-xs leading-relaxed text-slate-500">{r.ideaHe}</p>
                   </td>
-                  <td className="py-3 pe-4 whitespace-nowrap"><Tex>{r.worst}</Tex></td>
-                  <td className="py-3 pe-4 whitespace-nowrap"><Tex>{r.average}</Tex></td>
-                  <td className="py-3 pe-4 whitespace-nowrap">
+                  <td className="py-3 px-3 whitespace-nowrap"><ComplexityPill tex={r.worst} /></td>
+                  <td className="py-3 px-3 whitespace-nowrap"><ComplexityPill tex={r.average} /></td>
+                  <td className="py-3 px-3 whitespace-nowrap">
                     <span className={r.stableHe === 'יציב' ? 'text-emerald-600' : 'text-slate-500'}>{r.stableHe}</span>
                   </td>
-                  <td className="py-3 pe-4 whitespace-nowrap text-slate-600">{r.inPlaceHe}</td>
-                  <td className="py-3 leading-relaxed text-slate-600">{r.whenHe}</td>
+                  <td className="py-3 px-3 whitespace-nowrap text-slate-600">{r.inPlaceHe}</td>
+                  <td className="py-3 px-3 leading-relaxed text-slate-600">{r.whenHe}</td>
                 </tr>
               ))}
             </tbody>

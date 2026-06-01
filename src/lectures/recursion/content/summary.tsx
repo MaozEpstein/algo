@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { AlgorithmSpec } from '@/engine/types'
 import Tex from '@/components/Tex'
 import ComplexityProofButton from '@/components/ComplexityProofButton'
+import ComplexityPill from '@/components/ComplexityPill'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import { factorialSpec } from '../algorithms/factorial'
 import { powerSpec } from '../algorithms/power'
@@ -213,9 +214,7 @@ export default function RecursionSummary() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-center gap-2">
-                      <span className="rounded-lg bg-slate-900 px-2.5 py-1 text-white">
-                        <Tex>{spec.complexity}</Tex>
-                      </span>
+                      <ComplexityPill tex={spec.complexity} />
                       <ComplexityProofButton algo={spec} variant="link" />
                     </div>
                   </td>

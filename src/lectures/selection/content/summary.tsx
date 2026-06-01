@@ -4,6 +4,7 @@ import type { AlgorithmSpec } from '@/engine/types'
 import Tex from '@/components/Tex'
 import RoutineBadge from '@/components/RoutineBadge'
 import ComplexityProofButton from '@/components/ComplexityProofButton'
+import ComplexityPill from '@/components/ComplexityPill'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import { minMaxSpec } from '../algorithms/minMax'
 import { randomizedSelectSpec } from '../algorithms/randomizedSelect'
@@ -159,36 +160,36 @@ export default function SelectionSummary() {
 
         <CollapsibleSection title="טבלת סיבוכיות" open={open.table} onToggle={() => toggle('table')}>
           <p className="mb-3 text-sm text-slate-500">לחצו על "מדוע?" בכל שורה כדי לראות את הוכחת הסיבוכיות.</p>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-start">
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full border-collapse text-center text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-sm text-slate-500">
-                  <th className="py-2 pe-3 text-start font-semibold">פעולה</th>
-                  <th className="py-2 pe-3 text-start font-semibold">סוג</th>
-                  <th className="py-2 pe-3 text-start font-semibold">תיאור</th>
-                  <th className="py-2 pe-3 text-start font-semibold">סיבוכיות</th>
-                  <th className="py-2 pe-3 text-start font-semibold">הערה</th>
-                  <th className="py-2 text-start font-semibold">הוכחה</th>
+                <tr className="bg-slate-50 text-slate-500">
+                  <th className="py-2.5 px-3 text-center font-semibold">פעולה</th>
+                  <th className="py-2.5 px-3 text-center font-semibold">סוג</th>
+                  <th className="py-2.5 px-3 text-center font-semibold">תיאור</th>
+                  <th className="py-2.5 px-3 text-center font-semibold">סיבוכיות</th>
+                  <th className="py-2.5 px-3 text-center font-semibold">הערה</th>
+                  <th className="py-2.5 px-3 text-center font-semibold">הוכחה</th>
                 </tr>
               </thead>
               <tbody>
                 {TABLE.map(({ spec, descHe, noteHe }) => (
-                  <tr key={spec.id} className="border-b border-slate-100">
-                    <td dir="ltr" className="py-2.5 pe-3 text-start font-mono text-sm font-semibold text-slate-800">
+                  <tr key={spec.id} className="border-t border-slate-100 transition hover:bg-slate-50/70">
+                    <td dir="ltr" className="py-3 px-3 text-center font-mono text-sm font-semibold text-slate-800">
                       {spec.titleEn}
                     </td>
-                    <td className="py-2.5 pe-3">
-                      <span className="flex items-center gap-1.5">
+                    <td className="py-3 px-3">
+                      <span className="flex items-center justify-center gap-1.5">
                         <RoutineBadge kind={spec.kind} size="sm" />
                         {spec.optional && <OptionalPill />}
                       </span>
                     </td>
-                    <td className="py-2.5 pe-3 text-slate-600">{descHe}</td>
-                    <td className="py-2.5 pe-3">
-                      <Tex>{spec.complexity}</Tex>
+                    <td className="py-3 px-3 text-slate-600">{descHe}</td>
+                    <td className="py-3 px-3">
+                      <ComplexityPill tex={spec.complexity} />
                     </td>
-                    <td className="py-2.5 pe-3 text-sm text-slate-500">{noteHe}</td>
-                    <td className="py-2.5">
+                    <td className="py-3 px-3 text-sm text-slate-500">{noteHe}</td>
+                    <td className="py-3 px-3">
                       <ComplexityProofButton algo={spec} variant="link" />
                     </td>
                   </tr>
