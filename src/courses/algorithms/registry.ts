@@ -1,0 +1,31 @@
+import type { LectureModule } from '@/core/engine/types'
+import { deriveAlgorithmSteps } from './steps'
+import { heapsortLecture } from '@/courses/algorithms/lectures/heapsort'
+import { quickSortLecture } from '@/courses/algorithms/lectures/quicksort'
+import { selectionLecture } from '@/courses/algorithms/lectures/selection'
+import { recurrencesLecture } from '@/courses/algorithms/lectures/recurrences'
+import { divideAndConquerLecture } from '@/courses/algorithms/lectures/divide-and-conquer'
+import { recursionLecture } from '@/courses/algorithms/lectures/recursion'
+import { foundationsLecture } from '@/courses/algorithms/lectures/foundations'
+import { linearSortLecture } from '@/courses/algorithms/lectures/linear-sort'
+
+/** The single wiring point. Adding a lecture = import it and add it here. */
+export const LECTURES: Record<string, LectureModule> = {
+  [foundationsLecture.id]: foundationsLecture,
+  [recursionLecture.id]: recursionLecture,
+  [divideAndConquerLecture.id]: divideAndConquerLecture,
+  [recurrencesLecture.id]: recurrencesLecture,
+  [heapsortLecture.id]: heapsortLecture,
+  [quickSortLecture.id]: quickSortLecture,
+  [selectionLecture.id]: selectionLecture,
+  [linearSortLecture.id]: linearSortLecture,
+}
+
+// The guided StepTimeline derivation is course-wide (keys off algorithm
+// codeBlock names) — attach it to every lecture here, the single wiring point.
+// Harmless on explainer lectures (no guided player consumes it).
+for (const lecture of Object.values(LECTURES)) lecture.deriveSteps = deriveAlgorithmSteps
+
+export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(
+  (a, b) => a.number - b.number,
+)
