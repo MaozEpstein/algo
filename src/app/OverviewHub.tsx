@@ -61,8 +61,12 @@ export default function OverviewHub() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6">
       <header>
-        <Link to="/" className="text-sm text-slate-400 transition hover:text-slate-600">
-          ← כל השיעורים
+        <Link
+          to="/"
+          className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+        >
+          <span aria-hidden>←</span>
+          כל השיעורים
         </Link>
         <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
           מבט-על · השוואות
