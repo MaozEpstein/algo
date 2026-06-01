@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import Tex from '@/core/components/Tex'
+import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import JunctionElectrostatics from '../../../viz/JunctionElectrostatics'
 import { MATERIALS, junctionState } from '../../../lib/junction'
@@ -11,15 +12,15 @@ const Nd = 5e16
 const REVEALS: { titleHe: string; bodyHe: string }[] = [
   {
     titleHe: 'ρ — קירוב המחסור',
-    bodyHe: 'מניחים שאזור המחסור "ריק" מנושאים חופשיים, ולכן המטען בו הוא רק היונים הקבועים: −qN_A בצד p, +qN_D בצד n. מחוץ לאזור — ניטרלי (ρ=0).',
+    bodyHe: 'מניחים שאזור המחסור "ריק" מנושאים חופשיים, ולכן המטען בו הוא רק היונים הקבועים: $-qN_A$ בצד p, $+qN_D$ בצד n. מחוץ לאזור — ניטרלי ($\\rho=0$).',
   },
   {
     titleHe: 'E — אינטגרל ראשון (גאוס)',
-    bodyHe: 'אינטגרל של ρ נותן את השדה: משוואת פואסון dE/dx = ρ/εₛ. השדה משולש, עם שיא E_max בדיוק בצומת, ומתאפס בקצות אזור המחסור.',
+    bodyHe: 'אינטגרל של $\\rho$ נותן את השדה (משוואת פואסון $dE/dx = \\rho/\\varepsilon_s$). השדה משולש, עם שיא $E_{max}$ בדיוק בצומת, ומתאפס בקצות אזור המחסור.',
   },
   {
     titleHe: 'V — אינטגרל שני',
-    bodyHe: 'אינטגרל נוסף (V = −∫E dx) נותן את הפוטנציאל: עקומה פרבולית שעולה מ-0 בצד p ל-V_bi בצד n. השטח מתחת למשולש השדה = V_bi.',
+    bodyHe: 'אינטגרל נוסף ($V=-\\int E\\,dx$) נותן את הפוטנציאל: עקומה פרבולית שעולה מ-0 בצד p ל-$V_{bi}$ בצד n. השטח מתחת למשולש השדה שווה ל-$V_{bi}$.',
   },
 ]
 
@@ -72,7 +73,9 @@ export default function ElectrostaticsTab() {
 
         <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50/60 p-4">
           <p className="font-bold text-slate-800">{r.titleHe}</p>
-          <p className="mt-1 leading-relaxed text-slate-600">{r.bodyHe}</p>
+          <p className="mt-1 leading-relaxed text-slate-600">
+            <RichText>{r.bodyHe}</RichText>
+          </p>
         </div>
 
         <div className="mt-3 flex items-center justify-center gap-2">

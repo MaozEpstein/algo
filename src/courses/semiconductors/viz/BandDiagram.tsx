@@ -74,28 +74,28 @@ export default function BandDiagram({ state, Na, mat }: Props) {
         {/* E_F — flat dashed line (equilibrium) */}
         <line x1={MX} y1={yF} x2={W - MR} y2={yF} stroke="#0f172a" strokeWidth={1.5} strokeDasharray="6 3" />
         <text x={W - MR + 3} y={yF + 3} className="fill-slate-800" style={{ fontSize: 11, fontWeight: 700 }}>
-          E_F
+          E<tspan dy={3} style={{ fontSize: 8 }}>F</tspan>
         </text>
 
         {/* E_i — dashed midgap */}
         <path d={EiPath} fill="none" stroke="#94a3b8" strokeWidth={1.25} strokeDasharray="5 4" />
         <text x={W - MR + 3} y={eToY(Ei(dn)) + 3} className="fill-slate-400" style={{ fontSize: 10 }}>
-          E_i
+          E<tspan dy={3} style={{ fontSize: 7 }}>i</tspan>
         </text>
 
         {/* E_c / E_v — solid */}
         <path d={Ec} fill="none" stroke="#0ea5e9" strokeWidth={2.5} strokeLinejoin="round" />
         <path d={Ev} fill="none" stroke="#f43f5e" strokeWidth={2.5} strokeLinejoin="round" />
         <text x={W - MR + 3} y={eToY(Ei(dn) + eg / 2) + 3} className="fill-sky-600" style={{ fontSize: 11, fontWeight: 700 }}>
-          E_c
+          E<tspan dy={3} style={{ fontSize: 8 }}>c</tspan>
         </text>
         <text x={W - MR + 3} y={eToY(Ei(-dp) - eg / 2) + 3} className="fill-rose-500" style={{ fontSize: 11, fontWeight: 700 }}>
-          E_v
+          E<tspan dy={3} style={{ fontSize: 8 }}>v</tspan>
         </text>
 
         {/* qV_bi bending bracket */}
         <text x={x0} y={H - 6} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 10 }}>
-          ← כיפוף qV_bi →
+          ← כיפוף qV<tspan dy={2.5} style={{ fontSize: 8 }}>bi</tspan> →
         </text>
         <text x={MX + 4} y={TOP - 12} className="fill-rose-400" style={{ fontSize: 10, fontWeight: 700 }}>
           p

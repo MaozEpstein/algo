@@ -4,6 +4,7 @@ import { useCourse } from '@/core/platform/CourseProvider'
 import { coursePath, lecturePath } from '@/core/platform/links'
 import ModeSelector from './ModeSelector'
 import GlossaryButton from '@/core/components/GlossaryButton'
+import FormulasButton from '@/core/components/FormulasButton'
 import GuidedMode from '@/core/modes/GuidedMode'
 import SummaryMode from '@/core/modes/SummaryMode'
 
@@ -84,9 +85,10 @@ function LectureHeader({ lecture }: { lecture: LectureModule }) {
             <span aria-hidden>←</span>
           </Link>
         )}
-        {lecture.glossary && lecture.glossary.length > 0 && (
-          <span className="ms-auto">
-            <GlossaryButton terms={lecture.glossary} />
+        {(lecture.glossary?.length || lecture.formulas?.length) && (
+          <span className="ms-auto flex flex-wrap gap-2">
+            {lecture.formulas && lecture.formulas.length > 0 && <FormulasButton formulas={lecture.formulas} />}
+            {lecture.glossary && lecture.glossary.length > 0 && <GlossaryButton terms={lecture.glossary} />}
           </span>
         )}
       </div>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { GlossaryTerm } from '@/core/engine/types'
+import Tex from './Tex'
+import RichText from './RichText'
 
 /**
  * A header button that opens a modal gathering all of a lecture's foundational
- * concepts (term → short explanation). Shown for any lecture that defines a
- * `glossary`. Esc / backdrop closes it.
+ * concepts (term → short explanation, with optional inline/block math). Shown for
+ * any lecture that defines a `glossary`. Esc / backdrop closes it.
  */
 export default function GlossaryButton({ terms }: { terms: GlossaryTerm[] }) {
   const [open, setOpen] = useState(false)
@@ -70,9 +72,18 @@ export default function GlossaryButton({ terms }: { terms: GlossaryTerm[] }) {
                   >
                     <dt className="flex items-center gap-2 font-bold text-slate-800">
                       <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400 transition group-hover:scale-150" />
-                      {t.term}
+                      <span>
+                        <RichText>{t.term}</RichText>
+                      </span>
                     </dt>
-                    <dd className="mt-1.5 ps-4 text-sm leading-relaxed text-slate-600">{t.def}</dd>
+                    <dd className="mt-1.5 ps-4 text-sm leading-relaxed text-slate-600">
+                      <RichText>{t.def}</RichText>
+                    </dd>
+                    {t.tex && (
+                      <dd className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-center">
+                        <Tex block>{t.tex}</Tex>
+                      </dd>
+                    )}
                   </div>
                 ))}
               </dl>

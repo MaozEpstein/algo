@@ -102,10 +102,10 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
                 <rect x={x0} y={base - hP} width={Math.max(xR - x0, 0)} height={hP} fill={SKY} opacity={0.85} />
                 <rect x={xL} y={base} width={Math.max(x0 - xL, 0)} height={hN} fill={ROSE} opacity={0.85} />
                 <text x={(x0 + xR) / 2} y={base - hP - 4} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 9 }}>
-                  +qN_D
+                  +qN<tspan dy={2.5} style={{ fontSize: 7 }}>D</tspan>
                 </text>
                 <text x={(xL + x0) / 2} y={base + hN + 10} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 9 }}>
-                  −qN_A
+                  −qN<tspan dy={2.5} style={{ fontSize: 7 }}>A</tspan>
                 </text>
               </g>
             )
@@ -122,7 +122,7 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
                 <polygon points={`${xL},${base} ${x0},${apex} ${xR},${base}`} fill={AMBER} opacity={0.18} />
                 <polyline points={`${xL},${base} ${x0},${apex} ${xR},${base}`} fill="none" stroke={AMBER} strokeWidth={2.5} strokeLinejoin="round" />
                 <text x={x0 + 4} y={apex + 2} className="fill-amber-600" style={{ fontSize: 9 }}>
-                  −E_max
+                  −E<tspan dy={2.5} style={{ fontSize: 7 }}>max</tspan>
                 </text>
               </g>
             )
@@ -134,7 +134,7 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
             <line x1={MX} y1={vBase} x2={W - MR} y2={vBase} stroke="#94a3b8" strokeWidth={1.25} />
             <path d={vPath} fill="none" stroke={EMER} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
             <text x={xR + 3} y={vBase - PH * 0.82 + 3} className="fill-emerald-600" style={{ fontSize: 9 }}>
-              V_bi
+              V<tspan dy={2.5} style={{ fontSize: 7 }}>bi</tspan>
             </text>
           </g>
         )}

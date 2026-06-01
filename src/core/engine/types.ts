@@ -228,6 +228,16 @@ export interface Step {
 export interface GlossaryTerm {
   term: string
   def: string
+  /** Optional LaTeX formula, rendered (KaTeX) below the explanation. */
+  tex?: string
+}
+
+/** One entry in a lecture's "key formulas" sheet — a name + the LaTeX formula
+ *  and an optional one-line note. */
+export interface FormulaItem {
+  name: string
+  tex: string
+  note?: string
 }
 
 /** The single contract the shell knows about. Adding a lecture = implement this. */
@@ -255,6 +265,8 @@ export interface LectureModule {
   /** Foundational concepts taught in this lecture — surfaced via a "מושגי יסוד"
    *  button in the lecture header (term → short explanation). */
   glossary?: GlossaryTerm[]
+  /** Key formulas of this lecture — surfaced via a "נוסחאות מרכזיות" button. */
+  formulas?: FormulaItem[]
 }
 
 export type LearningMode = 'guided' | 'summary'

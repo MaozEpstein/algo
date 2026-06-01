@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Tex from '@/core/components/Tex'
+import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import FormationCartoon from '../components/FormationCartoon'
 
@@ -22,7 +23,7 @@ const STEPS: { titleHe: string; bodyHe: string }[] = [
   },
   {
     titleHe: '5 · שיווי משקל',
-    bodyHe: 'כשזרם הסחיפה (מהשדה) מאזן בדיוק את זרם הדיפוזיה — הזרם נטו אפס. אזור המחסור מתייצב, ורמת פרמי E_F אחידה לכל רוחב ההתקן.',
+    bodyHe: 'כשזרם הסחיפה (מהשדה) מאזן בדיוק את זרם הדיפוזיה — הזרם נטו אפס. אזור המחסור מתייצב, ורמת פרמי $E_F$ אחידה לכל רוחב ההתקן.',
   },
 ]
 
@@ -95,7 +96,9 @@ export default function FormationTab() {
 
         <div className="mt-3 rounded-xl border border-sky-100 bg-sky-50/60 p-4">
           <p className="font-bold text-slate-800">{s.titleHe}</p>
-          <p className="mt-1 leading-relaxed text-slate-600">{s.bodyHe}</p>
+          <p className="mt-1 leading-relaxed text-slate-600">
+            <RichText>{s.bodyHe}</RichText>
+          </p>
         </div>
 
         <div className="mt-3 flex items-center justify-center gap-2">
