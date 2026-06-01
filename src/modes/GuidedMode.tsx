@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import type { Frame, LectureModule } from '@/engine/types'
+import type { AlgorithmInput, Frame, LectureModule, Preset } from '@/engine/types'
 import PlaybackStage from '@/shell/PlaybackStage'
 import ComplexityProofButton from '@/components/ComplexityProofButton'
 import RoutineBadge from '@/components/RoutineBadge'
@@ -23,13 +23,26 @@ export default function GuidedMode({ lecture }: { lecture: LectureModule }) {
   const [error, setError] = useState<string | null>(null)
   const [runKey, setRunKey] = useState(0)
   const [dirty, setDirty] = useState(false)
+  // The `extra` params (startIndex / key / i / seed) for the current run —
+  // updated by presets so manual edits keep the right context.
+  const [currentExtra, setCurrentExtra] = useState(algo.defaultInput.extra)
 
   const placeholder = useMemo(() => algo.defaultInput.array.join(', '), [algo])
+
+  function loadInput(input: AlgorithmInput) {
+    setRaw(input.array.join(', '))
+    setCurrentExtra(input.extra)
+    setFrames(algo.run(input))
+    setError(null)
+    setDirty(false)
+    setRunKey((k) => k + 1)
+  }
 
   function pickAlgo(id: string) {
     const next = lecture.algorithms.find((a) => a.id === id)!
     setAlgoId(id)
     setRaw(next.defaultInput.array.join(', '))
+    setCurrentExtra(next.defaultInput.extra)
     setFrames(next.run(next.defaultInput))
     setError(null)
     setDirty(false)
@@ -43,17 +56,17 @@ export default function GuidedMode({ lecture }: { lecture: LectureModule }) {
       return
     }
     setError(null)
-    setFrames(algo.run({ ...res.value, extra: algo.defaultInput.extra }))
+    setFrames(algo.run({ ...res.value, extra: currentExtra }))
     setDirty(false)
     setRunKey((k) => k + 1)
   }
 
+  function loadPreset(p: Preset) {
+    loadInput(p.input)
+  }
+
   function resetInput() {
-    setRaw(algo.defaultInput.array.join(', '))
-    setFrames(algo.run(algo.defaultInput))
-    setError(null)
-    setDirty(false)
-    setRunKey((k) => k + 1)
+    loadInput(algo.defaultInput)
   }
 
   return (
@@ -73,6 +86,15 @@ export default function GuidedMode({ lecture }: { lecture: LectureModule }) {
           >
             <span aria-hidden>{a.kind === 'helper' ? '🔧' : '📦'}</span>
             {a.titleHe}
+            {a.optional && (
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                  a.id === algoId ? 'bg-white/25 text-white' : 'bg-amber-100 text-amber-700'
+                }`}
+              >
+                רשות
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -132,6 +154,28 @@ export default function GuidedMode({ lecture }: { lecture: LectureModule }) {
             </button>
           </div>
         </div>
+
+        {/* instructive example inputs (edge cases) */}
+        {algo.presets && algo.presets.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+            <span className="text-xs font-medium text-slate-400">דוגמאות:</span>
+            {algo.presets.map((p) => (
+              <button
+                key={p.labelHe}
+                onClick={() => loadPreset(p)}
+                title={p.noteHe}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                  p.worst
+                    ? 'bg-rose-100 text-rose-700 ring-1 ring-rose-200 hover:bg-rose-200'
+                    : 'bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-700'
+                }`}
+              >
+                {p.worst && <span aria-hidden>⚠ </span>}
+                {p.labelHe}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <PlaybackStage key={runKey} frames={frames} algorithm={algo} views={lecture.views} />

@@ -18,6 +18,23 @@ export default function Home() {
       </header>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* cross-lecture overview hub — always first, visually distinct */}
+        <Link
+          to="/overview"
+          className="group relative overflow-hidden rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-6 shadow-card transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg"
+        >
+          <div className="absolute -left-8 -top-8 h-24 w-24 rounded-full bg-violet-100 opacity-70 transition group-hover:scale-125" />
+          <div className="relative">
+            <span className="font-mono text-sm font-semibold text-violet-500">כללי</span>
+            <h2 className="mt-1 text-2xl font-bold text-slate-900">מבט-על · השוואות</h2>
+            <p className="mt-0.5 font-mono text-sm text-slate-400">Overview &amp; Race</p>
+            <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-600">
+              השוואות ומירוץ אלגוריתמים
+              <span className="transition group-hover:-translate-x-1">←</span>
+            </span>
+          </div>
+        </Link>
+
         {LECTURE_LIST.map((lec) => (
           <Link
             key={lec.id}

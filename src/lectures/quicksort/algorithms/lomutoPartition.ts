@@ -4,14 +4,28 @@ import { parseIntArray } from '@/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker } from '@/engine/types'
 import { lomutoPartitionBlock } from '../pseudocode'
 
+/** Shared context so embedded partitions can keep extra cells highlighted. */
+export interface PartitionCtx {
+  /** Indices to always mark 'sorted' (e.g. an answer already located). */
+  sorted?: number[]
+  phase?: string
+}
+
 /**
- * Lomuto partition (CLRS). The pivot is the LAST element A[r], and unlike Hoare
- * it ends up in its FINAL sorted position q = i+1 — so we mark it 'sorted'.
+ * Lomuto partition (CLRS), reusable. The pivot is the element CURRENTLY at A[r]
+ * (callers that want a specific pivot must swap it to r first). It ends up at
+ * its rank position q = i+1 within [p..r]. Returns q. Does NOT mark the result
+ * 'sorted' (the caller decides), so it works both as a sort step and as a
+ * Selection subroutine.
  */
-export function runLomutoPartition(input: AlgorithmInput): Frame[] {
-  const b = new FrameBuilder(input.array)
-  const p = 1
-  const r = b.length
+export function lomutoPartitionInto(
+  b: FrameBuilder,
+  p: number,
+  r: number,
+  depth: number,
+  ctx?: PartitionCtx,
+): number {
+  b.setBlock('lomutoPartition')
   const A = (k: number) => b.value(k)
   const x = b.value(r)
   const pivotId = b.elementIdAt(r)
@@ -23,15 +37,25 @@ export function runLomutoPartition(input: AlgorithmInput): Frame[] {
     opts: { highlights?: Highlight[]; markers?: Marker[]; action?: Parameters<FrameBuilder['emit']>[0]['action'] } = {},
   ) => {
     const pivotIdx = b.indexOfElement(pivotId)
-    const highlights: Highlight[] = [hl('active', ...rangeInclusive(p, r)), hl('pivot', pivotIdx)]
+    const highlights: Highlight[] = [hl('active', ...rangeInclusive(p, r))]
+    if (ctx?.sorted?.length) highlights.push(hl('sorted', ...ctx.sorted))
+    highlights.push(hl('pivot', pivotIdx))
     if (opts.highlights) highlights.push(...opts.highlights)
     const markers: Marker[] = [{ label: 'pivot', index: pivotIdx, tone: 'pivot' }]
     if (i >= p && i <= r) markers.push({ label: 'i', index: i, tone: 'i' })
     if (opts.markers) markers.push(...opts.markers)
-    b.emit({ codeBlock: 'lomutoPartition', codeLine, narration, action: opts.action, highlights, markers })
+    b.emit({
+      codeBlock: 'lomutoPartition',
+      codeLine,
+      narration,
+      callDepth: depth,
+      phase: ctx?.phase,
+      action: opts.action,
+      highlights,
+      markers,
+    })
   }
 
-  emit(null, 'מצב התחלתי. ב-Lomuto הציר הוא האיבר האחרון A[r].')
   emit(2, `הציר: x = A[${r}] = ${x}.`)
   emit(3, `i = ${p} − 1 = ${i} (גבול אזור הקטנים-שווים).`)
 
@@ -60,13 +84,25 @@ export function runLomutoPartition(input: AlgorithmInput): Frame[] {
   })
   b.swap(i + 1, r)
   const q = i + 1
-  emit(9, `מחזירים q = ${q}. הציר ${x} במקומו הסופי — קטנים משמאלו, גדולים מימינו.`, {
+  emit(9, `מחזירים q = ${q}. כל הקטנים-שווים משמאל, הגדולים מימין.`, {
     highlights: [
-      hl('sorted', q),
       ...(q - 1 >= p ? [hl('less', ...rangeInclusive(p, q - 1))] : []),
       ...(q + 1 <= r ? [hl('greater', ...rangeInclusive(q + 1, r))] : []),
     ],
   })
+  return q
+}
+
+/** Standalone Lomuto demo (pivots on the last element). */
+export function runLomutoPartition(input: AlgorithmInput): Frame[] {
+  const b = new FrameBuilder(input.array)
+  b.emit({
+    codeBlock: 'lomutoPartition',
+    codeLine: null,
+    narration: 'מצב התחלתי. ב-Lomuto הציר הוא האיבר האחרון A[r].',
+    highlights: [hl('active', ...rangeInclusive(1, b.length))],
+  })
+  const q = lomutoPartitionInto(b, 1, b.length, 0)
   b.emit({
     codeBlock: 'lomutoPartition',
     codeLine: null,
@@ -95,4 +131,19 @@ export const lomutoPartitionSpec: AlgorithmSpec = {
   run: runLomutoPartition,
   validateInput: (raw) => parseIntArray(raw, { min: 2, max: 20 }),
   defaultInput: { array: [2, 8, 7, 1, 3, 5, 6, 4] },
+  presets: [
+    { labelHe: 'אקראי', input: { array: [2, 8, 7, 1, 3, 5, 6, 4] } },
+    {
+      labelHe: 'הפוך',
+      input: { array: [8, 7, 6, 5, 4, 3, 2, 1] },
+      noteHe: 'הציר A[r]=1 הוא הקטן — אין החלפות, הציר עובר לקדמה.',
+    },
+    { labelHe: 'כל האיברים שווים', input: { array: [4, 4, 4, 4, 4] } },
+    {
+      labelHe: 'ממוין (המקרה הגרוע ביותר)',
+      input: { array: [1, 2, 3, 4, 5, 6, 7, 8] },
+      worst: true,
+      noteHe: 'כל האיברים ≤ הציר A[r] — i מתקדם בכל צעד, מקסימום החלפות. (Θ(n) תמיד.)',
+    },
+  ],
 }

@@ -167,6 +167,25 @@ export const heapInsertSpec: AlgorithmSpec = {
   run: runHeapInsert,
   validateInput: heapValidate,
   defaultInput: { array: HEAP, extra: { key: 15 } },
+  presets: [
+    { labelHe: 'מפתח בינוני', input: { array: HEAP, extra: { key: 15 } } },
+    {
+      labelHe: 'מפתח קטן (נשאר בעלה)',
+      input: { array: HEAP, extra: { key: 0 } },
+      noteHe: 'מפתח קטן — נשאר בעלה, ללא טיפוס.',
+    },
+    {
+      labelHe: 'מפתח גדול (טיפוס לשורש)',
+      input: { array: HEAP, extra: { key: 20 } },
+      noteHe: 'מפתח גדול מכולם — מטפס עד השורש.',
+    },
+    {
+      labelHe: 'ערימה גבוהה, מפתח ענק (המקרה הגרוע ביותר)',
+      input: { array: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], extra: { key: 100 } },
+      worst: true,
+      noteHe: 'מפתח גדול מכולם בערימה גבוהה — טיפוס לאורך המסלול המלא, עומס מרבי O(log n).',
+    },
+  ],
 }
 
 export const heapMaximumSpec: AlgorithmSpec = {
@@ -192,6 +211,21 @@ export const heapMaximumSpec: AlgorithmSpec = {
   run: runHeapMaximum,
   validateInput: heapValidate,
   defaultInput: { array: HEAP },
+  presets: [
+    { labelHe: 'רשימה בת 2', input: { array: [9, 4] }, noteHe: 'המקסימום בשורש — A[1]=9.' },
+    { labelHe: 'ערימה רגילה', input: { array: HEAP } },
+    {
+      labelHe: 'כל הערכים שווים',
+      input: { array: [7, 7, 7, 7, 7] },
+      noteHe: 'המקסימום הוא 7 — עדיין נקרא ישירות מהשורש.',
+    },
+    {
+      labelHe: 'ערימה ענקית (המקרה הגרוע ביותר)',
+      input: { array: [99, 80, 90, 70, 60, 85, 88, 40, 50, 30, 20, 75, 65, 82, 86] },
+      worst: true,
+      noteHe: 'גם בערימה ענקית — עדיין צעד אחד בלבד, O(1). אין "מקרה גרוע" אמיתי.',
+    },
+  ],
 }
 
 export const heapExtractMaxSpec: AlgorithmSpec = {
@@ -216,4 +250,19 @@ export const heapExtractMaxSpec: AlgorithmSpec = {
   run: runHeapExtractMax,
   validateInput: heapValidate,
   defaultInput: { array: HEAP },
+  presets: [
+    { labelHe: 'רשימה בת 2', input: { array: [9, 4] }, noteHe: 'שולפים 9, נשאר 4 — תיקון מיידי.' },
+    { labelHe: 'ערימה רגילה', input: { array: HEAP } },
+    {
+      labelHe: 'כפילויות',
+      input: { array: [7, 7, 5, 5, 3, 3] },
+      noteHe: 'שליפת מקסימום כשיש ערכים שווים.',
+    },
+    {
+      labelHe: 'ערימה גבוהה — תיקון עמוק (המקרה הגרוע ביותר)',
+      input: { array: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1] },
+      worst: true,
+      noteHe: 'אחרי השליפה, האיבר האחרון עולה לשורש ו-Max-Heapify שוקע לעומק המלא — עומס מרבי O(log n).',
+    },
+  ],
 }

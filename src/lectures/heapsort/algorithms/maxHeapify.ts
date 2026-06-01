@@ -155,4 +155,27 @@ export const maxHeapifySpec: AlgorithmSpec = {
   run: runMaxHeapify,
   validateInput: (raw) => parseIntArray(raw, { min: 1, max: 31 }),
   defaultInput: { array: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], extra: { startIndex: 2 } },
+  presets: [
+    {
+      labelHe: 'ברירת מחדל',
+      input: { array: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], extra: { startIndex: 2 } },
+      noteHe: 'הערך 4 שוקע שתי רמות (דוגמת CLRS).',
+    },
+    {
+      labelHe: 'ללא החלפה',
+      input: { array: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], extra: { startIndex: 1 } },
+      noteHe: 'השורש כבר גדול מילדיו — עוצר מיד, 0 החלפות.',
+    },
+    {
+      labelHe: 'החלפה בודדת',
+      input: { array: [5, 10, 3], extra: { startIndex: 1 } },
+      noteHe: 'החלפה אחת בלבד עם הילד הגדול, ואז עצירה.',
+    },
+    {
+      labelHe: 'ירידה לעומק מלא (המקרה הגרוע ביותר)',
+      input: { array: [0, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], extra: { startIndex: 1 } },
+      worst: true,
+      noteHe: 'השורש קטן מכולם בעץ גבוה — שוקע לאורך המסלול המלא (⌊log n⌋ רמות), עומס מרבי O(log n).',
+    },
+  ],
 }

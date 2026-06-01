@@ -88,4 +88,19 @@ export const buildMaxHeapSpec: AlgorithmSpec = {
   run: runBuildMaxHeap,
   validateInput: (raw) => parseIntArray(raw, { min: 1, max: 31 }),
   defaultInput: { array: [4, 1, 3, 2, 16, 9, 10, 14, 8, 7] },
+  presets: [
+    { labelHe: 'אקראי', input: { array: [4, 1, 3, 2, 16, 9, 10, 14, 8, 7] } },
+    {
+      labelHe: 'כבר ערימה (ממוין יורד)',
+      input: { array: [8, 7, 6, 5, 4, 3, 2, 1] },
+      noteHe: 'מערך ממוין-יורד הוא כבר ערימת-מקסימום — כמעט אפס עבודה.',
+    },
+    { labelHe: 'כל האיברים שווים', input: { array: [5, 5, 5, 5, 5, 5, 5] }, noteHe: '0 החלפות.' },
+    {
+      labelHe: 'ממוין עולה (המקרה הגרוע ביותר)',
+      input: { array: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] },
+      worst: true,
+      noteHe: 'הכי רחוק מערימה — מקסימום הצפות. (החסם נשאר O(n) הדוק בכל מקרה.)',
+    },
+  ],
 }

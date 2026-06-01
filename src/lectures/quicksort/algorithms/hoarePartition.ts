@@ -154,4 +154,19 @@ export const hoarePartitionSpec: AlgorithmSpec = {
   run: runHoarePartition,
   validateInput: (raw) => parseIntArray(raw, { min: 2, max: 20 }),
   defaultInput: { array: [5, 3, 2, 6, 4, 1, 3, 7] },
+  presets: [
+    { labelHe: 'אקראי', input: { array: [5, 3, 2, 6, 4, 1, 3, 7] } },
+    {
+      labelHe: 'ממוין',
+      input: { array: [1, 2, 3, 4, 5, 6, 7, 8] },
+      noteHe: 'הציר A[p]=1 הוא הקטן — j יורד עד הקצה, חלוקה לא מאוזנת.',
+    },
+    { labelHe: 'כל האיברים שווים', input: { array: [4, 4, 4, 4, 4, 4] } },
+    {
+      labelHe: 'הפוך (המקרה הגרוע ביותר)',
+      input: { array: [8, 7, 6, 5, 4, 3, 2, 1] },
+      worst: true,
+      noteHe: 'מקסימום החלפות במעבר אחד. (חלוקה היא Θ(n) בכל מקרה.)',
+    },
+  ],
 }

@@ -9,6 +9,7 @@ const ROLE_PRIORITY: HighlightRole[] = [
   'inserted',
   'extracted',
   'current',
+  'median',
   'less',
   'greater',
   'path',
@@ -50,6 +51,7 @@ const STYLES: Record<HighlightRole, RoleStyle> = {
   less: { ring: '#38bdf8', fill: '#f0f9ff', text: '#0c4a6e', glow: 'rgba(56,189,248,0.3)', labelHe: '≤ ציר' },
   greater: { ring: '#f59e0b', fill: '#fffbeb', text: '#78350f', glow: 'rgba(245,158,11,0.3)', labelHe: '≥ ציר' },
   active: { ring: '#cbd5e1', fill: '#f8fafc', text: '#0f172a', glow: 'rgba(0,0,0,0)', labelHe: 'תת-מערך פעיל' },
+  median: { ring: '#14b8a6', fill: '#f0fdfa', text: '#115e59', glow: 'rgba(20,184,166,0.45)', labelHe: 'חציון קבוצה' },
 }
 
 /** Highest-priority role present at a 1-indexed slot, or null. */

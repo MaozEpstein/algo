@@ -136,4 +136,26 @@ export const quickSortSpec: AlgorithmSpec = {
   run: runQuickSort,
   validateInput: (raw) => parseIntArray(raw, { min: 2, max: 20 }),
   defaultInput: { array: [5, 3, 8, 4, 1, 7] },
+  presets: [
+    { labelHe: 'אקראי', input: { array: [5, 3, 8, 4, 1, 7] } },
+    {
+      labelHe: 'הפוך',
+      input: { array: [7, 6, 5, 4, 3, 2, 1] },
+      noteHe: 'גם כאן הציר קיצוני בכל שלב — רקורסיה צרה, O(n²).',
+    },
+    { labelHe: 'כפילויות', input: { array: [3, 1, 3, 2, 3, 1] } },
+    {
+      labelHe: 'ממוין (המקרה הגרוע ביותר)',
+      input: { array: [1, 2, 3, 4, 5, 6, 7] },
+      worst: true,
+      noteHe: 'הציר תמיד קיצוני → רקורסיה צרה וארוכה, O(n²). שימו לב למונה ההשוואות המקסימלי.',
+    },
+  ],
+  sortProfile: {
+    worst: 'O(n^2)',
+    average: 'O(n \\log n)',
+    stableHe: 'לא יציב',
+    inPlaceHe: 'במקום',
+    whenHe: 'מהיר מאוד בפועל; אך נזהרים מקלט ממוין (המקרה הגרוע).',
+  },
 }

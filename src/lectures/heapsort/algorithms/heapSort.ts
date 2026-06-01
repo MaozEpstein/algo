@@ -95,4 +95,22 @@ export const heapSortSpec: AlgorithmSpec = {
   run: runHeapSort,
   validateInput: (raw) => parseIntArray(raw, { min: 2, max: 31 }),
   defaultInput: { array: [4, 1, 3, 2, 16, 9, 10, 14, 8, 7] },
+  presets: [
+    { labelHe: 'אקראי', input: { array: [4, 1, 3, 2, 16, 9, 10, 14, 8, 7] } },
+    { labelHe: 'ממוין יורד', input: { array: [8, 7, 6, 5, 4, 3, 2, 1] } },
+    { labelHe: 'כפילויות', input: { array: [5, 2, 5, 1, 5, 2, 4] } },
+    {
+      labelHe: 'ממוין עולה (המקרה הגרוע ביותר)',
+      input: { array: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
+      worst: true,
+      noteHe: 'מספר ההשוואות המרבי — אך HeapSort הוא O(n log n) בכל מקרה (גם בגרוע).',
+    },
+  ],
+  sortProfile: {
+    worst: 'O(n \\log n)',
+    average: 'O(n \\log n)',
+    stableHe: 'לא יציב',
+    inPlaceHe: 'במקום',
+    whenHe: 'כשרוצים חסם O(n log n) מובטח בכל מקרה, וגם מיון במקום.',
+  },
 }

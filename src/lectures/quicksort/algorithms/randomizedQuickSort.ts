@@ -163,4 +163,30 @@ export const randomizedQuickSortSpec: AlgorithmSpec = {
   run: runRandomizedQuickSort,
   validateInput: (raw) => parseIntArray(raw, { min: 2, max: 20 }),
   defaultInput: { array: [1, 2, 3, 4, 5, 6, 7], extra: { seed: 20407 } },
+  presets: [
+    {
+      labelHe: 'ממוין (הרנדומיזציה מצילה)',
+      input: { array: [1, 2, 3, 4, 5, 6, 7], extra: { seed: 20407 } },
+      noteHe: 'אותו קלט שמפיל את Quicksort ל-O(n²) — כאן הציר האקראי שומר על איזון.',
+    },
+    { labelHe: 'אקראי', input: { array: [5, 3, 8, 4, 1, 7], extra: { seed: 20407 } } },
+    {
+      labelHe: 'זרע אחר',
+      input: { array: [1, 2, 3, 4, 5, 6, 7], extra: { seed: 7 } },
+      noteHe: 'אותו מערך, זרע אקראי אחר → רצף חלוקות שונה.',
+    },
+    {
+      labelHe: 'זרע ביש-מזל (המקרה הגרוע ביותר)',
+      input: { array: [6, 2, 8, 4, 9, 1, 7, 3, 5, 10], extra: { seed: 170 } },
+      worst: true,
+      noteHe: 'זרע שגורם לרצף חלוקות לא-מאוזנות ומונה השוואות מקסימלי — אך זהו אירוע נדיר; התוחלת נשארת O(n log n).',
+    },
+  ],
+  sortProfile: {
+    worst: 'O(n^2)',
+    average: '\\Theta(n \\log n)',
+    stableHe: 'לא יציב',
+    inPlaceHe: 'במקום',
+    whenHe: 'גרסת ברירת-המחדל המעשית — תוחלת O(n log n) לכל קלט, ללא "קלט גרוע" קבוע.',
+  },
 }

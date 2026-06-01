@@ -29,6 +29,7 @@ export type HighlightRole =
   | 'less' // Quicksort: region known to be ≤ pivot
   | 'greater' // Quicksort: region known to be ≥ pivot
   | 'active' // Quicksort: the subarray currently being partitioned
+  | 'median' // Selection: the median of a group of 5
 
 export interface Highlight {
   role: HighlightRole
@@ -133,12 +134,24 @@ export type ValidateResult =
   | { ok: true; value: AlgorithmInput }
   | { ok: false; error: string }
 
+/** A one-click example input that demonstrates a notable/edge case. */
+export interface Preset {
+  labelHe: string
+  input: AlgorithmInput
+  /** Optional tooltip explaining what this input demonstrates. */
+  noteHe?: string
+  /** The worst case — shows maximum complexity. Rendered with a distinct style. */
+  worst?: boolean
+}
+
 export interface AlgorithmSpec {
   id: string
   titleHe: string
   titleEn: string
   /** Whether this is a standalone algorithm or a helper subroutine. */
   kind: RoutineKind
+  /** Mark as optional ("רשות") course material — shown with a badge. */
+  optional?: boolean
   /** Canonical Hebrew description of the routine — shown in the guided
    *  instruction card, the summary overview, and operation tooltips. */
   blurbHe: string
@@ -156,6 +169,21 @@ export interface AlgorithmSpec {
   /** Parse a raw user string from the sandbox into an input. */
   validateInput: (raw: string) => ValidateResult
   defaultInput: AlgorithmInput
+  /** One-click instructive example inputs (edge cases, worst cases, …). */
+  presets?: Preset[]
+  /** Present iff this is a full array sort — drives the Overview hub (table + race). */
+  sortProfile?: SortProfile
+}
+
+/** Comparison attributes for a full sorting algorithm (Overview hub). */
+export interface SortProfile {
+  /** Worst-case time in LaTeX, e.g. 'O(n^2)'. */
+  worst: string
+  /** Average/expected time in LaTeX. */
+  average: string
+  stableHe: 'יציב' | 'לא יציב'
+  inPlaceHe: 'במקום' | 'לא במקום'
+  whenHe: string
 }
 
 export type ViewKind = 'array' | 'tree' | 'recursionTree' | 'custom'
