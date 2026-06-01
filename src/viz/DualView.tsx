@@ -11,8 +11,10 @@ interface Props {
   clickable?: boolean
   /** Reserve bottom padding so a floating control doesn't overlap content. */
   reserveBottomSpace?: boolean
-  /** Bespoke renderer used when `views` includes 'custom' (Merge-Sort / Hanoi). */
-  customViz?: ComponentType<{ frame: Frame }>
+  /** Bespoke renderer used when `views` includes 'custom' (Merge-Sort / Hanoi).
+   *  Receives `instant` so it can skip animations when scrubbing — needed when
+   *  hosted in LocalPlayer, which doesn't drive the global player store. */
+  customViz?: ComponentType<{ frame: Frame; instant?: boolean }>
 }
 
 /**
@@ -40,7 +42,7 @@ export default function DualView({
           reserveBottomSpace ? 'pb-20 sm:pb-20' : ''
         }`}
       >
-        <CustomViz frame={frame} />
+        <CustomViz frame={frame} instant={instant} />
       </div>
     )
   }

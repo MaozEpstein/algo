@@ -6,6 +6,7 @@ import { recurrencesLecture } from '@/lectures/recurrences'
 import { divideAndConquerLecture } from '@/lectures/divide-and-conquer'
 import { recursionLecture } from '@/lectures/recursion'
 import { foundationsLecture } from '@/lectures/foundations'
+import { linearSortLecture } from '@/lectures/linear-sort'
 
 /** The single wiring point. Adding a lecture = import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
@@ -16,6 +17,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [heapsortLecture.id]: heapsortLecture,
   [quickSortLecture.id]: quickSortLecture,
   [selectionLecture.id]: selectionLecture,
+  [linearSortLecture.id]: linearSortLecture,
 }
 
 export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(

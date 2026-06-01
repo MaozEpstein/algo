@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import type { Frame, PseudocodeBlock, ViewKind } from '@/engine/types'
 import DualView from '@/viz/DualView'
 import CodePanel from './panels/CodePanel'
@@ -15,6 +15,10 @@ interface Props {
   pseudocode: PseudocodeBlock[]
   titleHe: string
   views?: ViewKind[]
+  /** Bespoke renderer when `views` includes 'custom' (forwarded to DualView). */
+  customViz?: ComponentType<{ frame: Frame; instant?: boolean }>
+  /** Navigable high-level steps (chips). Each seeks to its frame index. */
+  steps?: { label: string; index: number; ltr?: boolean }[]
   /** Show the comparisons/swaps cost readout (for sorts). */
   showCost?: boolean
 }
@@ -34,7 +38,7 @@ function Icon({ d }: { d: string }) {
   )
 }
 
-export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['array'], showCost }: Props) {
+export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['array'], customViz, steps, showCost }: Props) {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
@@ -77,12 +81,34 @@ export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['arr
     setPlaying(false)
   }
 
+  let activeStep = -1
+  if (steps) for (let k = 0; k < steps.length; k++) if (steps[k].index <= index) activeStep = k
+
+  const stepStrip = steps && steps.length > 1 && (
+    <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <span className="shrink-0 text-xs font-medium text-slate-400">שלבים:</span>
+      {steps.map((s, k) => (
+        <button
+          key={k}
+          onClick={() => jump(s.index)}
+          className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition ${
+            k === activeStep ? 'bg-slate-800 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}
+        >
+          <span dir={s.ltr ? 'ltr' : undefined} className="inline-block">
+            {s.label}
+          </span>
+        </button>
+      ))}
+    </div>
+  )
+
   return (
     <div className="flex flex-col gap-3">
       <NarrationBar frame={frame} />
       <div className="grid gap-3 lg:grid-cols-[1.6fr_1fr]">
         <div className="min-h-[300px] min-w-0 rounded-2xl">
-          <DualView frame={frame} views={views} instant={jumped} />
+          <DualView frame={frame} views={views} instant={jumped} customViz={customViz} />
         </div>
         <CodePanel blocks={pseudocode} frame={frame} mainBlockId={pseudocode[0].id} mainTitleHe={titleHe} />
       </div>
@@ -103,6 +129,7 @@ export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['arr
             {index + 1}/{maxLen}
           </span>
         </div>
+        {stepStrip}
         <div dir="ltr" className="flex items-center justify-center gap-1">
           <Ctl onClick={() => jump(0)} disabled={index === 0} d={RESET} />
           <Ctl onClick={() => jump(Math.max(0, index - 1))} disabled={index === 0} d={PREV} />
