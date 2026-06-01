@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Tex from '@/components/Tex'
 
 /** A single expansion line: the running equation plus an optional aside. */
@@ -18,14 +18,27 @@ export default function UnrollStepper({
   steps,
   resultTex,
   introHe,
+  onStepChange,
 }: {
   steps: UnrollStep[]
   resultTex: string
   introHe?: string
+  /** Notified on every step change (and on mount) so a sibling visual can sync. */
+  onStepChange?: (idx: number, total: number) => void
 }) {
   const [idx, setIdx] = useState(0)
   const last = steps.length - 1
   const atEnd = idx >= last
+  const go = (next: number) => {
+    const v = Math.max(0, Math.min(last, next))
+    setIdx(v)
+    onStepChange?.(v, steps.length)
+  }
+  // Report the initial step once on mount (remounts per preset via `key`).
+  useEffect(() => {
+    onStepChange?.(0, steps.length)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
@@ -56,13 +69,13 @@ export default function UnrollStepper({
 
       <div dir="ltr" className="flex items-center justify-center gap-2">
         <button
-          onClick={() => setIdx(0)}
+          onClick={() => go(0)}
           className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
         >
           ⟲ איפוס
         </button>
         <button
-          onClick={() => setIdx((i) => Math.max(0, i - 1))}
+          onClick={() => go(idx - 1)}
           disabled={idx === 0}
           className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:opacity-40"
         >
@@ -72,7 +85,7 @@ export default function UnrollStepper({
           צעד {idx + 1}/{steps.length}
         </span>
         <button
-          onClick={() => setIdx((i) => Math.min(last, i + 1))}
+          onClick={() => go(idx + 1)}
           disabled={atEnd}
           className="rounded-lg border border-sky-500 bg-sky-500 px-3 py-1.5 text-sm font-semibold text-white shadow transition hover:bg-sky-600 disabled:opacity-40"
         >

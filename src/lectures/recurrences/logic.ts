@@ -82,17 +82,17 @@ export function classifyMaster({ a, b, c, k }: MasterInput): MasterResult {
     caseNo = 1
     resultTex = `\\Theta(${product(nPow(e, eTex))})`
     reasonHe =
-      'f(n) קטן פולינומיאלית מ-n^{log_b a}, ולכן העלות נשלטת על-ידי העלים — מספר תת-הבעיות גדל מהר יותר מהעבודה בכל רמה.'
+      'f(n) קטן מהסף, ולכן רוב העבודה מצטברת בעלים — מספר תת-הבעיות גדל מהר יותר מהעבודה שבכל רמה.'
   } else if (Math.abs(c - e) <= EPS) {
     caseNo = 2
     resultTex = `\\Theta(${product(nPow(e, eTex), logPow(k + 1))})`
     reasonHe =
-      'f(n) באותו סדר גודל כמו n^{log_b a}: כל אחת מ-log_b n הרמות תורמת עלות שווה, ולכן מוסיפים גורם log אחד.'
+      'f(n) שווה לסף, וכל הרמות תורמות עלות שווה — ויש כ-log n רמות, ולכן מוסיפים גורם log אחד.'
   } else {
     caseNo = 3
     resultTex = `\\Theta(${product(nPow(c, numFmt(c)), logPow(k))})`
     reasonHe =
-      'f(n) גדל פולינומיאלית מהר יותר מ-n^{log_b a}, ולכן העלות נשלטת על-ידי השורש (בהנחה שמתקיים תנאי הרגולריות).'
+      'f(n) גדול מהסף, ולכן רוב העבודה מצטברת בשורש — הקריאה העליונה, על כל הקלט (בהנחה שתנאי הרגולריות מתקיים).'
   }
 
   return { e, eTex, eApproxTex, caseNo, fTex, watershedTex, resultTex, reasonHe }
