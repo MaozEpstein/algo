@@ -5,11 +5,19 @@ export interface Step {
   index: number
   /** Render the label left-to-right (for bracketed ranges like [1..5]). */
   ltr?: boolean
+  /** Recursion: a call (descending) vs a return (ascending) — drives the
+   *  arrow/colour and the call→return divider in the timeline. */
+  kind?: 'call' | 'return'
 }
 
 function currentIndexOf(f: Frame): number | null {
   const h = f.highlights.find((x) => x.role === 'current')
   return h && h.indices.length === 1 ? h.indices[0] : null
+}
+
+/** True for a recursion-lecture frame (its scene carries a call stack). */
+function hasCallStack(f: Frame): boolean {
+  return !!f.scene && Array.isArray((f.scene as { stack?: unknown }).stack)
 }
 
 /**
@@ -44,6 +52,16 @@ export function deriveSteps(frames: Frame[]): Step[] {
     } else if (f.codeBlock === 'hanoi' && f.codeLine === 4) {
       move += 1
       steps.push({ label: `מהלך ${move}`, index: i })
+    } else if (hasCallStack(f)) {
+      // Recursion lecture: a chip per call entered (↓) and per return (↑ = value).
+      const stack = (f.scene as { stack: { callTex: string; returnTex?: string }[] }).stack
+      const top = stack[stack.length - 1]
+      if (top && f.codeLine === 1) {
+        steps.push({ label: top.callTex, index: i, ltr: true, kind: 'call' })
+      } else if (top && top.returnTex != null) {
+        const val = top.returnTex !== '—' ? ` = ${top.returnTex}` : ''
+        steps.push({ label: `${top.callTex}${val}`, index: i, ltr: true, kind: 'return' })
+      }
     }
   })
   return steps

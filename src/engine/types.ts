@@ -166,6 +166,9 @@ export interface AlgorithmSpec {
   titleEn: string
   /** Whether this is a standalone algorithm or a helper subroutine. */
   kind: RoutineKind
+  /** Override the 'main' routine badge label (default "אלגוריתם"). E.g. the
+   *  recursion lecture uses "פונקציה רקורסיבית" — these are examples, not algorithms. */
+  routineLabelHe?: string
   /** Mark as optional ("רשות") course material — shown with a badge. */
   optional?: boolean
   /** Canonical Hebrew description of the routine — shown in the guided

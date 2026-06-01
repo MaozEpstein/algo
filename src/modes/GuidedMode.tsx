@@ -107,7 +107,12 @@ export default function GuidedMode({ lecture }: { lecture: LectureModule }) {
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-slate-800">{algo.titleHe}</span>
-            <RoutineBadge kind={algo.kind} helperOfHe={algo.helperOfHe} size="sm" />
+            <RoutineBadge
+              kind={algo.kind}
+              helperOfHe={algo.helperOfHe}
+              mainLabelHe={algo.routineLabelHe}
+              size="sm"
+            />
           </div>
           <p className="leading-relaxed text-slate-600">{algo.blurbHe}</p>
         </div>

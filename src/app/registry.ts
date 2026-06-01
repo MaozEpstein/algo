@@ -4,9 +4,11 @@ import { quickSortLecture } from '@/lectures/quicksort'
 import { selectionLecture } from '@/lectures/selection'
 import { recurrencesLecture } from '@/lectures/recurrences'
 import { divideAndConquerLecture } from '@/lectures/divide-and-conquer'
+import { recursionLecture } from '@/lectures/recursion'
 
 /** The single wiring point. Adding a lecture = import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
+  [recursionLecture.id]: recursionLecture,
   [divideAndConquerLecture.id]: divideAndConquerLecture,
   [recurrencesLecture.id]: recurrencesLecture,
   [heapsortLecture.id]: heapsortLecture,

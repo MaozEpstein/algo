@@ -6,6 +6,8 @@ interface Props {
   calledFromHe?: string
   /** For helpers: all algorithms that use it (shown as a tooltip / subtitle). */
   helperOfHe?: string[]
+  /** Override the 'main' label (default "אלגוריתם"). */
+  mainLabelHe?: string
   size?: 'sm' | 'md'
 }
 
@@ -14,7 +16,13 @@ interface Props {
  * helper — and, for helpers, which algorithm they serve. Used in the code panel
  * and in every operation picker so the distinction is uniform across the app.
  */
-export default function RoutineBadge({ kind, calledFromHe, helperOfHe, size = 'md' }: Props) {
+export default function RoutineBadge({
+  kind,
+  calledFromHe,
+  helperOfHe,
+  mainLabelHe,
+  size = 'md',
+}: Props) {
   const pad = size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'
   if (kind === 'helper') {
     const subtitle = calledFromHe
@@ -38,7 +46,7 @@ export default function RoutineBadge({ kind, calledFromHe, helperOfHe, size = 'm
       className={`inline-flex items-center gap-1 rounded-full bg-slate-100 font-semibold text-slate-600 ${pad}`}
     >
       <span aria-hidden>📦</span>
-      אלגוריתם
+      {mainLabelHe ?? 'אלגוריתם'}
     </span>
   )
 }
