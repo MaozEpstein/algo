@@ -15,7 +15,6 @@ interface Row {
   stableHe: string
   inPlaceHe: string
   whenHe: string
-  fromCourse?: boolean
 }
 
 /** One-line "what it does" per sort — shown under the name in the table. Keyed
@@ -36,7 +35,6 @@ const CURATED: Row[] = [
     stableHe: 'יציב',
     inPlaceHe: 'לא במקום',
     whenHe: 'כשצריך יציבות, או למיון רשימות מקושרות / קבצים גדולים.',
-    fromCourse: true,
   },
   {
     name: 'Insertion Sort',
@@ -46,7 +44,6 @@ const CURATED: Row[] = [
     stableHe: 'יציב',
     inPlaceHe: 'במקום',
     whenHe: 'קלט קטן או כמעט-ממוין (מהיר בפועל על קלטים כאלה).',
-    fromCourse: true,
   },
   {
     name: 'Counting Sort',
@@ -56,7 +53,6 @@ const CURATED: Row[] = [
     stableHe: 'יציב',
     inPlaceHe: 'לא במקום',
     whenHe: 'מפתחות שלמים בטווח קטן (k = O(n)).',
-    fromCourse: true,
   },
   {
     name: 'Radix Sort',
@@ -66,7 +62,6 @@ const CURATED: Row[] = [
     stableHe: 'יציב',
     inPlaceHe: 'לא במקום',
     whenHe: 'מספרים/מחרוזות באורך קבוע d (ספרה אחר ספרה).',
-    fromCourse: true,
   },
   {
     name: 'Bucket Sort',
@@ -76,7 +71,6 @@ const CURATED: Row[] = [
     stableHe: 'יציב',
     inPlaceHe: 'לא במקום',
     whenHe: 'קלט ממשי פרוש אחיד ב-[0,1). תוחלת לינארית.',
-    fromCourse: true,
   },
 ]
 
