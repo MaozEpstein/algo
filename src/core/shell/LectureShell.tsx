@@ -3,6 +3,7 @@ import type { LearningMode, LectureModule } from '@/core/engine/types'
 import { useCourse } from '@/core/platform/CourseProvider'
 import { coursePath, lecturePath } from '@/core/platform/links'
 import ModeSelector from './ModeSelector'
+import GlossaryButton from '@/core/components/GlossaryButton'
 import GuidedMode from '@/core/modes/GuidedMode'
 import SummaryMode from '@/core/modes/SummaryMode'
 
@@ -82,6 +83,11 @@ function LectureHeader({ lecture }: { lecture: LectureModule }) {
             השיעור הבא
             <span aria-hidden>←</span>
           </Link>
+        )}
+        {lecture.glossary && lecture.glossary.length > 0 && (
+          <span className="ms-auto">
+            <GlossaryButton terms={lecture.glossary} />
+          </span>
         )}
       </div>
       <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">

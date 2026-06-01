@@ -26,6 +26,13 @@ export default function CourseHome() {
         </p>
       </header>
 
+      {LECTURE_LIST.length === 0 && !Overview && (
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-white/50 px-6 py-16 text-center">
+          <p className="text-lg font-semibold text-slate-700">השיעורים יתווספו כאן בקרוב 🛠️</p>
+          <p className="mt-1 text-slate-500">הקורס נפתח — התוכן עדיין בהכנה.</p>
+        </div>
+      )}
+
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Overview && (
           <Link

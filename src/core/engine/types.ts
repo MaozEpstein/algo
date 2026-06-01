@@ -224,6 +224,12 @@ export interface Step {
   kind?: 'call' | 'return'
 }
 
+/** One entry in a lecture's glossary — a concept name + a short explanation. */
+export interface GlossaryTerm {
+  term: string
+  def: string
+}
+
 /** The single contract the shell knows about. Adding a lecture = implement this. */
 export interface LectureModule {
   id: string
@@ -246,6 +252,9 @@ export interface LectureModule {
   /** Course-specific deriver of high-level step chips for the guided StepTimeline.
    *  Supplied by the course (keeps the core shell free of algorithm names). */
   deriveSteps?: (frames: Frame[]) => Step[]
+  /** Foundational concepts taught in this lecture — surfaced via a "מושגי יסוד"
+   *  button in the lecture header (term → short explanation). */
+  glossary?: GlossaryTerm[]
 }
 
 export type LearningMode = 'guided' | 'summary'

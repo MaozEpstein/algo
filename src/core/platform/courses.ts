@@ -14,10 +14,17 @@ export const COURSES: CourseManifest[] = [
     subtitleEn: 'Data Structures & Algorithms',
     accent: 'sky',
   },
+  {
+    id: 'semiconductors',
+    titleHe: 'התקנים של מוליכים למחצה',
+    subtitleEn: 'Semiconductor Devices',
+    accent: 'violet',
+  },
 ]
 
 export const COURSE_LOADERS: Record<string, () => Promise<{ default: CourseModule }>> = {
   algorithms: () => import('@/courses/algorithms'),
+  semiconductors: () => import('@/courses/semiconductors'),
 }
 
 export const getManifest = (id: string): CourseManifest | undefined =>
