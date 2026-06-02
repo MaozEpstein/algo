@@ -1,4 +1,4 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker } from '@/core/engine/types'
@@ -26,12 +26,14 @@ export function runInsertionSort(input: AlgorithmInput): Frame[] {
   })
 
   for (let j = 2; j <= n; j++) {
+    const key = b.value(j) // the element being inserted (travels left with its identity)
     b.emit({
       codeBlock: 'insertionSort',
       codeLine: 2,
       narration: `לוקחים את A[${j}] = ${b.value(j)} ומכניסים אותו לאזור הממוין משמאלו.`,
       highlights: [...base(j - 1), hl('current', j)],
       markers: keyMarker(j),
+      vars: [vv('key', key, 'pivot'), vi('j', j, 'j')],
     })
 
     let i = j
@@ -46,6 +48,7 @@ export function runInsertionSort(input: AlgorithmInput): Frame[] {
           : `${b.value(i - 1)} ≤ ${b.value(i)} — המקום נמצא, עוצרים.`,
         highlights: [...base(j - 1), hl('comparing', i - 1, i)],
         markers: keyMarker(i),
+        vars: [vv('key', key, 'pivot'), vi('j', j, 'j'), vi('i', i, 'i')],
       })
       if (!cmp) break
       b.swap(i - 1, i)
@@ -57,6 +60,7 @@ export function runInsertionSort(input: AlgorithmInput): Frame[] {
         narration: `המפתח מחליק שמאלה למקום ${i}.`,
         highlights: [...base(j - 1), hl('swapping', i, i + 1)],
         markers: keyMarker(i),
+        vars: [vv('key', key, 'pivot'), vi('j', j, 'j'), vi('i', i, 'i')],
       })
     }
 
@@ -66,6 +70,7 @@ export function runInsertionSort(input: AlgorithmInput): Frame[] {
       narration: `A[1..${j}] ממוין כעת.`,
       highlights: [hl('sorted', ...rangeInclusive(1, j))],
       markers: keyMarker(i),
+      vars: [vv('key', key, 'pivot'), vi('j', j, 'j'), vi('i', i, 'i')],
     })
   }
 

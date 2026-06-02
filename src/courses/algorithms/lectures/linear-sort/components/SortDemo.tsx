@@ -20,11 +20,14 @@ export default function SortDemo({
   block,
   run,
   presets,
+  varsPlacement,
 }: {
   titleHe: string
   block: PseudocodeBlock
   run: (input: AlgorithmInput) => Frame[]
   presets: DemoPreset[]
+  /** Forwarded to LocalPlayer: 'side' docks the variables box beside the code. */
+  varsPlacement?: 'overlay' | 'side'
 }) {
   const [array, setArray] = useState<number[]>(presets[0].array)
   const frames = useMemo(() => run({ array }), [array, run])
@@ -58,6 +61,7 @@ export default function SortDemo({
         views={['custom']}
         customViz={FlowView}
         steps={steps}
+        varsPlacement={varsPlacement}
       />
     </div>
   )

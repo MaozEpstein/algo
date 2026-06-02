@@ -1,8 +1,8 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
 import { mulberry32, randInt } from '@/core/engine/seededRng'
-import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, WatchVar } from '@/core/engine/types'
 import { lomutoPartitionInto } from '@/courses/algorithms/lectures/quicksort/algorithms/lomutoPartition'
 import { lomutoPartitionBlock } from '@/courses/algorithms/lectures/quicksort/pseudocode'
 import { randomizedPartitionBlock, randomizedSelectBlock } from '../pseudocode'
@@ -33,6 +33,7 @@ export function runRandomizedSelect(input: AlgorithmInput): Frame[] {
 
   function rs(p: number, r: number, i: number, depth: number): number {
     b.setBlock('randomizedSelect')
+    const rsVars: WatchVar[] = [vi('p', p, 'bound'), vi('r', r, 'bound'), vv('i', i, 'k')]
     const emit = (codeLine: number, narration: string, extra: Highlight[] = []) =>
       b.emit({
         codeBlock: 'randomizedSelect',
@@ -41,6 +42,7 @@ export function runRandomizedSelect(input: AlgorithmInput): Frame[] {
         callDepth: depth,
         narration,
         highlights: [...base(p, r), ...extra],
+        vars: rsVars,
       })
 
     emit(1, `RandomizedSelect על [${p}..${r}] — מחפשים את האיבר ה-${i} הקטן בתת-מערך זה.`)
@@ -61,6 +63,7 @@ export function runRandomizedSelect(input: AlgorithmInput): Frame[] {
       narration: `בוחרים ציר אקראי: A[${kRand}] = ${A(kRand)}.`,
       highlights: [...base(p, r), hl('pivot', kRand)],
       markers: [{ label: 'rand', index: kRand, tone: 'pivot' }],
+      vars: [...rsVars, vi('rand', kRand, 'pivot')],
     })
     b.emit({
       codeBlock: 'randomizedPartition',
@@ -70,6 +73,7 @@ export function runRandomizedSelect(input: AlgorithmInput): Frame[] {
       narration: `מחליפים אותו לסוף (A[${r}]) כדי שחלוקת Lomuto תעבוד עליו.`,
       action: { kind: 'swap', a: kRand, b: r },
       highlights: [...base(p, r), hl('swapping', kRand, r)],
+      vars: [...rsVars, vi('rand', kRand, 'pivot')],
     })
     b.swap(kRand, r)
 

@@ -1,7 +1,7 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
-import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, WatchVar } from '@/core/engine/types'
 import { lomutoPartitionInto } from '@/courses/algorithms/lectures/quicksort/algorithms/lomutoPartition'
 import { lomutoPartitionBlock } from '@/courses/algorithms/lectures/quicksort/pseudocode'
 import { selectBlock } from '../pseudocode'
@@ -37,6 +37,7 @@ export function runSelect(input: AlgorithmInput): Frame[] {
 
   function sel(p: number, r: number, i: number, depth: number): number {
     b.setBlock('select')
+    const selVars: WatchVar[] = [vi('p', p, 'bound'), vi('r', r, 'bound'), vv('i', i, 'k')]
     const emit = (codeLine: number, narration: string, extra: Highlight[] = []) =>
       b.emit({
         codeBlock: 'select',
@@ -45,6 +46,7 @@ export function runSelect(input: AlgorithmInput): Frame[] {
         callDepth: depth,
         narration,
         highlights: [...base(p, r), ...extra],
+        vars: selVars,
       })
 
     emit(1, `Select על [${p}..${r}] — מחפשים את האיבר ה-${i} הקטן.`)

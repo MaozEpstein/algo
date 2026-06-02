@@ -1,4 +1,4 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
 import { buildMaxHeapBlock, heapSortBlock, maxHeapifyBlock } from '../pseudocode'
@@ -30,12 +30,14 @@ export function runHeapSort(input: AlgorithmInput): Frame[] {
       codeLine: 3,
       narration: `i = ${i} — השורש הוא המקסימום של הערימה הנוכחית; נמקם אותו בסוף.`,
       highlights: [hl('current', 1)],
+      vars: [vi('i', i, 'i'), vv('heapSize', b.size, 'bound')],
     })
     b.emit({
       codeLine: 4,
       action: { kind: 'swap', a: 1, b: i },
       narration: `מחליפים את השורש A[1] = ${b.value(1)} (המקסימום) עם A[${i}] = ${b.value(i)}.`,
       highlights: [hl('swapping', 1, i)],
+      vars: [vi('i', i, 'i'), vv('heapSize', b.size, 'bound')],
     })
     b.swap(1, i)
     b.setHeapSize(i - 1)
@@ -44,11 +46,13 @@ export function runHeapSort(input: AlgorithmInput): Frame[] {
       action: { kind: 'shrinkHeap', newSize: i - 1 },
       narration: `הערך ${b.value(i)} נמצא במקומו הסופי. מכווצים את הערימה ל-${i - 1} ומוציאים אותו מהעץ.`,
       highlights: [hl('sorted', i)],
+      vars: [vi('i', i, 'i'), vv('heapSize', b.size, 'bound')],
     })
     b.emit({
       codeLine: 6,
       narration: 'Max-Heapify על השורש — מתקנים את הערימה המכווצת.',
       highlights: [hl('current', 1)],
+      vars: [vi('i', i, 'i'), vv('heapSize', b.size, 'bound')],
     })
     heapifyInto(b, 1, 0, 'sort')
   }

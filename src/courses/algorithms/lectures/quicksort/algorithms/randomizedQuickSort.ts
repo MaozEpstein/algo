@@ -1,8 +1,8 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
 import { mulberry32, randInt } from '@/core/engine/seededRng'
-import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, WatchVar } from '@/core/engine/types'
 import {
   hoarePartitionBlock,
   randomizedPartitionBlock,
@@ -27,6 +27,11 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
     if (sorted.size) h.push(hl('sorted', ...sorted))
     return h
   }
+  const qsVars = (p: number, r: number, depth: number): WatchVar[] => [
+    vi('p', p, 'bound'),
+    vi('r', r, 'bound'),
+    vv('depth', depth, 'k'),
+  ]
 
   function randomizedPartition(p: number, r: number, depth: number): number {
     b.setBlock('randomizedPartition')
@@ -39,6 +44,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
       narration: `בוחרים ציר אקראי: i = ${k} מתוך [${p}..${r}].`,
       highlights: [...baseHl(p, r), hl('pivot', k)],
       markers: [{ label: 'rand', index: k, tone: 'pivot' }],
+      vars: [...qsVars(p, r, depth), vi('rand', k, 'pivot')],
     })
     b.emit({
       codeBlock: 'randomizedPartition',
@@ -48,6 +54,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
       narration: `מחליפים את A[${p}] עם A[${k}] — כך הציר האקראי הופך לראשון, ו-Partition רגיל יעבוד.`,
       action: { kind: 'swap', a: p, b: k },
       highlights: [...baseHl(p, r), hl('swapping', p, k)],
+      vars: [...qsVars(p, r, depth), vi('rand', k, 'pivot')],
     })
     b.swap(p, k)
     b.emit({
@@ -57,6 +64,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
       phase: 'sort',
       narration: `קוראים ל-Partition (Hoare) על [${p}..${r}].`,
       highlights: baseHl(p, r),
+      vars: qsVars(p, r, depth),
     })
     return hoarePartitionInto(b, p, r, depth, { sorted, phase: 'sort' })
   }
@@ -67,6 +75,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
     phase: 'sort',
     narration: 'מצב התחלתי. גרסה אקראית — בכל חלוקה הציר נבחר אקראית כדי להימנע מהמקרה הגרוע.',
     highlights: [hl('active', ...rangeInclusive(1, n))],
+    vars: qsVars(1, n, 0),
   })
 
   function rqs(p: number, r: number, depth: number): void {
@@ -78,6 +87,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
       phase: 'sort',
       narration: `Randomized-Quicksort על [${p}..${r}].`,
       highlights: baseHl(p, r),
+      vars: qsVars(p, r, depth),
     })
     if (p < r) {
       b.emit({
@@ -87,6 +97,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `קוראים ל-Randomized-Partition על [${p}..${r}].`,
         highlights: baseHl(p, r),
+        vars: qsVars(p, r, depth),
       })
       const q = randomizedPartition(p, r, depth)
       b.setBlock('randomizedQuickSort')
@@ -97,6 +108,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `ממיינים רקורסיבית את [${p}..${q}].`,
         highlights: baseHl(p, r),
+        vars: [...qsVars(p, r, depth), vi('q', q, 'bound')],
       })
       rqs(p, q, depth + 1)
       b.setBlock('randomizedQuickSort')
@@ -107,6 +119,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `ממיינים רקורסיבית את [${q + 1}..${r}].`,
         highlights: baseHl(q + 1, r),
+        vars: [...qsVars(p, r, depth), vi('q', q, 'bound')],
       })
       rqs(q + 1, r, depth + 1)
     } else {
@@ -118,6 +131,7 @@ export function runRandomizedQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: p === r ? `תת-מערך בגודל 1 (${p}) — במקומו הסופי.` : `תת-מערך ריק.`,
         highlights: baseHl(p, r),
+        vars: qsVars(p, r, depth),
       })
     }
   }

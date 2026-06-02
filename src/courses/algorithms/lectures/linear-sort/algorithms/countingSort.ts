@@ -1,4 +1,4 @@
-import { FrameBuilder } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, vi, vv } from '@/core/engine/FrameBuilder'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
 import { countingSortBlock } from '../pseudocode'
@@ -85,6 +85,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     codeLine: 3,
     narration: `מאתחלים מערך מונים C בגודל k=${k} (אינדקסים 1..${k}) לאפסים. אין השוואות בין איברים!`,
     scene: scene({}),
+    vars: [vv('k', k, 'bound')],
   })
 
   // 1) count occurrences
@@ -96,6 +97,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
       codeLine: 5,
       narration: `סופרים: A[${j}]=${v} ⇐ מגדילים את C[${v}] ל-${C[v]}.`,
       scene: scene({ ptrA: j, activeVal: v }),
+      vars: [vv('k', k, 'bound'), vi('j', j, 'i'), vv('v', v, 'pivot'), vv('C[v]', C[v], 'k')],
     })
   }
 
@@ -107,6 +109,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
       codeLine: 7,
       narration: `סכומי-רישא: C[${v}] += C[${v - 1}] ⇒ C[${v}]=${C[v]} = כמה איברים ≤ ${v} (האינדקס האחרון בפלט עבור ${v}).`,
       scene: scene({ activeVal: v }),
+      vars: [vv('k', k, 'bound'), vv('v', v, 'pivot'), vv('C[v]', C[v], 'k')],
     })
   }
 
@@ -120,6 +123,13 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
       codeLine: 9,
       narration: `מציבים מימין לשמאל: A[${j}]=${v} → B[${target}] (כי C[${v}]=${target}).`,
       scene: scene({ ptrA: j, activeVal: v, ptrB: target }),
+      vars: [
+        vv('k', k, 'bound'),
+        vi('j', j, 'i'),
+        vv('v', v, 'pivot'),
+        vv('C[v]', C[v], 'k'),
+        vv('B-pos', target, 'bound'),
+      ],
     })
     el.lane = 'B'
     el.pos = target
@@ -128,6 +138,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
       codeLine: 10,
       narration: `מקטינים C[${v}] ל-${C[v]} — כך ${v} הבא יישב שמאלה יותר, והסדר נשמר (יציב).`,
       scene: scene({ activeVal: v }),
+      vars: [vv('k', k, 'bound'), vv('v', v, 'pivot'), vv('C[v]', C[v], 'k')],
     })
   }
 
@@ -137,6 +148,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     action: { kind: 'done' },
     narration: 'סיום — B ממוין! ספרנו וחילקנו בלי שום השוואה: O(n+k).',
     scene: scene({}),
+    vars: [vv('k', k, 'bound')],
   })
   return b.build()
 }

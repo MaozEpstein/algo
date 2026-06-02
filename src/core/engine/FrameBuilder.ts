@@ -1,4 +1,4 @@
-import type { ElementId, Frame, FrameAction, Highlight, Marker } from './types'
+import type { ElementId, Frame, FrameAction, Highlight, Marker, WatchVar } from './types'
 
 interface EmitInput {
   narration: string
@@ -9,6 +9,8 @@ interface EmitInput {
   phase?: string
   callDepth?: number
   markers?: Marker[]
+  /** Tracked scalar variables for the WatchPanel. */
+  vars?: WatchVar[]
   /** Highlights/markers for the auxiliary lane (Merge-Sort output). */
   auxHighlights?: Highlight[]
   auxMarkers?: Marker[]
@@ -161,6 +163,7 @@ export class FrameBuilder {
       phase: input.phase ?? this.currentPhase,
       callDepth: input.callDepth,
       markers: input.markers?.map((m) => ({ ...m })),
+      vars: input.vars?.map((v) => ({ ...v })),
       aux: this.aux
         ? {
             array: this.aux.array.slice(),
@@ -197,6 +200,10 @@ function deepFreeze(frame: Frame): void {
     frame.markers.forEach((m) => Object.freeze(m))
     Object.freeze(frame.markers)
   }
+  if (frame.vars) {
+    frame.vars.forEach((v) => Object.freeze(v))
+    Object.freeze(frame.vars)
+  }
   if (frame.aux) {
     Object.freeze(frame.aux.array)
     Object.freeze(frame.aux.elementIds)
@@ -223,3 +230,19 @@ export function hl(
 
 /** Build a `FrameAction` of kind 'done'. */
 export const DONE: FrameAction = { kind: 'done' }
+
+/** Compact WatchVar constructors. `vi` = index var (a slot position, so the
+ *  panel can also show A[slot]); `vv` = value var (a standalone number).
+ *  `from` optionally names a variable this one was just assigned from (draws an arrow). */
+export const vi = (
+  name: string,
+  slot: number,
+  tone?: WatchVar['tone'],
+  from?: string,
+): WatchVar => ({ name, value: slot, kind: 'index', tone, from })
+export const vv = (
+  name: string,
+  value: number,
+  tone?: WatchVar['tone'],
+  from?: string,
+): WatchVar => ({ name, value, kind: 'value', tone, from })

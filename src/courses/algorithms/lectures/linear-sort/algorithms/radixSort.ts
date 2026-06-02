@@ -1,4 +1,4 @@
-import { FrameBuilder } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, vv } from '@/core/engine/FrameBuilder'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
 import { radixSortBlock } from '../pseudocode'
@@ -76,6 +76,7 @@ export function runRadixSort(input: AlgorithmInput): Frame[] {
       codeLine: 2,
       narration: `מעבר ${pass} מתוך ${d}: ממיינים יציב לפי הספרה ${ordinal[pass] ?? pass} (הספרה המודגשת).`,
       scene: scene(pass),
+      vars: [vv('pass', pass, 'k'), vv('d', d, 'bound')],
     })
 
     // distribute (stable: scan current order left→right)
@@ -88,6 +89,7 @@ export function runRadixSort(input: AlgorithmInput): Frame[] {
         codeLine: 3,
         narration: `${pad(e.value, d)} → דלי ${dg} (ספרה = ${dg}).`,
         scene: scene(pass, dg),
+        vars: [vv('pass', pass, 'k'), vv('d', d, 'bound'), vv('dg', dg, 'j'), vv('val', e.value, 'pivot')],
       })
     }
 
@@ -101,6 +103,13 @@ export function runRadixSort(input: AlgorithmInput): Frame[] {
           codeLine: 3,
           narration: `אוספים מדלי ${dg}: ${pad(e.value, d)} → A[${next.length}]. הסדר היחסי נשמר.`,
           scene: scene(pass, dg),
+          vars: [
+            vv('pass', pass, 'k'),
+            vv('d', d, 'bound'),
+            vv('dg', dg, 'j'),
+            vv('val', e.value, 'pivot'),
+            vv('A-pos', next.length, 'bound'),
+          ],
         })
       }
     }
@@ -114,6 +123,7 @@ export function runRadixSort(input: AlgorithmInput): Frame[] {
     action: { kind: 'done' },
     narration: 'סיום — אחרי מעבר על כל הספרות המערך ממוין! O(d·(n+k)).',
     scene: scene(d),
+    vars: [vv('pass', d, 'k'), vv('d', d, 'bound')],
   })
   return b.build()
 }

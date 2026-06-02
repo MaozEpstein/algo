@@ -45,6 +45,25 @@ export interface Marker {
   tone: 'pivot' | 'i' | 'j' | 'bound' | 'k'
 }
 
+/** One tracked variable shown in the WatchPanel strip (e.g. `i = 5`, `x = 7`).
+ *  Frames are self-contained: the panel renders ONLY from this, no engine state. */
+export interface WatchVar {
+  /** Display name, rendered verbatim LTR (e.g. 'i', 'j', 'pivot', 'x', 'largest'). */
+  name: string
+  /** For an 'index' var this is the 1-indexed SLOT; for a 'value' var the number. */
+  value: number
+  /** 'index' = a position into the array (panel may also show A[value]);
+   *  'value' = a standalone number (no element lookup). Default 'value'. */
+  kind?: 'index' | 'value'
+  /** Color key — reuses the ArrayView/Marker TONE palette. When omitted, the
+   *  panel infers from `name` (i→i, j→j, pivot→pivot, …) else a neutral tone. */
+  tone?: Marker['tone']
+  /** Name of another tracked variable this one was just assigned FROM, e.g.
+   *  `largest ← l`. The WatchPanel draws an arrow from `from` to this variable
+   *  on the frame where the relationship holds. */
+  from?: string
+}
+
 /** An optional second array lane (e.g. the Merge-Sort output). Its `elementIds`
  *  are shared with the main array, so a value animates as it flies between lanes. */
 export interface AuxLane {
@@ -98,6 +117,9 @@ export interface Frame {
   callDepth?: number
   /** Pointer markers above cells (e.g. Quicksort i / j / pivot / p / r). */
   markers?: Marker[]
+  /** Tracked scalar variables for the WatchPanel strip (i, j, pivot, x, …).
+   *  When absent, the panel derives chips from `markers`. */
+  vars?: WatchVar[]
   /** Optional second array lane (e.g. Merge-Sort output). */
   aux?: AuxLane
   /** Free-form per-frame data for bespoke custom views (e.g. Hanoi pegs,

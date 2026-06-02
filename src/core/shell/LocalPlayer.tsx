@@ -3,6 +3,7 @@ import type { Frame, PseudocodeBlock, ViewKind } from '@/core/engine/types'
 import DualView from '@/core/viz/DualView'
 import CodePanel from './panels/CodePanel'
 import NarrationBar from './panels/NarrationBar'
+import WatchPanel from './panels/WatchPanel'
 
 /**
  * A self-contained playback widget for embedding a guided visualization inside a
@@ -21,6 +22,10 @@ interface Props {
   steps?: { label: string; index: number; ltr?: boolean }[]
   /** Show the comparisons/swaps cost readout (for sorts). */
   showCost?: boolean
+  /** Where to put the watched-variables box: 'overlay' (default, floats in a
+   *  canvas corner) or 'side' (docked above the code — for full-canvas flow
+   *  diagrams where any corner would overlap). */
+  varsPlacement?: 'overlay' | 'side'
 }
 
 const BASE_MS = 1000
@@ -38,7 +43,7 @@ function Icon({ d }: { d: string }) {
   )
 }
 
-export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['array'], customViz, steps, showCost }: Props) {
+export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['array'], customViz, steps, showCost, varsPlacement = 'overlay' }: Props) {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
@@ -70,6 +75,14 @@ export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['arr
     }
     return { c, s }
   }, [frames, index, maxLen])
+
+  const hasVars = useMemo(
+    () => frames.some((f) => (f.vars?.length ?? 0) > 0 || (f.markers?.length ?? 0) > 0),
+    [frames],
+  )
+  const isTree = views.includes('tree')
+  const sideVars = hasVars && varsPlacement === 'side'
+  const overlayVars = hasVars && varsPlacement === 'overlay'
 
   const frame = frames[Math.min(index, maxLen - 1)]
   if (!frame) return null
@@ -103,14 +116,69 @@ export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['arr
     </div>
   )
 
+  // Floating transport pill (reset / step / play-pause / speed) — overlaid on the
+  // canvas, matching the main player (PlaybackStage) so embedded demos look the same.
+  const transport = (
+    <div
+      dir="ltr"
+      className="ltr flex items-center gap-1 rounded-full bg-white/90 px-2 py-1.5 shadow-xl ring-1 ring-black/5 backdrop-blur-md"
+    >
+      <Ctl onClick={() => jump(0)} disabled={index === 0} d={RESET} />
+      <Ctl onClick={() => jump(Math.max(0, index - 1))} disabled={index === 0} d={PREV} />
+      <button
+        onClick={() => {
+          if (done) {
+            setIndex(0)
+            setJumped(false)
+            setPlaying(true)
+          } else {
+            setJumped(false)
+            setPlaying((p) => !p)
+          }
+        }}
+        className="grid h-12 w-12 place-items-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/30 transition hover:bg-sky-600"
+      >
+        <Icon d={playing ? PAUSE : PLAY} />
+      </button>
+      <Ctl onClick={() => jump(Math.min(maxLen - 1, index + 1))} disabled={done} d={NEXT} />
+      <div className="ms-1 flex items-center gap-0.5 rounded-full bg-slate-100 p-0.5">
+        {[0.5, 1, 2, 4].map((s) => (
+          <button
+            key={s}
+            onClick={() => setSpeed(s)}
+            className={`rounded-full px-2 py-0.5 font-mono text-[11px] transition ${
+              speed === s ? 'bg-white text-sky-600 shadow' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            {s}×
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+
   return (
     <div className="flex flex-col gap-3">
       <NarrationBar frame={frame} />
       <div className="grid gap-3 lg:grid-cols-[1.6fr_1fr]">
-        <div className="min-h-[300px] min-w-0 rounded-2xl">
-          <DualView frame={frame} views={views} instant={jumped} customViz={customViz} />
+        <div className="relative min-h-[300px] min-w-0 rounded-2xl">
+          <DualView frame={frame} views={views} instant={jumped} customViz={customViz} reserveBottomSpace />
+          {overlayVars && (
+            <div className={`absolute z-20 ${isTree ? 'left-3 top-3' : 'bottom-20 right-3'}`}>
+              <WatchPanel frames={frames} index={Math.min(index, maxLen - 1)} jumped={jumped} />
+            </div>
+          )}
+          {/* floating transport, near the content (same as the main player) */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
+            <div className="pointer-events-auto">{transport}</div>
+          </div>
         </div>
-        <CodePanel blocks={pseudocode} frame={frame} mainBlockId={pseudocode[0].id} mainTitleHe={titleHe} />
+        <div className="flex min-w-0 flex-col gap-3">
+          {sideVars && (
+            <WatchPanel frames={frames} index={Math.min(index, maxLen - 1)} jumped={jumped} wide />
+          )}
+          <CodePanel blocks={pseudocode} frame={frame} mainBlockId={pseudocode[0].id} mainTitleHe={titleHe} />
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
@@ -130,39 +198,6 @@ export default function LocalPlayer({ frames, pseudocode, titleHe, views = ['arr
           </span>
         </div>
         {stepStrip}
-        <div dir="ltr" className="flex items-center justify-center gap-1">
-          <Ctl onClick={() => jump(0)} disabled={index === 0} d={RESET} />
-          <Ctl onClick={() => jump(Math.max(0, index - 1))} disabled={index === 0} d={PREV} />
-          <button
-            onClick={() => {
-              if (done) {
-                setIndex(0)
-                setJumped(false)
-                setPlaying(true)
-              } else {
-                setJumped(false)
-                setPlaying((p) => !p)
-              }
-            }}
-            className="grid h-12 w-12 place-items-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/30 transition hover:bg-sky-600"
-          >
-            <Icon d={playing ? PAUSE : PLAY} />
-          </button>
-          <Ctl onClick={() => jump(Math.min(maxLen - 1, index + 1))} disabled={done} d={NEXT} />
-          <div className="ms-2 flex items-center gap-0.5 rounded-full bg-slate-100 p-0.5">
-            {[0.5, 1, 2, 4].map((s) => (
-              <button
-                key={s}
-                onClick={() => setSpeed(s)}
-                className={`rounded-full px-2 py-0.5 font-mono text-[11px] ${
-                  speed === s ? 'bg-white text-sky-600 shadow' : 'text-slate-500'
-                }`}
-              >
-                {s}×
-              </button>
-            ))}
-          </div>
-        </div>
         {showCost && (
           <div className="border-t border-slate-100 pt-2 text-center font-mono text-xs tabular-nums text-slate-500">
             {cost.c} השוואות · {cost.s} החלפות

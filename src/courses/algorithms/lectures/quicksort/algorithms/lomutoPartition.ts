@@ -1,7 +1,7 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
-import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker, WatchVar } from '@/core/engine/types'
 import { lomutoPartitionBlock } from '../pseudocode'
 
 /** Shared context so embedded partitions can keep extra cells highlighted. */
@@ -44,6 +44,12 @@ export function lomutoPartitionInto(
     const markers: Marker[] = [{ label: 'pivot', index: pivotIdx, tone: 'pivot' }]
     if (i >= p && i <= r) markers.push({ label: 'i', index: i, tone: 'i' })
     if (opts.markers) markers.push(...opts.markers)
+
+    const vars: WatchVar[] = [vv('x', x, 'pivot')] // pivot VALUE — the teaching point
+    if (i >= p && i <= r) vars.push(vi('i', i, 'i'))
+    const jMarker = opts.markers?.find((m) => m.label === 'j')
+    if (jMarker) vars.push(vi('j', jMarker.index, 'j'))
+
     b.emit({
       codeBlock: 'lomutoPartition',
       codeLine,
@@ -53,6 +59,7 @@ export function lomutoPartitionInto(
       action: opts.action,
       highlights,
       markers,
+      vars,
     })
   }
 

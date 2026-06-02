@@ -1,7 +1,7 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
-import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, WatchVar } from '@/core/engine/types'
 import { hoarePartitionBlock, quickSortBlock } from '../pseudocode'
 import { hoarePartitionInto } from './hoarePartition'
 
@@ -16,6 +16,11 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
     if (sorted.size) h.push(hl('sorted', ...sorted))
     return h
   }
+  const qsVars = (p: number, r: number, depth: number): WatchVar[] => [
+    vi('p', p, 'bound'),
+    vi('r', r, 'bound'),
+    vv('depth', depth, 'k'),
+  ]
 
   b.emit({
     codeBlock: 'quickSort',
@@ -23,6 +28,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
     phase: 'sort',
     narration: 'מצב התחלתי — מערך לא ממוין. נמיין אותו בשיטת "חלק וכבוש".',
     highlights: [hl('active', ...rangeInclusive(1, n))],
+    vars: qsVars(1, n, 0),
   })
 
   function qs(p: number, r: number, depth: number): void {
@@ -34,6 +40,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
       phase: 'sort',
       narration: `Quicksort על תת-המערך [${p}..${r}].`,
       highlights: baseHl(p, r),
+      vars: qsVars(p, r, depth),
     })
 
     if (p < r) {
@@ -44,6 +51,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `p < r — יש לפחות שני איברים, ממשיכים לחלק.`,
         highlights: baseHl(p, r),
+        vars: qsVars(p, r, depth),
       })
       b.emit({
         codeBlock: 'quickSort',
@@ -52,6 +60,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `קוראים ל-Partition על [${p}..${r}].`,
         highlights: baseHl(p, r),
+        vars: qsVars(p, r, depth),
       })
 
       const q = hoarePartitionInto(b, p, r, depth, { sorted, phase: 'sort' })
@@ -64,6 +73,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `ממיינים רקורסיבית את החצי השמאלי [${p}..${q}].`,
         highlights: baseHl(p, r),
+        vars: [...qsVars(p, r, depth), vi('q', q, 'bound')],
       })
       qs(p, q, depth + 1)
 
@@ -75,6 +85,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
         phase: 'sort',
         narration: `ממיינים רקורסיבית את החצי הימני [${q + 1}..${r}].`,
         highlights: baseHl(q + 1, r),
+        vars: [...qsVars(p, r, depth), vi('q', q, 'bound')],
       })
       qs(q + 1, r, depth + 1)
     } else {
@@ -89,6 +100,7 @@ export function runQuickSort(input: AlgorithmInput): Frame[] {
             ? `תת-מערך בגודל 1 (אינדקס ${p}) — האיבר במקומו הסופי.`
             : `תת-מערך ריק — אין מה למיין.`,
         highlights: baseHl(p, r),
+        vars: qsVars(p, r, depth),
       })
     }
   }

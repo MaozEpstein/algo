@@ -63,3 +63,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
 export const selectCurrentFrame = (s: PlayerState): Frame | undefined =>
   s.frames[s.index]
+
+/** The frame immediately before the current one (by id), for change detection. */
+export const selectPrevFrame = (s: PlayerState): Frame | undefined =>
+  s.index > 0 ? s.frames[s.index - 1] : undefined

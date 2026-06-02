@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { AlgorithmSpec, Frame, Step, ViewKind } from '@/core/engine/types'
 import DualView from '@/core/viz/DualView'
 import CodePanel from './panels/CodePanel'
 import NarrationBar from './panels/NarrationBar'
+import WatchPanel from './panels/WatchPanel'
 import CostMeter from './panels/CostMeter'
 import StepTimeline from './panels/StepTimeline'
 import TransportControls from './player/TransportControls'
@@ -38,10 +39,19 @@ export default function PlaybackStage({ frames, algorithm, views, steps, seekTo 
 
   const frame = usePlayerStore(selectCurrentFrame)
   const jumped = usePlayerStore((s) => s.jumped)
+  const index = usePlayerStore((s) => s.index)
+  // Does this run track any variables? If so, reserve a left gutter for the box.
+  const hasVars = useMemo(
+    () => frames.some((f) => (f.vars?.length ?? 0) > 0 || (f.markers?.length ?? 0) > 0),
+    [frames],
+  )
   if (!frame) return null
 
   const mainBlock = algorithm.pseudocode[0]
   const effViews = algorithm.views ?? views
+  // Tree views put the box top-left (room above the tree); everything else
+  // (array, custom flow) puts it bottom-right, clear of the centered transport.
+  const isTree = effViews.includes('tree')
 
   return (
     <div className="flex flex-col gap-4">
@@ -55,6 +65,15 @@ export default function PlaybackStage({ frames, algorithm, views, steps, seekTo 
             instant={jumped}
             reserveBottomSpace
           />
+          {/* watched-variables box: top-left for tree views, bottom-right (above
+              the transport controls) for array views. */}
+          {hasVars && (
+            <div
+              className={`absolute z-20 ${isTree ? 'left-3 top-3' : 'bottom-20 right-3'}`}
+            >
+              <WatchPanel frames={frames} index={index} jumped={jumped} />
+            </div>
+          )}
           {/* floating transport, near the content */}
           <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
             <div className="pointer-events-auto">

@@ -1,4 +1,4 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi } from '@/core/engine/FrameBuilder'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
 import { buildMaxHeapBlock, maxHeapifyBlock } from '../pseudocode'
@@ -19,11 +19,13 @@ export function buildInto(b: FrameBuilder, phase = 'build'): void {
           ? `מתחילים מ-i = ⌊n/2⌋ = ${start}. כל האיברים מ-${start + 1} והלאה הם עלים — כבר ערימות תקינות.`
           : `i = ${i} — מטפלים בתת-העץ הבא, מלמטה למעלה.`,
       highlights: [hl('current', i)],
+      vars: [vi('i', i, 'i')],
     })
     b.emit({
       codeLine: 4,
       narration: `קוראים ל-Max-Heapify על צומת ${i} (הערך ${b.value(i)}).`,
       highlights: [hl('current', i)],
+      vars: [vi('i', i, 'i')],
     })
     heapifyInto(b, i, 0, phase)
   }

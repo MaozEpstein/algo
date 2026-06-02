@@ -1,7 +1,7 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi } from '@/core/engine/FrameBuilder'
 import { left, right } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
-import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, WatchVar } from '@/core/engine/types'
 import { maxHeapifyBlock } from '../pseudocode'
 
 /**
@@ -18,18 +18,28 @@ export function heapifyInto(
 ): void {
   b.setBlock('maxHeapify')
   const A = (k: number) => b.value(k)
+  let l = -1
+  let r = -1
+  let largest = i
+  const curVars = (): WatchVar[] => {
+    const vs: WatchVar[] = [vi('i', i, 'i')]
+    if (l >= 1) vs.push(vi('l', l, 'bound'))
+    if (r >= 1) vs.push(vi('r', r, 'bound'))
+    vs.push(vi('largest', largest, 'k'))
+    return vs
+  }
   const emit = (
     codeLine: number,
     narration: string,
     extra: Partial<Parameters<FrameBuilder['emit']>[0]> = {},
-  ) => b.emit({ codeLine, narration, callDepth: depth, phase, ...extra })
+  ) => b.emit({ codeLine, narration, callDepth: depth, phase, vars: curVars(), ...extra })
 
   emit(1, `קוראים ל-Max-Heapify על צומת ${i} (הערך ${A(i)})`, {
     highlights: [hl('current', i)],
   })
 
-  const l = left(i)
-  const r = right(i)
+  l = left(i)
+  r = right(i)
   emit(
     2,
     l <= b.size ? `הילד השמאלי באינדקס l = ${l}` : `אין ילד שמאלי (l = ${l} מחוץ לערימה)`,
@@ -41,8 +51,6 @@ export function heapifyInto(
     { highlights: r <= b.size ? [hl('current', i), hl('path', r)] : [hl('current', i)] },
   )
 
-  let largest = i
-
   if (l <= b.size) {
     emit(4, `משווים: האם A[${l}] = ${A(l)} גדול מ-A[${i}] = ${A(i)}?`, {
       action: { kind: 'compare', a: l, b: i },
@@ -53,6 +61,7 @@ export function heapifyInto(
       emit(5, `כן — הילד השמאלי גדול יותר, נסמן largest = ${l}`, {
         action: { kind: 'setLargest', index: l, from: i },
         highlights: [hl('current', i), hl('largest', largest)],
+        vars: curVars().map((v) => (v.name === 'largest' ? { ...v, from: 'l' } : v)),
       })
     } else {
       emit(6, `לא — נשאר largest = i = ${i}`, {
@@ -76,6 +85,7 @@ export function heapifyInto(
       emit(8, `כן — הילד הימני גדול יותר, נסמן largest = ${r}`, {
         action: { kind: 'setLargest', index: r, from },
         highlights: [hl('current', i), hl('largest', largest)],
+        vars: curVars().map((v) => (v.name === 'largest' ? { ...v, from: 'r' } : v)),
       })
     }
   }
@@ -110,6 +120,7 @@ export function runMaxHeapify(input: AlgorithmInput): Frame[] {
     codeLine: null,
     narration: `מצב התחלתי. נריץ Max-Heapify מצומת ${startIndex} בהנחה ששני תת-העצים שמתחתיו כבר ערימות.`,
     highlights: [hl('current', startIndex)],
+    vars: [vi('i', startIndex, 'i')],
   })
   heapifyInto(b, startIndex, 0)
   b.emit({

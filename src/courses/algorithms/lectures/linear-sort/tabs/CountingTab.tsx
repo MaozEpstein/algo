@@ -28,7 +28,7 @@ export default function CountingTab() {
         </div>
       </Panel>
 
-      <SortDemo titleHe="מיון מנייה" block={countingSortBlock} run={runCountingSort} presets={PRESETS} />
+      <SortDemo titleHe="מיון מנייה" block={countingSortBlock} run={runCountingSort} presets={PRESETS} varsPlacement="side" />
     </div>
   )
 }

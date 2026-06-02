@@ -1,4 +1,4 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { parent } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
@@ -17,25 +17,29 @@ const HEAP: number[] = [16, 14, 10, 8, 7, 9, 3, 2, 4, 1]
 export function runHeapInsert(input: AlgorithmInput): Frame[] {
   const b = new FrameBuilder(input.array)
   const key = input.extra?.key ?? 15
+  const kv = vv('key', key, 'pivot')
   b.setBlock('heapInsert').setPhase('insert')
-  b.emit({ codeLine: 1, narration: `מכניסים מפתח חדש: ${key}.` })
+  b.emit({ codeLine: 1, narration: `מכניסים מפתח חדש: ${key}.`, vars: [kv] })
   const idx = b.push(key)
   b.emit({
     codeLine: 2,
     narration: `מגדילים את הערימה ב-1 (heap-size = ${b.size}).`,
     highlights: [hl('inserted', idx)],
+    vars: [kv, vi('i', idx, 'i')],
   })
   b.emit({
     codeLine: 3,
     action: { kind: 'insert', value: key, at: idx },
     narration: `מניחים את ${key} בעלה החדש, אינדקס ${idx}.`,
     highlights: [hl('inserted', idx)],
+    vars: [kv, vi('i', idx, 'i')],
   })
   let i = idx
   b.emit({
     codeLine: 4,
     narration: `i = ${i}. כעת נטפס מעלה כל עוד ההורה קטן מהמפתח.`,
     highlights: [hl('current', i)],
+    vars: [kv, vi('i', i, 'i')],
   })
   while (i > 1) {
     const p = parent(i)
@@ -44,6 +48,7 @@ export function runHeapInsert(input: AlgorithmInput): Frame[] {
       action: { kind: 'compare', a: p, b: i },
       narration: `בדיקה: האם A[${p}] = ${b.value(p)} קטן מ-A[${i}] = ${b.value(i)}?`,
       highlights: [hl('comparing', p, i)],
+      vars: [kv, vi('i', i, 'i'), vi('parent', p, 'bound')],
     })
     if (b.value(p) >= b.value(i)) {
       b.emit({
@@ -51,6 +56,7 @@ export function runHeapInsert(input: AlgorithmInput): Frame[] {
         action: { kind: 'noSwap', at: i },
         narration: `לא — ההורה גדול-שווה. המפתח הגיע למקומו.`,
         highlights: [hl('current', i)],
+        vars: [kv, vi('i', i, 'i'), vi('parent', p, 'bound')],
       })
       break
     }
@@ -59,6 +65,7 @@ export function runHeapInsert(input: AlgorithmInput): Frame[] {
       action: { kind: 'swap', a: i, b: p },
       narration: `כן — מחליפים את ${b.value(i)} עם ההורה ${b.value(p)} (טיפוס מעלה).`,
       highlights: [hl('swapping', i, p)],
+      vars: [kv, vi('i', i, 'i', 'parent'), vi('parent', p, 'bound')],
     })
     b.swap(i, p)
     i = p
@@ -67,6 +74,7 @@ export function runHeapInsert(input: AlgorithmInput): Frame[] {
       action: { kind: 'bubbleUp', from: idx, to: i },
       narration: `i = ${i} — ממשיכים לטפס.`,
       highlights: [hl('current', i)],
+      vars: [kv, vi('i', i, 'i')],
     })
   }
   if (i === 1) {
@@ -74,6 +82,7 @@ export function runHeapInsert(input: AlgorithmInput): Frame[] {
       codeLine: 4,
       narration: `הגענו לשורש — המפתח ${key} הוא המקסימום החדש.`,
       highlights: [hl('current', 1)],
+      vars: [kv, vi('i', 1, 'i')],
     })
   }
   b.emit({
@@ -95,6 +104,7 @@ export function runHeapMaximum(input: AlgorithmInput): Frame[] {
     narration: `הוא תמיד בשורש: A[1] = ${b.value(1)}. עלות: O(1).`,
     action: { kind: 'done' },
     highlights: [hl('largest', 1)],
+    vars: [vv('max', b.value(1), 'k')],
   })
   return b.build()
 }
@@ -105,18 +115,26 @@ export function runHeapExtractMax(input: AlgorithmInput): Frame[] {
   b.setBlock('heapExtractMax').setPhase('extract')
   const maxVal = b.value(1)
   const last = b.size
-  b.emit({ codeLine: 1, narration: 'שולפים את המקסימום מהערימה.' })
-  b.emit({ codeLine: 2, narration: 'הערימה אינה ריקה — ממשיכים.', highlights: [hl('current', 1)] })
+  const mv = vv('max', maxVal, 'k')
+  b.emit({ codeLine: 1, narration: 'שולפים את המקסימום מהערימה.', vars: [mv] })
+  b.emit({
+    codeLine: 2,
+    narration: 'הערימה אינה ריקה — ממשיכים.',
+    highlights: [hl('current', 1)],
+    vars: [mv, vi('last', last, 'bound')],
+  })
   b.emit({
     codeLine: 4,
     narration: `שומרים את המקסימום: max = A[1] = ${maxVal}.`,
     highlights: [hl('extracted', 1)],
+    vars: [mv, vi('last', last, 'bound')],
   })
   b.emit({
     codeLine: 5,
     action: { kind: 'swap', a: 1, b: last },
     narration: `מעבירים את האיבר האחרון A[${last}] = ${b.value(last)} אל השורש.`,
     highlights: [hl('swapping', 1, last)],
+    vars: [mv, vi('last', last, 'bound')],
   })
   b.swap(1, last)
   b.setHeapSize(last - 1)
@@ -125,11 +143,13 @@ export function runHeapExtractMax(input: AlgorithmInput): Frame[] {
     action: { kind: 'shrinkHeap', newSize: last - 1 },
     narration: `מכווצים את הערימה ל-${last - 1} — האיבר ${maxVal} יוצא מהערימה.`,
     highlights: [hl('extracted', last)],
+    vars: [mv, vv('heapSize', b.size, 'bound')],
   })
   b.emit({
     codeLine: 7,
     narration: 'Max-Heapify על השורש כדי לשקם את תכונת הערימה.',
     highlights: [hl('current', 1)],
+    vars: [mv, vv('heapSize', b.size, 'bound')],
   })
   heapifyInto(b, 1, 0, 'extract')
   b.emit({

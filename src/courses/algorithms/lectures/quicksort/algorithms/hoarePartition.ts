@@ -1,7 +1,7 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vi, vv } from '@/core/engine/FrameBuilder'
 import { rangeInclusive } from '@/core/engine/indexing'
 import { parseIntArray } from '@/core/engine/parseInput'
-import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker } from '@/core/engine/types'
+import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker, WatchVar } from '@/core/engine/types'
 import { hoarePartitionBlock } from '../pseudocode'
 
 /** Shared recursion context so embedded partitions can show the sorted region. */
@@ -14,6 +14,8 @@ interface EmitOpts {
   highlights?: Highlight[]
   markers?: Marker[]
   action?: Parameters<FrameBuilder['emit']>[0]['action']
+  /** Extra watched variables to append on this frame (e.g. the result q). */
+  vars?: WatchVar[]
 }
 
 /**
@@ -48,6 +50,11 @@ export function hoarePartitionInto(
     if (j >= p && j <= r) markers.push({ label: 'j', index: j, tone: 'j' })
     if (opts.markers) markers.push(...opts.markers)
 
+    const vars: WatchVar[] = [vv('x', x, 'pivot')] // pivot VALUE — the teaching point
+    if (i >= p && i <= r) vars.push(vi('i', i, 'i'))
+    if (j >= p && j <= r) vars.push(vi('j', j, 'j'))
+    if (opts.vars) vars.push(...opts.vars)
+
     b.emit({
       codeBlock: 'hoarePartition',
       codeLine,
@@ -57,6 +64,7 @@ export function hoarePartitionInto(
       action: opts.action,
       highlights,
       markers,
+      vars,
     })
   }
 
@@ -102,6 +110,7 @@ export function hoarePartitionInto(
           ...(j >= p ? [hl('less', ...rangeInclusive(p, j))] : []),
           ...(j + 1 <= r ? [hl('greater', ...rangeInclusive(j + 1, r))] : []),
         ],
+        vars: [vi('q', j, 'bound', 'j')],
       })
       return j
     }

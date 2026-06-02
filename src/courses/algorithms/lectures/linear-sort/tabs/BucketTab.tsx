@@ -33,7 +33,7 @@ export default function BucketTab() {
         </div>
       </Panel>
 
-      <SortDemo titleHe="מיון דלי" block={bucketSortBlock} run={runBucketSort} presets={PRESETS} />
+      <SortDemo titleHe="מיון דלי" block={bucketSortBlock} run={runBucketSort} presets={PRESETS} varsPlacement="side" />
     </div>
   )
 }

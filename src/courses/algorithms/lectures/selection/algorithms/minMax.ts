@@ -1,4 +1,4 @@
-import { FrameBuilder, hl } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, hl, vv } from '@/core/engine/FrameBuilder'
 import { parseIntArray } from '@/core/engine/parseInput'
 import type { AlgorithmInput, AlgorithmSpec, Frame, Highlight, Marker } from '@/core/engine/types'
 import { minMaxBlock } from '../pseudocode'
@@ -22,7 +22,8 @@ export function runMinMax(input: AlgorithmInput): Frame[] {
       { label: 'min', index: mn, tone: 'i' },
       { label: 'max', index: mx, tone: 'j' },
     ]
-    b.emit({ codeBlock: 'minMax', codeLine, narration, action: opts.action, highlights, markers })
+    const vars = [vv('min', A(mn), 'i'), vv('max', A(mx), 'j')]
+    b.emit({ codeBlock: 'minMax', codeLine, narration, action: opts.action, highlights, markers, vars })
   }
 
   emit(2, `מאתחלים: min = max = A[1] = ${A(1)}.`)

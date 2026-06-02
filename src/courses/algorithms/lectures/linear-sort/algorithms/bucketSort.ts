@@ -1,4 +1,4 @@
-import { FrameBuilder } from '@/core/engine/FrameBuilder'
+import { FrameBuilder, vv } from '@/core/engine/FrameBuilder'
 import type { AlgorithmInput, AlgorithmSpec, Frame } from '@/core/engine/types'
 import { bucketSortBlock } from '../pseudocode'
 import { CELL, PITCH, type FlowBox, type FlowChip, type FlowScene } from '../scene'
@@ -75,8 +75,8 @@ export function runBucketSort(input: AlgorithmInput): Frame[] {
       boxes.push({ x: xArr(i), y: OUT_Y, w: CELL, h: CELL, tone: 'output', labelTop: i === 1 ? 'פלט' : undefined })
 
     const chips: FlowChip[] = all.map((e) => {
-      let x = 0
-      let y = 0
+      let x: number
+      let y: number
       if (e.loc.lane === 'input') {
         x = xArr(e.loc.idx)
         y = AY
@@ -108,6 +108,7 @@ export function runBucketSort(input: AlgorithmInput): Frame[] {
     codeLine: 1,
     narration: `${n} מספרים ממשיים ב-[0,1). פותחים ${n} דליים — דלי i מכסה את הקטע [i/n, (i+1)/n).`,
     scene: scene(),
+    vars: [vv('n', n, 'bound')],
   })
 
   // 1) scatter
@@ -120,6 +121,7 @@ export function runBucketSort(input: AlgorithmInput): Frame[] {
       codeLine: 3,
       narration: `${fmt(e.value)} → דלי ${d} (⌊${n}·${fmt(e.value)}⌋ = ${d}).`,
       scene: scene(d),
+      vars: [vv('n', n, 'bound'), vv('x', e.value, 'pivot'), vv('d', d, 'j')],
     })
   }
 
@@ -133,6 +135,7 @@ export function runBucketSort(input: AlgorithmInput): Frame[] {
         codeLine: 5,
         narration: `ממיינים את דלי ${d} (מיון הכנסה) — מעט איברים, ולכן זול.`,
         scene: scene(d),
+        vars: [vv('n', n, 'bound'), vv('d', d, 'j')],
       })
     }
   }
@@ -148,6 +151,7 @@ export function runBucketSort(input: AlgorithmInput): Frame[] {
         codeLine: 6,
         narration: `משרשרים: דלי ${d} → פלט[${out}] = ${fmt(e.value)}.`,
         scene: scene(d, { lane: 'output', idx: out }),
+        vars: [vv('n', n, 'bound'), vv('d', d, 'j'), vv('out', out, 'bound')],
       })
     }
   }
@@ -158,6 +162,7 @@ export function runBucketSort(input: AlgorithmInput): Frame[] {
     action: { kind: 'done' },
     narration: 'סיום — הפלט ממוין! בהתפלגות אחידה: תוחלת O(n).',
     scene: scene(),
+    vars: [vv('n', n, 'bound')],
   })
   return b.build()
 }
