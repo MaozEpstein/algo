@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { MATERIALS, builtInVoltage, junctionState, thermalVoltage } from '../../lib/junction'
+import { MATERIALS, builtInVoltage, junctionState, niAt, thermalVoltage } from '../../lib/junction'
 import { pnJunctionEqLecture } from './index'
 import { LECTURE_LIST } from '../../registry'
 
@@ -48,6 +48,17 @@ describe('PN junction physics', () => {
     // n+ p junction (Nd >> Na) → most depletion on the p-side
     const s = junctionState(1e15, 1e18, MATERIALS.Si)
     expect(s.dp).toBeGreaterThan(s.dn)
+  })
+
+  it('n_i(T): equals the 300K value at 300K and rises with temperature', () => {
+    expect(niAt(MATERIALS.Si, 300)).toBeCloseTo(MATERIALS.Si.ni, 0)
+    expect(niAt(MATERIALS.Si, 400)).toBeGreaterThan(niAt(MATERIALS.Si, 300))
+  })
+
+  it('V_bi drops as the junction heats up (n_i grows)', () => {
+    const cool = junctionState(1e16, 1e16, MATERIALS.Si, 0, 300)
+    const hot = junctionState(1e16, 1e16, MATERIALS.Si, 0, 400)
+    expect(hot.Vbi).toBeLessThan(cool.Vbi)
   })
 })
 

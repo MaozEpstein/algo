@@ -10,6 +10,7 @@
 const Q = 1.602e-19 // C
 const EPS0 = 8.854e-14 // F/cm
 const KB = 1.381e-23 // J/K
+const KB_EV = 8.617e-5 // eV/K
 
 export interface Material {
   key: 'Si' | 'Ge' | 'GaAs'
@@ -31,6 +32,15 @@ export const MATERIAL_LIST: Material[] = [MATERIALS.Si, MATERIALS.Ge, MATERIALS.
 
 /** Thermal voltage kT/q (V). ≈ 0.02585 V at 300K. */
 export const thermalVoltage = (T = 300): number => (KB * T) / Q
+
+/**
+ * Intrinsic carrier concentration at temperature T (cm⁻³), scaled from the
+ * material's 300K value: n_i² = N_c N_v e^{−E_g/kT} with N_c N_v ∝ T³, so
+ * n_i(T) = n_i(300)·(T/300)^{3/2}·exp[(E_g/2k)(1/300 − 1/T)]. Strongly rising
+ * with T — this (not kT/q) is why V_bi DROPS as the junction heats up.
+ */
+export const niAt = (mat: Material, T = 300): number =>
+  mat.ni * (T / 300) ** 1.5 * Math.exp((mat.eg / (2 * KB_EV)) * (1 / 300 - 1 / T))
 
 /** Built-in potential V_bi = (kT/q)·ln(N_A·N_D / n_i²). */
 export function builtInVoltage(Na: number, Nd: number, ni: number, T = 300): number {
@@ -56,7 +66,7 @@ export function junctionState(
   Va = 0,
   T = 300,
 ): JunctionState {
-  const Vbi = builtInVoltage(Na, Nd, mat.ni, T)
+  const Vbi = builtInVoltage(Na, Nd, niAt(mat, T), T)
   const epsS = mat.epsR * EPS0 // F/cm
   const drive = Math.max(Vbi - Va, 0) // V across the junction
   const k = (2 * epsS * drive) / Q // common factor (cm²·cm⁻³)
@@ -78,11 +88,24 @@ export function fmtLength(cm: number): string {
   return `${cmToMicron(cm).toFixed(2)} µm`
 }
 
+/** Depletion (junction) capacitance per unit area, C/A = ε_s / d (F/cm²). */
+export const capPerArea = (epsR: number, dCm: number): number => (epsR * EPS0) / dCm
+
+/** Format a capacitance-per-area (F/cm²) as nF/cm². */
+export const fmtCapPerArea = (fPerCm2: number): string => `${(fPerCm2 * 1e9).toFixed(1)} nF/cm²`
+
 /** Format a field given in V/cm as kV/cm. */
 export const fmtField = (vPerCm: number): string => `${(vPerCm / 1e3).toFixed(1)} kV/cm`
 
 /** Format a voltage (V) with 3 significant places. */
 export const fmtVolt = (v: number): string => `${v.toFixed(3)} V`
+
+/** Format a carrier concentration (cm⁻³) as a plain "m×10^e" string (readouts). */
+export function fmtCarrier(n: number): string {
+  const exp = Math.floor(Math.log10(n))
+  const mant = n / 10 ** exp
+  return `${mant.toFixed(1)}×10^${exp}`
+}
 
 /** Format a doping concentration (cm⁻³) as a ×10ⁿ string for labels. */
 export function fmtDoping(n: number): string {

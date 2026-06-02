@@ -33,5 +33,13 @@ export default function CourseProvider({ children }: { children: ReactNode }) {
   const { courseId } = useParams()
   if (!courseId || !hasCourse(courseId)) return <Navigate to="/" replace />
   const course = use(loadCourse(courseId)) // suspends until the chunk resolves
-  return <CourseContext.Provider value={{ courseId, course }}>{children}</CourseContext.Provider>
+  const FormulaSheet = course.formulaSheet
+  return (
+    <CourseContext.Provider value={{ courseId, course }}>
+      {children}
+      {/* Mounted once per course (not per page) so the formula-sheet modal — and
+          its global keyboard shortcut — work from any page in the course. */}
+      {FormulaSheet && <FormulaSheet />}
+    </CourseContext.Provider>
+  )
 }

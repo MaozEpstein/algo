@@ -1,4 +1,4 @@
-import { thermalVoltage, type JunctionState, type Material } from '../lib/junction'
+import { niAt, thermalVoltage, type JunctionState, type Material } from '../lib/junction'
 
 /**
  * Equilibrium energy-band diagram of a PN junction: E_c, E_v (solid), E_i
@@ -12,6 +12,8 @@ interface Props {
   Na: number
   Nd: number
   mat: Material
+  /** Temperature (K) — affects the thermal voltage and n_i used for E_F offsets. */
+  T?: number
 }
 
 const W = 560
@@ -21,13 +23,13 @@ const H = 240
 const TOP = 26
 const PW = W - MX - MR
 
-export default function BandDiagram({ state, Na, mat }: Props) {
+export default function BandDiagram({ state, Na, mat, T = 300 }: Props) {
   const { Vbi, dn, dp, Emax } = state
-  const VT = thermalVoltage()
-  const phiP = VT * Math.log(Na / mat.ni) // E_i,p above E_F (eV); E_i,n below by V_bi−φ_p
+  const VT = thermalVoltage(T)
+  const phiP = VT * Math.log(Na / niAt(mat, T)) // E_i,p above E_F (eV); E_i,n below by V_bi−φ_p
   const eg = mat.eg
 
-  const xMax = Math.max(dn, dp, 1e-30) * 1.45
+  const xMax = Math.max(dn, dp, 1e-30) * 2.2 // wider neutral margins ⇒ the depletion band reads smaller
   const sx = (x: number) => MX + ((x + xMax) / (2 * xMax)) * PW
 
   // energy → y (higher energy = smaller y). Span = E_c,p (top) … E_v,n (bottom).
@@ -65,11 +67,20 @@ export default function BandDiagram({ state, Na, mat }: Props) {
   return (
     <div className="ltr w-full overflow-x-auto" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
-        {/* depletion shading + guides */}
-        <rect x={xL} y={TOP - 6} width={Math.max(xR - xL, 0)} height={drawH + 12} fill="#f1f5f9" />
-        {[xL, x0, xR].map((gx, i) => (
-          <line key={i} x1={gx} y1={TOP - 6} x2={gx} y2={TOP + drawH + 6} stroke="#cbd5e1" strokeWidth={1} strokeDasharray="3 3" />
+        {/* depletion region (data-driven: −d_p … +d_n) — violet so it stands out */}
+        <rect x={xL} y={TOP - 6} width={Math.max(xR - xL, 0)} height={drawH + 12} fill="#ede9fe" opacity={0.75} />
+        {[
+          { gx: xL, c: '#a78bfa' },
+          { gx: x0, c: '#cbd5e1' },
+          { gx: xR, c: '#a78bfa' },
+        ].map(({ gx, c }, i) => (
+          <line key={i} x1={gx} y1={TOP - 6} x2={gx} y2={TOP + drawH + 6} stroke={c} strokeWidth={1} strokeDasharray="3 3" />
         ))}
+        {xR > xL + 10 && (
+          <text x={(xL + xR) / 2} y={TOP - 11} textAnchor="middle" className="fill-violet-600" style={{ fontSize: 9, fontWeight: 700 }}>
+            אזור המחסור
+          </text>
+        )}
 
         {/* E_F — flat dashed line (equilibrium) */}
         <line x1={MX} y1={yF} x2={W - MR} y2={yF} stroke="#0f172a" strokeWidth={1.5} strokeDasharray="6 3" />

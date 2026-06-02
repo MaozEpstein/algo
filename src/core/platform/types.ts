@@ -24,4 +24,16 @@ export interface CourseModule {
   LECTURE_LIST: LectureModule[]
   /** Optional cross-lecture overview page (e.g. the sorting comparison + race). */
   Overview?: ComponentType
+  /** Optional course-wide reference (e.g. the formula sheet) — a self-contained
+   *  modal mounted once per course (by CourseProvider) so it can be opened from
+   *  anywhere via the keyboard shortcut or the OPEN_FORMULA_SHEET window event. */
+  formulaSheet?: ComponentType
 }
+
+/**
+ * Window event that opens the course formula-sheet modal. The (course-provided)
+ * formulaSheet component listens for it; CourseHome's button dispatches it. Using
+ * an event keeps CourseHome (core) decoupled from the course-specific modal while
+ * still letting both the button and the global keyboard shortcut open the same one.
+ */
+export const OPEN_FORMULA_SHEET = 'app:open-formula-sheet'

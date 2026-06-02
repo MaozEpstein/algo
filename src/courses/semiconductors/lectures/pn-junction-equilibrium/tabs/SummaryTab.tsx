@@ -7,6 +7,8 @@ const FORMULAS: { he: string; tex: string }[] = [
   { he: 'נייטרליות מטען', tex: 'N_A\\,d_p = N_D\\,d_n' },
   { he: 'רוחב אזור המחסור', tex: 'd = \\sqrt{\\frac{2\\varepsilon_s V_{bi}}{q}\\cdot\\frac{N_A+N_D}{N_A N_D}}' },
   { he: 'שדה מרבי', tex: 'E_{max} = \\frac{2V_{bi}}{d}' },
+  { he: 'ריכוז אינטרינסי', tex: 'n_i = \\sqrt{N_c N_v}\\,e^{-E_g/2kT}' },
+  { he: 'מרחק דיפוזיה', tex: 'L = \\sqrt{D\\,\\tau}' },
 ]
 
 const MISTAKES: { wrong: ReactNode; right: ReactNode }[] = [
@@ -29,6 +31,26 @@ const MISTAKES: { wrong: ReactNode; right: ReactNode }[] = [
   {
     wrong: 'הצד המסומם יותר מקבל אזור מחסור רחב יותר.',
     right: 'הפוך: אזור המחסור רחב יותר בצד המסומם פחות (מנייטרליות המטען).',
+  },
+  {
+    wrong: 'גנרציה ורקומבינציה מתרחשות רק כשמפעילים מתח או אור.',
+    right: (
+      <>
+        הן קורות תמיד; בשיווי משקל הן פשוט מתאזנות (<Tex>{'G = R'}</Tex>) — ומכאן <Tex>{'n\\cdot p = n_i^2'}</Tex>.
+      </>
+    ),
+  },
+  {
+    wrong: (
+      <>
+        מרחק הדיפוזיה <Tex>{'L'}</Tex> תלוי רק במקדם הדיפוזיה <Tex>{'D'}</Tex>.
+      </>
+    ),
+    right: (
+      <>
+        גם בזמן החיים <Tex>{'\\tau'}</Tex>: <Tex>{'L=\\sqrt{D\\tau}'}</Tex> — נושא ש"חי" יותר זמן מתפזר רחוק יותר.
+      </>
+    ),
   },
 ]
 

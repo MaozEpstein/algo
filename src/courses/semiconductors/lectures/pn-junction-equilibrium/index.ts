@@ -3,9 +3,12 @@ import PnJunctionEqExplainer from './PnJunctionEqExplainer'
 
 /**
  * Semiconductors — Lecture 1א: the PN junction at equilibrium. An explainer
- * (5 tabs): how the junction forms, the equilibrium band diagram, the ρ→E→V
- * electrostatics cascade, an interactive sandbox, and a summary. Part ב (the
- * biased diode) follows later.
+ * (4 tabs): מבוא — foundations (semiconductor types, n_i & temperature, drift/
+ * diffusion, Einstein relation, generation–recombination, injection, band
+ * diagrams, electrostatics ρ→E→V, charge neutrality); צומת PN בשיווי משקל —
+ * formation, depletion-region concepts, carrier profile; ארגז חול — the
+ * interactive sandbox (incl. a temperature slider); תרגול — a worked example +
+ * self-check questions; and a summary. Part ב (the biased diode) follows later.
  */
 export const pnJunctionEqLecture: LectureModule = {
   id: 'pn-junction-equilibrium',
@@ -38,6 +41,17 @@ export const pnJunctionEqLecture: LectureModule = {
     { term: 'רמת פרמי $E_F$', def: 'המפלס שקובע את אכלוס הנושאים. בשיווי משקל היא אחידה לכל רוחב ההתקן.' },
     { term: 'יחס בולצמן', def: 'ריכוז הנושאים תלוי מעריכית במרחק רמת פרמי מהרמה האינטרינסית.', tex: 'n = n_i\\,e^{(E_F-E_i)/kT}' },
     { term: 'שיווי משקל', def: 'ללא מתח/אור חיצוני: הסחיפה מאזנת את הדיפוזיה, זרם נטו אפס, ו-$E_F$ אחידה.' },
+    { term: 'גנרציה', def: 'יצירת זוג אלקטרון–חור: אלקטרון קופץ מפס הערכיות לפס ההולכה בעזרת אנרגיה (חום/אור).' },
+    { term: 'רקומבינציה', def: 'היעלמות זוג אלקטרון–חור: אלקטרון נופל חזרה לפס הערכיות ומשחרר אנרגיה.' },
+    { term: 'רקומבינציית SRH', def: 'רקומבינציה דו-שלבית דרך רמת-פגם $E_t$ בפער; המנגנון השולט בצורן (Si).' },
+    { term: 'זמן חיים $\\tau$', def: 'הזמן הממוצע שנושא-מיעוט עודף "שורד" לפני רקומבינציה.' },
+    { term: 'מרחק דיפוזיה', def: 'המרחק הממוצע שנושא-מיעוט עודף עובר בדיפוזיה לפני שהוא נעלם.', tex: 'L = \\sqrt{D\\,\\tau}' },
+    { term: 'הזרקה', def: 'הוספת נושאים מעבר לשיווי המשקל (ע״י מתח קדמי או הארה); העודף מסומן $\\Delta n,\\Delta p$.' },
+    { term: 'הזרקה חלשה', def: 'העודף קטן בהרבה מנושאי הרוב ($\\Delta p \\ll n_{n0}$); ההנחה שמאחורי משוואת שוקלי.' },
+    { term: 'הזרקה חזקה', def: 'העודף בסדר-גודל הסימום או יותר; ההנחות הפשוטות נשברות והזרם גדל כ-$e^{V/2V_T}$.' },
+    { term: 'ריכוז אינטרינסי $n_i$', def: 'ריכוז הנושאים בחומר טהור (n=p=n_i); קטֵן עם פער האנרגיה וגדל מעריכית עם הטמפרטורה.', tex: 'n_i = \\sqrt{N_c N_v}\\,e^{-E_g/2kT}' },
+    { term: 'יחס איינשטיין', def: 'קושר את מקדם הדיפוזיה D לניידות μ — אותן התנגשויות תרמיות קובעות את שניהם.', tex: 'D = \\frac{kT}{q}\\,\\mu' },
+    { term: 'קיבול הצומת', def: 'אזור המחסור מתנהג כקבל; הקיבול ליחידת שטח גדל ככל שהאזור צר יותר.', tex: 'C/A = \\varepsilon_s/d' },
   ],
   formulas: [
     { name: 'מתח תרמי', tex: '\\frac{kT}{q} \\approx 25.85\\,\\mathrm{mV}', note: 'בטמפרטורת החדר (300K).' },
@@ -49,5 +63,9 @@ export const pnJunctionEqLecture: LectureModule = {
     { name: 'רוחב בצד p', tex: 'd_p = \\sqrt{\\frac{2\\varepsilon_s V_{bi}}{q}\\cdot\\frac{N_D}{N_A(N_A+N_D)}}' },
     { name: 'שדה מרבי (בצומת)', tex: 'E_{max} = \\frac{2V_{bi}}{d} = \\frac{qN_D d_n}{\\varepsilon_s}' },
     { name: 'ריכוז נושאים (יחס בולצמן)', tex: 'n = n_i\\,e^{(E_F-E_i)/kT}' },
+    { name: 'מרחק דיפוזיה', tex: 'L = \\sqrt{D\\,\\tau}', note: 'המרחק הממוצע לפני רקומבינציה; $L_n=\\sqrt{D_n\\tau_n}$, $L_p=\\sqrt{D_p\\tau_p}$.' },
+    { name: 'ריכוז אינטרינסי', tex: 'n_i = \\sqrt{N_c N_v}\\,e^{-E_g/2kT}', note: 'תלוי בחומר ובטמפרטורה.' },
+    { name: 'יחס איינשטיין', tex: 'D = \\frac{kT}{q}\\,\\mu' },
+    { name: 'קיבול הצומת (ליחידת שטח)', tex: 'C/A = \\varepsilon_s/d' },
   ],
 }

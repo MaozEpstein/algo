@@ -1,35 +1,35 @@
 import { useSearchParams } from 'react-router-dom'
-import FormationTab from './tabs/FormationTab'
-import BandDiagramTab from './tabs/BandDiagramTab'
-import ElectrostaticsTab from './tabs/ElectrostaticsTab'
+import IntroTab from './tabs/IntroTab'
+import PnJunctionTab from './tabs/PnJunctionTab'
 import SandboxTab from './tabs/SandboxTab'
+import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'formation' | 'bands' | 'electrostatics' | 'sandbox' | 'summary'
+type TabId = 'intro' | 'pn' | 'sandbox' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
-  { id: 'formation', labelHe: 'היווצרות הצומת', icon: '🔗' },
-  { id: 'bands', labelHe: 'דיאגרמת הפסים', icon: '📊' },
-  { id: 'electrostatics', labelHe: 'אלקטרוסטטיקה ρ→E→V', icon: '⚡' },
-  { id: 'sandbox', labelHe: 'ארגז חול', icon: '🎛️' },
+  { id: 'intro', labelHe: 'מבוא', icon: '📘' },
+  { id: 'pn', labelHe: 'צומת PN בשיווי משקל', icon: '🔗' },
+  { id: 'sandbox', labelHe: 'ארגז חול - צומת PN', icon: '🎛️' },
+  { id: 'practice', labelHe: 'תרגול', icon: '✏️' },
   { id: 'summary', labelHe: 'סיכום', icon: '📋' },
 ]
 
 const PANELS: Record<TabId, React.FC> = {
-  formation: FormationTab,
-  bands: BandDiagramTab,
-  electrostatics: ElectrostaticsTab,
+  intro: IntroTab,
+  pn: PnJunctionTab,
   sandbox: SandboxTab,
+  practice: PracticeTab,
   summary: SummaryTab,
 }
 
 const isTab = (v: string | null): v is TabId => TABS.some((t) => t.id === v)
 
-/** Lecture 1א page: five tabs (deep-linked via ?tab=). */
+/** Lecture 1א page: three tabs (deep-linked via ?tab=). */
 export default function PnJunctionEqExplainer() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
-  const active: TabId = isTab(raw) ? raw : 'formation'
+  const active: TabId = isTab(raw) ? raw : 'intro'
   const Panel = PANELS[active]
 
   return (

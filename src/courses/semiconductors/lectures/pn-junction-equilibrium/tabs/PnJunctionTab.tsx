@@ -3,6 +3,7 @@ import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import FormationCartoon from '../components/FormationCartoon'
+import CarrierProfile from '../components/CarrierProfile'
 
 const STEPS: { titleHe: string; bodyHe: string }[] = [
   {
@@ -27,64 +28,19 @@ const STEPS: { titleHe: string; bodyHe: string }[] = [
   },
 ]
 
-export default function FormationTab() {
+/**
+ * Lecture 1א — the PN junction at equilibrium: the step-by-step formation
+ * cartoon (diffusion → exposed ions → built-in field → equilibrium), the
+ * depletion-region concepts, and the carrier-concentration profile. The
+ * interactive sandbox lives in its own tab.
+ */
+export default function PnJunctionTab() {
   const [step, setStep] = useState(0)
   const last = STEPS.length - 1
   const s = STEPS[step]
 
   return (
     <div className="flex flex-col gap-5">
-      <Panel title="מושגי יסוד — שני סוגי מל״מ">
-        <p className="leading-relaxed text-slate-600">
-          מוליך-למחצה הופך שימושי כש<b>מסממים</b> אותו — מוסיפים אטומי-זרים שתורמים נושאי-מטען חופשיים.
-          יש שני סוגים, והם אבני-הבניין של כל התקן:
-        </p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-4">
-            <p className="font-bold text-sky-700">מסוג n — תורמים (Donors)</p>
-            <ul className="mt-1.5 space-y-1 text-sm leading-relaxed text-slate-600">
-              <li>כל אטום תורם (ריכוז <Tex>{'N_D'}</Tex>) מוסיף <b>אלקטרון</b> חופשי ונשאר יון חיובי קבוע.</li>
-              <li>נושאי <b>רוב</b>: אלקטרונים, <Tex>{'n_{n0} \\approx N_D'}</Tex>.</li>
-              <li>נושאי <b>מיעוט</b>: חורים, <Tex>{'p_{n0} = n_i^2 / N_D'}</Tex>.</li>
-            </ul>
-          </div>
-          <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-4">
-            <p className="font-bold text-rose-600">מסוג p — מקבלים (Acceptors)</p>
-            <ul className="mt-1.5 space-y-1 text-sm leading-relaxed text-slate-600">
-              <li>כל אטום מקבל (ריכוז <Tex>{'N_A'}</Tex>) "לוכד" אלקטרון ויוצר <b>חור</b>, ונשאר יון שלילי קבוע.</li>
-              <li>נושאי <b>רוב</b>: חורים, <Tex>{'p_{p0} \\approx N_A'}</Tex>.</li>
-              <li>נושאי <b>מיעוט</b>: אלקטרונים, <Tex>{'n_{p0} = n_i^2 / N_A'}</Tex>.</li>
-            </ul>
-          </div>
-        </div>
-        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-center text-sm text-slate-600">
-          בשיווי משקל מתקיים תמיד <Tex>{'n\\cdot p = n_i^2'}</Tex> — לכן ככל שיש יותר נושאי רוב, יש פחות מיעוט.
-        </p>
-      </Panel>
-
-      <Panel title="שני התהליכים המתחרים">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="font-bold text-slate-800">דיפוזיה</p>
-            <p className="mt-1 text-sm leading-relaxed text-slate-600">
-              נושאים זורמים מאזור בריכוז גבוה לאזור בריכוז נמוך (מפל ריכוז).
-            </p>
-            <div className="mt-2 text-center"><Tex>{'J_{diff} = qD\\,\\dfrac{dn}{dx}'}</Tex></div>
-          </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="font-bold text-slate-800">סחיפה</p>
-            <p className="mt-1 text-sm leading-relaxed text-slate-600">
-              נושאים נסחפים בכוח של שדה חשמלי <Tex>{'E'}</Tex>.
-            </p>
-            <div className="mt-2 text-center"><Tex>{'J_{drift} = q\\mu n E'}</Tex></div>
-          </div>
-        </div>
-        <p className="mt-3 leading-relaxed text-slate-600">
-          כל סיפור הצומת הוא <b>התחרות בין השניים</b>: דיפוזיה דוחפת נושאים לחצות, השדה הבנוי דוחף אותם
-          בחזרה. <b>שיווי משקל</b> = הנקודה שבה הם מתאזנים לכל סוג נושא, והזרם נטו מתאפס.
-        </p>
-      </Panel>
-
       <Panel title="איך נוצר הצומת? — צעד אחר צעד">
         <p className="leading-relaxed text-slate-600">
           עברו את חמשת השלבים וראו איך מדיפוזיה ראשונית מגיעים לאזור-מחסור, שדה בנוי, ושיווי משקל:
@@ -126,6 +82,39 @@ export default function FormationTab() {
           >
             הבא ←
           </button>
+        </div>
+      </Panel>
+
+      <Panel title="אזור המחסור והשדה הבנוי — המושגים">
+        <ul className="space-y-2 leading-relaxed text-slate-600">
+          <li>
+            <b>אזור המחסור</b> (Space-Charge Region) — הרצועה סביב הצומת שרוקנה מנושאים חופשיים. נשארו בה
+            רק היונים הקבועים, ולכן יש בה מטען מרחבי <Tex>{'\\rho'}</Tex>.
+          </li>
+          <li>
+            <b>קירוב המחסור</b> — מניחים שבתוך הרצועה אין נושאים כלל, ולכן{' '}
+            <Tex>{'\\rho = +qN_D'}</Tex> בצד n ו-<Tex>{'\\rho = -qN_A'}</Tex> בצד p; מחוץ לרצועה ניטרלי
+            (<Tex>{'\\rho = 0'}</Tex>). זה ההנחה שהופכת את החישוב לפשוט.
+          </li>
+          <li>
+            <b>השדה הבנוי</b> <Tex>{'E'}</Tex> — נוצר מהמטען החשוף, מכוון מ-n ל-p (כלומר מתנגד לדיפוזיה),
+            מקסימלי בצומת (<Tex>{'E_{max}'}</Tex>) ומתאפס בקצוות.
+          </li>
+          <li>
+            <b>רוחב אזור המחסור</b> <Tex>{'d'}</Tex> — גדל עם המתח הבנוי <Tex>{'V_{bi}'}</Tex> וקטן ככל
+            שהסימום כבד יותר.
+          </li>
+        </ul>
+      </Panel>
+
+      <Panel title="פרופיל ריכוז הנושאים לאורך הצומת">
+        <p className="leading-relaxed text-slate-600">
+          על ציר לוגריתמי רואים בבירור: בכל צד יש נושא <b>רוב</b> (גבוה) ונושא <b>מיעוט</b> (נמוך בכמה
+          סדרי-גודל). העקומות חוצות בדיוק ב-<Tex>{'n_i'}</Tex> בצומת (לפי <Tex>{'n\\cdot p = n_i^2'}</Tex>),
+          ושתיהן צונחות באזור המחסור — שם כמעט אין נושאים חופשיים.
+        </p>
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3">
+          <CarrierProfile />
         </div>
       </Panel>
     </div>

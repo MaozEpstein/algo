@@ -30,7 +30,7 @@ const AMBER = '#f59e0b'
 const EMER = '#10b981'
 
 export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reveal = 3 }: Props) {
-  const xMax = Math.max(dn, dp, 1e-30) * 1.45 // domain half-width (cm), with neutral margins
+  const xMax = Math.max(dn, dp, 1e-30) * 2.2 // domain half-width (cm); wider neutral margins ⇒ the depletion band reads smaller
   const sx = (x: number) => MX + ((x + xMax) / (2 * xMax)) * PW
   const x0 = sx(0)
   const xL = sx(-dp)
@@ -68,6 +68,24 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
   return (
     <div className="ltr w-full overflow-x-auto" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
+        {/* each of ρ / E / V sits on its own soft rounded panel, so the three
+            graphs read as separate plots instead of blurring into one block */}
+        {panels.map((p) =>
+          p.show ? (
+            <rect
+              key={`card-${p.row}`}
+              x={3}
+              y={topOf(p.row) - 7}
+              width={W - 6}
+              height={PH + 13}
+              rx={12}
+              fill="#f8fafc"
+              stroke="#b6c2d0"
+              strokeWidth={1.25}
+            />
+          ) : null,
+        )}
+
         {/* shared p/n side tint + depletion shading + guide lines, per visible panel */}
         {panels.map((p) => {
           if (!p.show) return null
@@ -75,12 +93,21 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
           const mid = top + PH / 2
           return (
             <g key={`bg-${p.row}`}>
-              {/* depletion region shading */}
-              <rect x={xL} y={top} width={Math.max(xR - xL, 0)} height={PH} fill="#f1f5f9" />
-              {/* guide verticals at -dp, 0, dn */}
-              {[xL, x0, xR].map((gx, i) => (
-                <line key={i} x1={gx} y1={top} x2={gx} y2={top + PH} stroke="#cbd5e1" strokeWidth={1} strokeDasharray="3 3" />
+              {/* depletion region shading (data-driven: −d_p … +d_n) — violet */}
+              <rect x={xL} y={top} width={Math.max(xR - xL, 0)} height={PH} fill="#ede9fe" opacity={0.75} />
+              {/* guide verticals: violet at the depletion edges, neutral at x=0 */}
+              {[
+                { gx: xL, c: '#a78bfa' },
+                { gx: x0, c: '#cbd5e1' },
+                { gx: xR, c: '#a78bfa' },
+              ].map(({ gx, c }, i) => (
+                <line key={i} x1={gx} y1={top} x2={gx} y2={top + PH} stroke={c} strokeWidth={1} strokeDasharray="3 3" />
               ))}
+              {p.row === 0 && xR > xL + 10 && (
+                <text x={(xL + xR) / 2} y={top + 9} textAnchor="middle" className="fill-violet-600" style={{ fontSize: 8.5, fontWeight: 700 }}>
+                  אזור המחסור
+                </text>
+              )}
               {/* panel label */}
               <text x={10} y={mid} className="fill-slate-700" style={{ fontSize: 15, fontWeight: 800 }}>
                 {p.label}
