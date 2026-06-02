@@ -8,6 +8,7 @@ import { divideAndConquerLecture } from '@/courses/algorithms/lectures/divide-an
 import { recursionLecture } from '@/courses/algorithms/lectures/recursion'
 import { foundationsLecture } from '@/courses/algorithms/lectures/foundations'
 import { linearSortLecture } from '@/courses/algorithms/lectures/linear-sort'
+import { elementaryDataStructuresLecture } from '@/courses/algorithms/lectures/elementary-data-structures'
 
 /** The single wiring point. Adding a lecture = import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
@@ -19,6 +20,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [quickSortLecture.id]: quickSortLecture,
   [selectionLecture.id]: selectionLecture,
   [linearSortLecture.id]: linearSortLecture,
+  [elementaryDataStructuresLecture.id]: elementaryDataStructuresLecture,
 }
 
 // The guided StepTimeline derivation is course-wide (keys off algorithm
