@@ -3,6 +3,7 @@ import { pnJunctionEqLecture } from '@/courses/semiconductors/lectures/pn-juncti
 import { pnJunctionBiasLecture } from '@/courses/semiconductors/lectures/pn-junction-bias'
 import { idealDiodeLecture } from '@/courses/semiconductors/lectures/ideal-diode'
 import { nonIdealDiodeLecture } from '@/courses/semiconductors/lectures/non-ideal-diode'
+import { schottkyDiodeLecture } from '@/courses/semiconductors/lectures/schottky-diode'
 
 /** The single wiring point for the semiconductors course. Adding a lecture =
  *  import it and add it here. */
@@ -11,6 +12,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [pnJunctionBiasLecture.id]: pnJunctionBiasLecture,
   [idealDiodeLecture.id]: idealDiodeLecture,
   [nonIdealDiodeLecture.id]: nonIdealDiodeLecture,
+  [schottkyDiodeLecture.id]: schottkyDiodeLecture,
 }
 
 export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(

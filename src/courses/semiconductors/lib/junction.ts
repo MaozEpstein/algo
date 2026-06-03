@@ -27,15 +27,42 @@ export interface Material {
   /** minority-carrier lifetimes (s) — set the diffusion lengths L=√(Dτ). */
   taun: number
   taup: number
+  /** electron affinity χ (eV) — vacuum level to E_c; sets the Schottky barrier. */
+  chi: number
+  /** effective conduction-band density of states N_c (cm⁻³) — sets E_c−E_F=V_T·ln(N_c/N_D). */
+  nc: number
+  /** effective Richardson constant A* (A·cm⁻²·K⁻²) for thermionic emission. */
+  astar: number
 }
 
 // Representative textbook values (300K). Mobilities cm²/V·s, lifetimes s.
+// χ/N_c/A* (Sze/Neamen): A* = 120·(m*_DOS/m_0) — note GaAs is ~13× smaller than Si.
 export const MATERIALS: Record<Material['key'], Material> = {
-  Si: { key: 'Si', he: 'סיליקון · Si', ni: 1.5e10, epsR: 11.8, eg: 1.12, mun: 1350, mup: 480, taun: 1e-6, taup: 1e-6 },
-  Ge: { key: 'Ge', he: 'גרמניום · Ge', ni: 2.4e13, epsR: 16, eg: 0.67, mun: 3900, mup: 1900, taun: 1e-3, taup: 1e-3 },
-  GaAs: { key: 'GaAs', he: 'גליום-ארסניד · GaAs', ni: 1.8e6, epsR: 13.1, eg: 1.42, mun: 8500, mup: 400, taun: 1e-8, taup: 1e-8 },
+  Si: { key: 'Si', he: 'סיליקון · Si', ni: 1.5e10, epsR: 11.8, eg: 1.12, mun: 1350, mup: 480, taun: 1e-6, taup: 1e-6, chi: 4.05, nc: 2.8e19, astar: 110 },
+  Ge: { key: 'Ge', he: 'גרמניום · Ge', ni: 2.4e13, epsR: 16, eg: 0.67, mun: 3900, mup: 1900, taun: 1e-3, taup: 1e-3, chi: 4.0, nc: 1.04e19, astar: 50 },
+  GaAs: { key: 'GaAs', he: 'גליום-ארסניד · GaAs', ni: 1.8e6, epsR: 13.1, eg: 1.42, mun: 8500, mup: 400, taun: 1e-8, taup: 1e-8, chi: 4.07, nc: 4.7e17, astar: 8.2 },
 }
 export const MATERIAL_LIST: Material[] = [MATERIALS.Si, MATERIALS.Ge, MATERIALS.GaAs]
+
+/** A metal contact, identified by its work function φ_m (eV) — vacuum level to E_F. */
+export interface Metal {
+  key: string
+  he: string
+  /** work function φ_m (eV). */
+  phiM: number
+}
+
+// Vacuum work functions (eV), textbook values. On real Si the measured barrier is
+// largely pinned (Bardeen) and nearly metal-independent — the ideal φ_B=φ_m−χ is taught here.
+export const METALS: Record<string, Metal> = {
+  Al: { key: 'Al', he: 'אלומיניום · Al', phiM: 4.28 },
+  Ti: { key: 'Ti', he: 'טיטניום · Ti', phiM: 4.33 },
+  Ag: { key: 'Ag', he: 'כסף · Ag', phiM: 4.26 },
+  W: { key: 'W', he: 'טונגסטן · W', phiM: 4.55 },
+  Au: { key: 'Au', he: 'זהב · Au', phiM: 5.1 },
+  Pt: { key: 'Pt', he: 'פלטינה · Pt', phiM: 5.65 },
+}
+export const METAL_LIST: Metal[] = [METALS.Al, METALS.Ti, METALS.Ag, METALS.W, METALS.Au, METALS.Pt]
 
 /** Thermal voltage kT/q (V). ≈ 0.02585 V at 300K. */
 export const thermalVoltage = (T = 300): number => (KB * T) / Q
@@ -245,6 +272,78 @@ export function logFloor(Na: number, Nd: number, mat: Material, tau0: number, T 
   const ni = niAt(mat, T)
   const W = junctionState(Na, Nd, mat, 0, T).d
   return (Q * ni * W) / (2 * tau0)
+}
+
+// ---- Schottky diode (metal–semiconductor) — lecture 2ג ---------------------
+export interface SchottkyState {
+  phiB: number // barrier height φ_B = φ_m − χ (eV), bias-independent
+  xi: number // bulk offset ξ = E_c − E_F (eV)
+  Vbi: number // built-in potential V_bi = φ_B − ξ (V)
+  rectifying: boolean // V_bi > 0 (φ_m > φ_s) — else ohmic/accumulation
+  degenerate: boolean // N_D ≥ N_c — the non-degenerate ξ formula breaks down
+  W: number // one-sided depletion width into the semiconductor (cm)
+  Jst: number // thermionic saturation current density (A/cm²)
+  J: number // current density at bias Va (A/cm²)
+  Vturn: number // turn-on voltage at J = 1 A/cm² (V)
+}
+
+/** Ideal Schottky-Mott barrier height (n-type): φ_B = φ_m − χ (eV). Bias-independent. */
+export const schottkyBarrier = (phiM: number, chi: number): number => phiM - chi
+
+/** Bulk conduction offset ξ = E_c − E_F = V_T·ln(N_c/N_D) (eV). ≤0 ⇒ degenerate (N_D ≥ N_c). */
+export const bulkOffset = (nc: number, Nd: number, T = 300): number => thermalVoltage(T) * Math.log(nc / Nd)
+
+/** Built-in potential of the metal–semiconductor junction: V_bi = φ_B − ξ = φ_m − φ_s (V). */
+export const schottkyVbi = (phiM: number, chi: number, nc: number, Nd: number, T = 300): number =>
+  schottkyBarrier(phiM, chi) - bulkOffset(nc, Nd, T)
+
+/** Rectifying (n-type) when φ_m > φ_s = χ + ξ, i.e. V_bi > 0. Otherwise the contact is ohmic. */
+export const isRectifying = (phiM: number, chi: number, nc: number, Nd: number, T = 300): boolean =>
+  schottkyVbi(phiM, chi, nc, Nd, T) > 0
+
+/** One-sided depletion width in the semiconductor: W = √(2ε_s(V_bi−V_A)/(q N_D)) (cm). */
+export function schottkyWidth(mat: Material, Nd: number, Va: number, Vbi: number): number {
+  const epsS = mat.epsR * EPS0
+  const drive = Math.max(Vbi - Va, 0)
+  return Math.sqrt((2 * epsS * drive) / (Q * Nd))
+}
+
+/** Thermionic saturation current density J_ST = A*·T²·e^{−φ_B/V_T} (A/cm²). φ_B in eV(≈V). */
+export const thermionicJst = (astar: number, phiB: number, T = 300): number =>
+  astar * T * T * Math.exp(-phiB / thermalVoltage(T))
+
+/**
+ * Thermionic-emission current of a Schottky diode: majority carriers over the
+ * barrier, J = J_ST·(e^{V_A/V_T} − 1). Forward rises exponentially; reverse
+ * saturates at −J_ST because the metal-side barrier φ_B is fixed by bias.
+ */
+export const schottkyCurrent = (astar: number, phiB: number, Va: number, T = 300): number =>
+  thermionicJst(astar, phiB, T) * (Math.exp(Va / thermalVoltage(T)) - 1)
+
+/** Forward turn-on voltage where J reaches Jref (default 1 A/cm²): V = V_T·ln(Jref/J_ST + 1). */
+export const schottkyTurnOn = (astar: number, phiB: number, Jref = 1, T = 300): number =>
+  thermalVoltage(T) * Math.log(Jref / thermionicJst(astar, phiB, T) + 1)
+
+/** Image-force barrier lowering Δφ_B = √(qE_max/4πε_s) (eV) — why real reverse current isn't truly flat. */
+export const imageForceLowering = (mat: Material, Emax: number): number =>
+  Math.sqrt((Q * Math.max(Emax, 0)) / (4 * Math.PI * mat.epsR * EPS0))
+
+/** Everything the Schottky widgets need, from one call (mirrors junctionState/diodeCurrents). */
+export function schottkyState(metal: Metal, mat: Material, Nd: number, Va: number, T = 300): SchottkyState {
+  const phiB = schottkyBarrier(metal.phiM, mat.chi)
+  const xi = bulkOffset(mat.nc, Nd, T)
+  const Vbi = phiB - xi
+  return {
+    phiB,
+    xi,
+    Vbi,
+    rectifying: Vbi > 0,
+    degenerate: Nd >= mat.nc,
+    W: schottkyWidth(mat, Nd, Va, Vbi),
+    Jst: thermionicJst(mat.astar, phiB, T),
+    J: schottkyCurrent(mat.astar, phiB, Va, T),
+    Vturn: schottkyTurnOn(mat.astar, phiB, 1, T),
+  }
 }
 
 // ---- display helpers -------------------------------------------------------
