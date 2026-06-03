@@ -22,7 +22,7 @@ export default function CourseHome() {
           {manifest.titleHe}
         </h1>
         <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-500">
-          לא עוד קירות טקסט — כאן רואים את האלגוריתם רץ, צעד אחר צעד, עם הקוד שמתרחש לצידו.
+          לא עוד קירות טקסט — כאן רואים את החומר קורה ומבינים אותו, צעד אחר צעד.
           בחרו שיעור והתחילו.
         </p>
         {(Syllabus || hasFormulaSheet) && (
