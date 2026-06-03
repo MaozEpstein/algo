@@ -48,8 +48,8 @@ const COLOR: Record<Mode, { stroke: string; marker: string; energy: string; ener
   srh: { stroke: '#f59e0b', marker: 'gr-dn-a', energy: 'fill-amber-600', energyText: '↝ חום (פונונים)' },
 }
 
-export default function GenRecombDiagram() {
-  const [mode, setMode] = useState<Mode>('gen')
+export default function GenRecombDiagram({ initialMode = 'gen' }: { initialMode?: Mode }) {
+  const [mode, setMode] = useState<Mode>(initialMode)
   const eControls = useAnimationControls()
   const holeControls = useAnimationControls()
   const flashControls = useAnimationControls()

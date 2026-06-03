@@ -147,6 +147,106 @@ export function diodeCurrents(Na: number, Nd: number, mat: Material, Va = 0, T =
   return { Js, JsP, JsN, J }
 }
 
+// ---- long vs short base diode — lecture 2א ---------------------------------
+/**
+ * Normalized excess minority profile in a neutral base of width `WB` ending in an
+ * ohmic contact (Δp=0 there): Δp(x)/Δp(0) = sinh((WB−x)/L) / sinh(WB/L), the exact
+ * steady-state diffusion solution. Long base (WB≫L) → e^{−x/L} (exponential decay,
+ * carriers recombine before reaching the contact). Short base (WB≪L) → linear
+ * (WB−x)/WB (carriers reach the contact before recombining). x and WB in cm.
+ */
+export function shortBaseProfile(x: number, WB: number, L: number): number {
+  return Math.sinh((WB - x) / L) / Math.sinh(WB / L)
+}
+
+/**
+ * The effective diffusion length that replaces L in J_S for a finite base:
+ * L_eff = L·tanh(WB/L). Long base → L (recombination-limited); short base → WB
+ * (transit-limited). The boundary slope at x=0 is Δp(0)/L_eff, so the initial
+ * tangent of the profile hits zero exactly at L_eff.
+ */
+export const effectiveLength = (WB: number, L: number): number => L * Math.tanh(WB / L)
+
+/**
+ * Factor by which a finite (short) base boosts the saturation current over the
+ * long-base value: J_S ∝ 1/L_eff, so the multiplier is L/L_eff = coth(WB/L) ≥ 1.
+ * ≈1 for a long base, large for a short one (the steeper profile = more current).
+ */
+export const shortBaseCurrentFactor = (WB: number, L: number): number => 1 / Math.tanh(WB / L)
+
+// ---- non-ideal diode — lecture 2ב ------------------------------------------
+export interface NonIdealCurrents {
+  Jdiff: number // ideal diffusion current (n=1)            (A/cm²)
+  Jrec: number // depletion-region recombination/generation (n=2) (A/cm²)
+  Jtot: number // Jdiff + Jrec                              (A/cm²)
+  W: number // depletion width at this bias                 (cm)
+  Jr0: number // recombination/generation prefactor q·n_i·W/(2τ₀) (A/cm²)
+}
+
+/**
+ * Depletion-region recombination/generation current density (A/cm²) at junction
+ * voltage `Vj` — the Sah–Noyce–Shockley n=2 term that the ideal model omits:
+ *   J_rec = (q·n_i·W)/(2τ₀)·(e^{V_j/2V_T} − 1).
+ * W = depletion width (grows under reverse bias as √(V_bi+|V_j|)); τ₀ is the
+ * effective SRH lifetime (symmetric convention τ_n=τ_p=τ₀). Forward → +; reverse
+ * → a small GENERATION current −q·n_i·W/(2τ₀) that GROWS with |V_j| (∝ W), so the
+ * real reverse current is not saturated. `niAt`/`junctionState` supply n_i and W.
+ */
+export function recombCurrent(Na: number, Nd: number, mat: Material, Vj: number, tau0: number, T = 300): number {
+  const ni = niAt(mat, T)
+  const W = junctionState(Na, Nd, mat, Vj, T).d
+  const Jr0 = (Q * ni * W) / (2 * tau0)
+  return Jr0 * (Math.exp(Vj / (2 * thermalVoltage(T))) - 1)
+}
+
+/**
+ * The full non-ideal junction current as the sum of the ideal diffusion term
+ * (n=1, from `diodeCurrents`) and the depletion recombination/generation term
+ * (n=2, from `recombCurrent`). Returns every branch so plots and tests can show
+ * the crossover (low forward → recombination dominates, higher → diffusion) and
+ * the non-saturating reverse current. Series resistance is applied separately
+ * via `terminalVoltage` (parametric), not here — this is the junction-voltage law.
+ */
+export function nonIdealCurrents(Na: number, Nd: number, mat: Material, Vj: number, tau0: number, T = 300): NonIdealCurrents {
+  const ni = niAt(mat, T)
+  const W = junctionState(Na, Nd, mat, Vj, T).d
+  const Jr0 = (Q * ni * W) / (2 * tau0)
+  const Jdiff = diodeCurrents(Na, Nd, mat, Vj, T).J
+  const Jrec = Jr0 * (Math.exp(Vj / (2 * thermalVoltage(T))) - 1)
+  return { Jdiff, Jrec, Jtot: Jdiff + Jrec, W, Jr0 }
+}
+
+/**
+ * Terminal voltage after the specific series-resistance drop:
+ *   V_term = V_j + J_tot·R_S   (R_S in Ω·cm², J_tot in A/cm² ⇒ drop in V).
+ * Plotting parametrically at x=V_term (sweeping V_j) yields the exact high-current
+ * "bend" without an implicit solve. Forward-monotonic, so the curve never folds.
+ */
+export const terminalVoltage = (Vj: number, Jtot: number, rs: number): number => Vj + Jtot * rs
+
+/**
+ * Lumped "engineering" diode model J = J_S·(e^{V_j/(n·V_T)} − 1) with a single
+ * ideality factor `n` (1 = pure diffusion, 2 = recombination/high-injection).
+ * Used for the dashed overlay in the sandbox — the same physics collapsed into
+ * one knob — so students see how the emergent n abstracts the two-exponential sum.
+ */
+export function lumpedDiodeCurrent(Na: number, Nd: number, mat: Material, Vj: number, n: number, T = 300): number {
+  const Js = diodeCurrents(Na, Nd, mat, 0, T).Js
+  return Js * (Math.exp(Vj / (n * thermalVoltage(T))) - 1)
+}
+
+/**
+ * Floor for the logarithmic current axis of the non-ideal curve: the generation
+ * prefactor J_{r0}=q·n_i·W/(2τ₀) at equilibrium. Unlike the ideal curve (floored
+ * at J_S), the non-ideal reverse/low-bias current is set by recombination, which
+ * is typically orders larger than J_S — flooring at J_S would clip the curve.
+ */
+export function logFloor(Na: number, Nd: number, mat: Material, tau0: number, T = 300): number {
+  const ni = niAt(mat, T)
+  const W = junctionState(Na, Nd, mat, 0, T).d
+  return (Q * ni * W) / (2 * tau0)
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

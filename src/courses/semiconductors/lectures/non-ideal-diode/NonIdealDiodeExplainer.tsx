@@ -1,42 +1,39 @@
 import { useSearchParams } from 'react-router-dom'
 import IntroTab from './tabs/IntroTab'
-import BalanceTab from './tabs/BalanceTab'
-import ProfileTab from './tabs/ProfileTab'
-import DerivationTab from './tabs/DerivationTab'
-import LengthRegimeTab from './tabs/LengthRegimeTab'
-import SandboxTab from './tabs/SandboxTab'
+import RecombinationTab from './tabs/RecombinationTab'
+import HighInjectionTab from './tabs/HighInjectionTab'
+import SeriesResistanceTab from './tabs/SeriesResistanceTab'
+import FullPictureTab from './tabs/FullPictureTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'intro' | 'balance' | 'profile' | 'derivation' | 'lengthRegime' | 'sandbox' | 'practice' | 'summary'
+type TabId = 'intro' | 'recombination' | 'highInjection' | 'seriesR' | 'full' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
-  { id: 'intro', labelHe: 'מבוא — מהזרקה לזרם', icon: '📘' },
-  { id: 'balance', labelHe: 'מאיזון לזרם', icon: '⚖️' },
-  { id: 'profile', labelHe: 'פרופיל המיעוט', icon: '📉' },
-  { id: 'derivation', labelHe: 'אופיין הדיודה', icon: '📈' },
-  { id: 'lengthRegime', labelHe: 'דיודה ארוכה וקצרה', icon: '📏' },
-  { id: 'sandbox', labelHe: 'ארגז חול', icon: '🎛️' },
+  { id: 'intro', labelHe: 'מבוא — מהאידיאלי למציאות', icon: '📘' },
+  { id: 'recombination', labelHe: 'זרם רקומבינציה', icon: '♻️' },
+  { id: 'highInjection', labelHe: 'הזרקה חזקה', icon: '🌊' },
+  { id: 'seriesR', labelHe: 'התנגדות טורית', icon: '🧱' },
+  { id: 'full', labelHe: 'התמונה המלאה — n', icon: '🎛️' },
   { id: 'practice', labelHe: 'תרגול', icon: '✏️' },
   { id: 'summary', labelHe: 'סיכום', icon: '📋' },
 ]
 
 const PANELS: Record<TabId, React.FC> = {
   intro: IntroTab,
-  balance: BalanceTab,
-  profile: ProfileTab,
-  derivation: DerivationTab,
-  lengthRegime: LengthRegimeTab,
-  sandbox: SandboxTab,
+  recombination: RecombinationTab,
+  highInjection: HighInjectionTab,
+  seriesR: SeriesResistanceTab,
+  full: FullPictureTab,
   practice: PracticeTab,
   summary: SummaryTab,
 }
 
 const isTab = (v: string | null): v is TabId => TABS.some((t) => t.id === v)
 
-/** Lecture 2א page: eight tabs separating the stages of deriving the ideal-diode
- *  (Shockley) characteristic (deep-linked via ?tab=). */
-export default function IdealDiodeExplainer() {
+/** Lecture 2ב page: seven tabs walking through the deviations of a real diode
+ *  from the ideal Shockley line (deep-linked via ?tab=). */
+export default function NonIdealDiodeExplainer() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const active: TabId = isTab(raw) ? raw : 'intro'

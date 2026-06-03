@@ -5,6 +5,9 @@ import {
   diffusionCoeff,
   diffusionLength,
   diodeCurrents,
+  effectiveLength,
+  shortBaseCurrentFactor,
+  shortBaseProfile,
   thermalVoltage,
 } from '../../lib/junction'
 import { idealDiodeLecture } from './index'
@@ -58,6 +61,31 @@ describe('ideal diode — physics', () => {
     expect(f2 / f1).toBeCloseTo(Math.exp(0.1 / thermalVoltage(300)), 0)
     // reverse saturates at −J_S (within e^{−0.5/V_T} of it)
     expect(diodeCurrents(1e16, 1e17, Si, -0.5, 300).J).toBeCloseTo(-Js, 12)
+  })
+})
+
+describe('long vs short base diode', () => {
+  const L = 1e-3 // cm
+
+  it('long base (W_B ≫ L) recovers the exponential profile and L_eff → L', () => {
+    const WB = 10 * L
+    expect(shortBaseProfile(0, WB, L)).toBeCloseTo(1, 6) // Δp(0)/Δp(0)=1
+    expect(shortBaseProfile(0.5 * L, WB, L)).toBeCloseTo(Math.exp(-0.5), 3)
+    expect(effectiveLength(WB, L)).toBeGreaterThan(0.99 * L) // tanh(10)≈1
+    expect(shortBaseCurrentFactor(WB, L)).toBeCloseTo(1, 3)
+  })
+
+  it('short base (W_B ≪ L) gives a linear profile and L_eff → W_B', () => {
+    const WB = 0.05 * L
+    // midpoint of a linear profile sits at ~0.5
+    expect(shortBaseProfile(0.5 * WB, WB, L)).toBeCloseTo(0.5, 2)
+    expect(effectiveLength(WB, L)).toBeLessThan(L) // shorter effective length
+    expect(effectiveLength(WB, L)).toBeGreaterThan(0.9 * WB) // → W_B
+    expect(shortBaseCurrentFactor(WB, L)).toBeGreaterThan(15) // coth(0.05)≈20 → big boost
+  })
+
+  it('the excess minority vanishes at the ohmic contact (x = W_B)', () => {
+    expect(shortBaseProfile(2e-4, 2e-4, 5e-4)).toBeCloseTo(0, 10)
   })
 })
 
