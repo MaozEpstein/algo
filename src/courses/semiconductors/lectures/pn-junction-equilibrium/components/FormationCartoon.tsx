@@ -69,10 +69,10 @@ export default function FormationCartoon({ stage }: { stage: number }) {
         ))}
         <line x1={MID} y1={14} x2={MID} y2={H - 28} stroke="#94a3b8" strokeWidth={1} strokeDasharray="2 3" />
 
-        <text x={MID / 2} y={16} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 12, fontWeight: 800 }}>
+        <text x={MID / 2} y={16} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 15.6, fontWeight: 800 }}>
           p
         </text>
-        <text x={MID + (W - MID) / 2} y={16} textAnchor="middle" className="fill-sky-500" style={{ fontSize: 12, fontWeight: 800 }}>
+        <text x={MID + (W - MID) / 2} y={16} textAnchor="middle" className="fill-sky-500" style={{ fontSize: 15.6, fontWeight: 800 }}>
           n
         </text>
 
@@ -82,7 +82,7 @@ export default function FormationCartoon({ stage }: { stage: number }) {
           return (
             <motion.g key={`ion-${s.id}`} initial={false} animate={{ opacity: exposed ? 1 : 0.2 }} transition={{ duration: 0.3 }}>
               <rect x={s.x - 6} y={s.y - 6} width={12} height={12} rx={3} fill="white" stroke={s.side === 'p' ? '#f43f5e' : '#0ea5e9'} strokeWidth={1.5} />
-              <text x={s.x} y={s.y + 3.5} textAnchor="middle" className={s.side === 'p' ? 'fill-rose-500' : 'fill-sky-600'} style={{ fontSize: 10, fontWeight: 800 }}>
+              <text x={s.x} y={s.y + 3.5} textAnchor="middle" className={s.side === 'p' ? 'fill-rose-500' : 'fill-sky-600'} style={{ fontSize: 13, fontWeight: 800 }}>
                 {s.side === 'p' ? '−' : '+'}
               </text>
             </motion.g>
@@ -116,7 +116,7 @@ export default function FormationCartoon({ stage }: { stage: number }) {
         {/* "depletion region" label — appears once the region forms (stage ≥ 2) */}
         <motion.g initial={false} animate={{ opacity: stage >= 2 ? 1 : 0 }} transition={{ duration: 0.4 }}>
           <rect x={MID - 54} y={26} width={108} height={19} rx={9.5} fill="#475569" />
-          <text x={MID} y={39} textAnchor="middle" fill="white" style={{ fontSize: 11, fontWeight: 700 }}>
+          <text x={MID} y={39} textAnchor="middle" fill="white" style={{ fontSize: 14.3, fontWeight: 700 }}>
             אזור המחסור
           </text>
         </motion.g>
@@ -124,7 +124,7 @@ export default function FormationCartoon({ stage }: { stage: number }) {
         {/* built-in field arrow (n → p), fades in at stage ≥ 3 */}
         <motion.g initial={false} animate={{ opacity: stage >= 3 ? 1 : 0 }} transition={{ duration: 0.4 }}>
           <line x1={MID + dep - 8} y1={H / 2} x2={MID - dep + 8} y2={H / 2} stroke="#f59e0b" strokeWidth={3} markerEnd="url(#fc-arrow-amber)" />
-          <text x={MID} y={H / 2 - 10} textAnchor="middle" className="fill-amber-600" style={{ fontSize: 12, fontWeight: 800 }}>
+          <text x={MID} y={H / 2 - 10} textAnchor="middle" className="fill-amber-600" style={{ fontSize: 15.6, fontWeight: 800 }}>
             E
           </text>
         </motion.g>
@@ -135,7 +135,7 @@ export default function FormationCartoon({ stage }: { stage: number }) {
           y={H - 8}
           textAnchor="middle"
           className="fill-emerald-600"
-          style={{ fontSize: 11, fontWeight: 700 }}
+          style={{ fontSize: 14.3, fontWeight: 700 }}
           initial={false}
           animate={{ opacity: stage >= 4 ? 1 : 0 }}
         >

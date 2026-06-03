@@ -28,6 +28,9 @@ export interface CourseModule {
    *  modal mounted once per course (by CourseProvider) so it can be opened from
    *  anywhere via the keyboard shortcut or the OPEN_FORMULA_SHEET window event. */
   formulaSheet?: ComponentType
+  /** Optional course roadmap (syllabus) — a self-contained button+modal shown on
+   *  the course home next to the formula-sheet button. */
+  syllabus?: ComponentType
 }
 
 /**

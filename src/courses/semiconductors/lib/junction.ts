@@ -94,6 +94,17 @@ export const dopingFromWidth = (epsR: number, Vbi: number, dCm: number): number 
 export const dopingFromVbi = (Vbi: number, nKnown: number, ni: number, T = 300): number =>
   ((ni * ni) / nKnown) * Math.exp(Vbi / thermalVoltage(T))
 
+// ---- bias (the diode under applied voltage) --------------------------------
+/**
+ * Law of the junction: the minority-carrier concentration at the edge of the
+ * depletion region under applied bias V_A, n_p(0) = n_{p0}·e^{V_A/V_T}. Forward
+ * bias (V_A>0) raises it exponentially (injection); reverse (V_A<0) drops it
+ * toward 0 (extraction). `n0` is the equilibrium minority concentration
+ * (n_i²/N_major). This is the bridge to the diode current (derived in part ב).
+ */
+export const minorityAtEdge = (n0: number, Va: number, T = 300): number =>
+  n0 * Math.exp(Va / thermalVoltage(T))
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

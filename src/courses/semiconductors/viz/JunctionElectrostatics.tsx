@@ -15,6 +15,10 @@ interface Props {
   Nd: number
   /** 1 = ρ only · 2 = +E · 3 = +V (default 3 = all). */
   reveal?: number
+  /** Fixed x-domain half-width (cm). When given, the x-axis does NOT auto-scale
+   *  to the depletion — so under bias the band visibly narrows/widens. Omit to
+   *  keep the auto-scaling (equilibrium use, part א). */
+  xMaxRef?: number
 }
 
 const W = 560
@@ -29,8 +33,8 @@ const SKY = '#38bdf8'
 const AMBER = '#f59e0b'
 const EMER = '#10b981'
 
-export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reveal = 3 }: Props) {
-  const xMax = Math.max(dn, dp, 1e-30) * 2.2 // domain half-width (cm); wider neutral margins ⇒ the depletion band reads smaller
+export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reveal = 3, xMaxRef }: Props) {
+  const xMax = xMaxRef ?? Math.max(dn, dp, 1e-30) * 2.2 // domain half-width (cm); wider neutral margins ⇒ the depletion band reads smaller
   const sx = (x: number) => MX + ((x + xMax) / (2 * xMax)) * PW
   const x0 = sx(0)
   const xL = sx(-dp)
@@ -104,15 +108,15 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
                 <line key={i} x1={gx} y1={top} x2={gx} y2={top + PH} stroke={c} strokeWidth={1} strokeDasharray="3 3" />
               ))}
               {p.row === 0 && xR > xL + 10 && (
-                <text x={(xL + xR) / 2} y={top + 9} textAnchor="middle" className="fill-violet-600" style={{ fontSize: 8.5, fontWeight: 700 }}>
+                <text x={(xL + xR) / 2} y={top + 9} textAnchor="middle" className="fill-violet-600" style={{ fontSize: 11.1, fontWeight: 700 }}>
                   אזור המחסור
                 </text>
               )}
               {/* panel label */}
-              <text x={10} y={mid} className="fill-slate-700" style={{ fontSize: 15, fontWeight: 800 }}>
+              <text x={10} y={mid} className="fill-slate-700" style={{ fontSize: 19.5, fontWeight: 800 }}>
                 {p.label}
               </text>
-              <text x={10} y={mid + 14} className="fill-slate-400" style={{ fontSize: 8 }}>
+              <text x={10} y={mid + 14} className="fill-slate-400" style={{ fontSize: 10.4 }}>
                 {p.sub}
               </text>
             </g>
@@ -128,11 +132,11 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
                 <line x1={MX} y1={base} x2={W - MR} y2={base} stroke="#94a3b8" strokeWidth={1.25} />
                 <rect x={x0} y={base - hP} width={Math.max(xR - x0, 0)} height={hP} fill={SKY} opacity={0.85} />
                 <rect x={xL} y={base} width={Math.max(x0 - xL, 0)} height={hN} fill={ROSE} opacity={0.85} />
-                <text x={(x0 + xR) / 2} y={base - hP - 4} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 9 }}>
-                  +qN<tspan dy={2.5} style={{ fontSize: 7 }}>D</tspan>
+                <text x={(x0 + xR) / 2} y={base - hP - 4} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 11.7 }}>
+                  +qN<tspan dy={2.5} style={{ fontSize: 9.1 }}>D</tspan>
                 </text>
-                <text x={(xL + x0) / 2} y={base + hN + 10} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 9 }}>
-                  −qN<tspan dy={2.5} style={{ fontSize: 7 }}>A</tspan>
+                <text x={(xL + x0) / 2} y={base + hN + 10} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 11.7 }}>
+                  −qN<tspan dy={2.5} style={{ fontSize: 9.1 }}>A</tspan>
                 </text>
               </g>
             )
@@ -148,8 +152,8 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
                 <line x1={MX} y1={base} x2={W - MR} y2={base} stroke="#94a3b8" strokeWidth={1.25} />
                 <polygon points={`${xL},${base} ${x0},${apex} ${xR},${base}`} fill={AMBER} opacity={0.18} />
                 <polyline points={`${xL},${base} ${x0},${apex} ${xR},${base}`} fill="none" stroke={AMBER} strokeWidth={2.5} strokeLinejoin="round" />
-                <text x={x0 + 4} y={apex + 2} className="fill-amber-600" style={{ fontSize: 9 }}>
-                  −E<tspan dy={2.5} style={{ fontSize: 7 }}>max</tspan>
+                <text x={x0 + 4} y={apex + 2} className="fill-amber-600" style={{ fontSize: 11.7 }}>
+                  −E<tspan dy={2.5} style={{ fontSize: 9.1 }}>max</tspan>
                 </text>
               </g>
             )
@@ -160,20 +164,20 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
           <g>
             <line x1={MX} y1={vBase} x2={W - MR} y2={vBase} stroke="#94a3b8" strokeWidth={1.25} />
             <path d={vPath} fill="none" stroke={EMER} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
-            <text x={xR + 3} y={vBase - PH * 0.82 + 3} className="fill-emerald-600" style={{ fontSize: 9 }}>
-              V<tspan dy={2.5} style={{ fontSize: 7 }}>bi</tspan>
+            <text x={xR + 3} y={vBase - PH * 0.82 + 3} className="fill-emerald-600" style={{ fontSize: 11.7 }}>
+              V<tspan dy={2.5} style={{ fontSize: 9.1 }}>bi</tspan>
             </text>
           </g>
         )}
 
         {/* x-axis side labels */}
-        <text x={MX + 4} y={H - 6} className="fill-rose-400" style={{ fontSize: 10, fontWeight: 700 }}>
+        <text x={MX + 4} y={H - 6} className="fill-rose-400" style={{ fontSize: 13, fontWeight: 700 }}>
           p
         </text>
-        <text x={W - MR - 8} y={H - 6} className="fill-sky-500" style={{ fontSize: 10, fontWeight: 700 }}>
+        <text x={W - MR - 8} y={H - 6} className="fill-sky-500" style={{ fontSize: 13, fontWeight: 700 }}>
           n
         </text>
-        <text x={x0} y={H - 6} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 9 }}>
+        <text x={x0} y={H - 6} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 11.7 }}>
           x = 0
         </text>
       </svg>

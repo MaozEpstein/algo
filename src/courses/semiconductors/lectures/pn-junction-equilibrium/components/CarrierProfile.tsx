@@ -45,9 +45,9 @@ const TICKS = [16, 12, 8, 4]
 
 function Pow10({ x, y, exp }: { x: number; y: number; exp: number }) {
   return (
-    <text x={x} y={y} textAnchor="end" className="fill-slate-400" style={{ fontSize: 10 }}>
+    <text x={x} y={y} textAnchor="end" className="fill-slate-400" style={{ fontSize: 13 }}>
       10
-      <tspan dy={-5} style={{ fontSize: 8 }}>
+      <tspan dy={-5} style={{ fontSize: 10.4 }}>
         {exp}
       </tspan>
     </text>
@@ -74,15 +74,15 @@ export default function CarrierProfile() {
           </g>
         ))}
         {/* y-axis caption */}
-        <text x={14} y={mT + plotH / 2} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 10 }} transform={`rotate(-90 14 ${mT + plotH / 2})`}>
+        <text x={14} y={mT + plotH / 2} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 13 }} transform={`rotate(-90 14 ${mT + plotH / 2})`}>
           ריכוז (cm⁻³)
         </text>
 
         {/* n_i reference */}
         <line x1={mL} y1={yOf(logNI)} x2={W - mR} y2={yOf(logNI)} stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="5 4" />
-        <text x={W - mR - 2} y={yOf(logNI) - 4} textAnchor="end" className="fill-slate-500" style={{ fontSize: 10, fontWeight: 700 }}>
+        <text x={W - mR - 2} y={yOf(logNI) - 4} textAnchor="end" className="fill-slate-500" style={{ fontSize: 13, fontWeight: 700 }}>
           n
-          <tspan dy={3} style={{ fontSize: 8 }}>i</tspan>
+          <tspan dy={3} style={{ fontSize: 10.4 }}>i</tspan>
         </text>
 
         {/* curves */}
@@ -90,24 +90,24 @@ export default function CarrierProfile() {
         <path d={nPath} fill="none" stroke="#0ea5e9" strokeWidth={2.5} />
 
         {/* curve labels */}
-        <text x={xOf(0.06)} y={yOf(logNA) - 6} className="fill-rose-500" style={{ fontSize: 11, fontWeight: 800 }}>
+        <text x={xOf(0.06)} y={yOf(logNA) - 6} className="fill-rose-500" style={{ fontSize: 14.3, fontWeight: 800 }}>
           p (חורים)
         </text>
-        <text x={xOf(0.94)} y={yOf(logND) - 6} textAnchor="end" className="fill-sky-600" style={{ fontSize: 11, fontWeight: 800 }}>
+        <text x={xOf(0.94)} y={yOf(logND) - 6} textAnchor="end" className="fill-sky-600" style={{ fontSize: 14.3, fontWeight: 800 }}>
           n (אלקטרונים)
         </text>
 
         {/* region captions */}
-        <text x={xOf(0.2)} y={H - mB + 18} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 11, fontWeight: 800 }}>
+        <text x={xOf(0.2)} y={H - mB + 18} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 14.3, fontWeight: 800 }}>
           צד p
         </text>
-        <text x={xOf(0.5)} y={H - mB + 18} textAnchor="middle" className="fill-violet-600" style={{ fontSize: 10, fontWeight: 700 }}>
+        <text x={xOf(0.5)} y={H - mB + 18} textAnchor="middle" className="fill-violet-600" style={{ fontSize: 13, fontWeight: 700 }}>
           אזור מחסור
         </text>
-        <text x={xOf(0.8)} y={H - mB + 18} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 11, fontWeight: 800 }}>
+        <text x={xOf(0.8)} y={H - mB + 18} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 14.3, fontWeight: 800 }}>
           צד n
         </text>
-        <text x={mL + plotW / 2} y={H - 6} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 10 }}>
+        <text x={mL + plotW / 2} y={H - 6} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 13 }}>
           מיקום x →
         </text>
       </svg>

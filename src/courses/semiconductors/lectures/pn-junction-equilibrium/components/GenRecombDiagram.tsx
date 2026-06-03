@@ -127,16 +127,16 @@ export default function GenRecombDiagram() {
           <rect x={30} y={EV} width={W - 42} height={44} rx={7} fill="url(#gr-vb)" />
           <line x1={30} y1={EC} x2={W - 12} y2={EC} stroke="#1e293b" strokeWidth={2.5} />
           <line x1={30} y1={EV} x2={W - 12} y2={EV} stroke="#1e293b" strokeWidth={2.5} />
-          <text x={26} y={EC + 5} textAnchor="end" className="fill-sky-700" style={{ fontSize: 13, fontWeight: 800 }}>
-            E<tspan dy={3} style={{ fontSize: 10 }}>c</tspan>
+          <text x={26} y={EC + 5} textAnchor="end" className="fill-sky-700" style={{ fontSize: 16.9, fontWeight: 800 }}>
+            E<tspan dy={3} style={{ fontSize: 13 }}>c</tspan>
           </text>
-          <text x={26} y={EV + 5} textAnchor="end" className="fill-rose-600" style={{ fontSize: 13, fontWeight: 800 }}>
-            E<tspan dy={3} style={{ fontSize: 10 }}>v</tspan>
+          <text x={26} y={EV + 5} textAnchor="end" className="fill-rose-600" style={{ fontSize: 16.9, fontWeight: 800 }}>
+            E<tspan dy={3} style={{ fontSize: 13 }}>v</tspan>
           </text>
-          <text x={W - 16} y={40} textAnchor="end" className="fill-sky-600" style={{ fontSize: 11, fontWeight: 700 }}>
+          <text x={W - 16} y={40} textAnchor="end" className="fill-sky-600" style={{ fontSize: 14.3, fontWeight: 700 }}>
             פס הולכה
           </text>
-          <text x={W - 16} y={EV + 30} textAnchor="end" className="fill-rose-500" style={{ fontSize: 11, fontWeight: 700 }}>
+          <text x={W - 16} y={EV + 30} textAnchor="end" className="fill-rose-500" style={{ fontSize: 14.3, fontWeight: 700 }}>
             פס ערכיות
           </text>
 
@@ -147,12 +147,12 @@ export default function GenRecombDiagram() {
           {mode === 'srh' ? (
             <>
               <line x1={CX - 34} y1={ET} x2={CX + 34} y2={ET} stroke="#d97706" strokeWidth={2.5} strokeDasharray="6 3" />
-              <text x={CX - 42} y={ET + 4} textAnchor="end" className="fill-amber-600" style={{ fontSize: 12, fontWeight: 700 }}>
-                E<tspan dy={3} style={{ fontSize: 9 }}>t</tspan>
+              <text x={CX - 42} y={ET + 4} textAnchor="end" className="fill-amber-600" style={{ fontSize: 15.6, fontWeight: 700 }}>
+                E<tspan dy={3} style={{ fontSize: 11.7 }}>t</tspan>
               </text>
               <line x1={CX} y1={88} x2={CX} y2={ET - 13} stroke={c.stroke} strokeWidth={3} markerEnd={`url(#${c.marker})`} />
               <line x1={CX} y1={ET + 13} x2={CX} y2={EV - 22} stroke={c.stroke} strokeWidth={3} markerEnd={`url(#${c.marker})`} />
-              <text x={CX + 22} y={(ET + EV) / 2 + 4} className={c.energy} style={{ fontSize: 12, fontWeight: 700 }}>
+              <text x={CX + 22} y={(ET + EV) / 2 + 4} className={c.energy} style={{ fontSize: 15.6, fontWeight: 700 }}>
                 {c.energyText}
               </text>
             </>
@@ -163,7 +163,7 @@ export default function GenRecombDiagram() {
               ) : (
                 <line x1={CX} y1={116} x2={CX} y2={150} stroke={c.stroke} strokeWidth={3} markerEnd={`url(#${c.marker})`} />
               )}
-              <text x={CX + 22} y={(EC + EV) / 2 + 4} className={c.energy} style={{ fontSize: 12, fontWeight: 700 }}>
+              <text x={CX + 22} y={(EC + EV) / 2 + 4} className={c.energy} style={{ fontSize: 15.6, fontWeight: 700 }}>
                 {c.energyText}
               </text>
             </>
@@ -175,7 +175,7 @@ export default function GenRecombDiagram() {
           {/* partner hole (created in gen, consumed in recomb) */}
           <motion.g initial={{ opacity: HOLE[mode].opacity[0] }} animate={holeControls}>
             <circle cx={CX} cy={EV} r={9} fill="white" stroke="#f43f5e" strokeWidth={2.5} />
-            <text x={CX} y={EV + 4} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 12, fontWeight: 800 }}>
+            <text x={CX} y={EV + 4} textAnchor="middle" className="fill-rose-500" style={{ fontSize: 15.6, fontWeight: 800 }}>
               +
             </text>
           </motion.g>
@@ -184,13 +184,13 @@ export default function GenRecombDiagram() {
           <motion.g initial={{ y: ANIM[mode].y[0], opacity: 1 }} animate={eControls}>
             <circle cx={CX} cy={0} r={15} fill="#0ea5e9" opacity={0.22} />
             <circle cx={CX} cy={0} r={9.5} fill="#0ea5e9" />
-            <text x={CX} y={4} textAnchor="middle" fill="white" style={{ fontSize: 12, fontWeight: 800 }}>
+            <text x={CX} y={4} textAnchor="middle" fill="white" style={{ fontSize: 15.6, fontWeight: 800 }}>
               −
             </text>
           </motion.g>
 
           {/* caption */}
-          <text x={CX} y={H - 10} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 11 }}>
+          <text x={CX} y={H - 10} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 14.3 }}>
             {mode === 'gen'
               ? 'אלקטרון מטפס מ-Ev אל Ec — נוצר זוג אלקטרון–חור'
               : 'אלקטרון נופל אל Ev ומאחה עם חור — הזוג נעלם'}

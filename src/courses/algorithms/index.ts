@@ -1,6 +1,7 @@
 import type { CourseModule } from '@/core/platform/types'
 import { LECTURES, LECTURE_LIST } from './registry'
 import OverviewHub from './overview/OverviewHub'
+import Syllabus from './components/Syllabus'
 
 /**
  * The Algorithms course as a self-contained, lazily-loaded module. The platform
@@ -17,6 +18,7 @@ const algorithmsCourse: CourseModule = {
   LECTURES,
   LECTURE_LIST,
   Overview: OverviewHub,
+  syllabus: Syllabus,
 }
 
 export default algorithmsCourse

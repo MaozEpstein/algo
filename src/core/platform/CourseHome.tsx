@@ -6,7 +6,7 @@ import { OPEN_FORMULA_SHEET } from './types'
 /** A course's landing page: the lecture grid (+ optional overview hub card). */
 export default function CourseHome() {
   const { courseId, course } = useCourse()
-  const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet } = course
+  const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet, syllabus: Syllabus } = course
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6">
@@ -25,20 +25,23 @@ export default function CourseHome() {
           לא עוד קירות טקסט — כאן רואים את האלגוריתם רץ, צעד אחר צעד, עם הקוד שמתרחש לצידו.
           בחרו שיעור והתחילו.
         </p>
-        {hasFormulaSheet && (
-          <div className="mt-4 flex justify-center">
-            {/* the modal itself lives in CourseProvider (so it's reachable from any
-                page); this button just asks it to open — same as pressing Ctrl+Shift+S */}
-            <button
-              onClick={() => window.dispatchEvent(new Event(OPEN_FORMULA_SHEET))}
-              className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-100"
-            >
-              <span aria-hidden>📄</span>
-              דף נוסחאות
-              <kbd className="ms-1 rounded border border-violet-200 bg-white px-1.5 py-0.5 font-mono text-[11px] font-semibold text-violet-500" dir="ltr">
-                Ctrl+Shift+S
-              </kbd>
-            </button>
+        {(Syllabus || hasFormulaSheet) && (
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {Syllabus && <Syllabus />}
+            {hasFormulaSheet && (
+              // the modal itself lives in CourseProvider (so it's reachable from any
+              // page); this button just asks it to open — same as pressing Ctrl+Shift+S
+              <button
+                onClick={() => window.dispatchEvent(new Event(OPEN_FORMULA_SHEET))}
+                className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-100"
+              >
+                <span aria-hidden>📄</span>
+                דף נוסחאות
+                <kbd className="ms-1 rounded border border-violet-200 bg-white px-1.5 py-0.5 font-mono text-[11px] font-semibold text-violet-500" dir="ltr">
+                  Ctrl+Shift+S
+                </kbd>
+              </button>
+            )}
           </div>
         )}
       </header>
