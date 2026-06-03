@@ -77,6 +77,23 @@ export function junctionState(
   return { Vbi, dn, dp, d, Emax }
 }
 
+// ---- reverse problems (recover doping from a measured V_bi / width) --------
+/**
+ * One-sided junction (N_A ≫ N_D): the depletion sits almost entirely in the
+ * lightly-doped side, so d ≈ √(2ε_s V_bi / q N_D). Inverting recovers the
+ * LIGHT-side doping from the measured built-in voltage and depletion width.
+ * Accuracy is of order N_D/N_A (negligible for a strongly one-sided junction).
+ */
+export const dopingFromWidth = (epsR: number, Vbi: number, dCm: number): number =>
+  (2 * epsR * EPS0 * Vbi) / (Q * dCm * dCm)
+
+/**
+ * Recover the remaining doping from V_bi and one known side, via
+ * V_bi = (kT/q)·ln(N_A N_D / n_i²)  ⇒  N = (n_i² / N_known)·e^{qV_bi/kT}.
+ */
+export const dopingFromVbi = (Vbi: number, nKnown: number, ni: number, T = 300): number =>
+  ((ni * ni) / nKnown) * Math.exp(Vbi / thermalVoltage(T))
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

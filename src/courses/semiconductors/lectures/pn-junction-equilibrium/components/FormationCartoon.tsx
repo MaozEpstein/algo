@@ -37,7 +37,7 @@ export default function FormationCartoon({ stage }: { stage: number }) {
   const carrierX = (s: Site) => s.x + (s.side === 'p' ? CARRIER_DX : -CARRIER_DX)
 
   return (
-    <div className="ltr w-full overflow-x-auto" dir="ltr">
+    <div className="ltr w-full" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
         {/* region tints */}
         <rect x={0} y={22} width={MID} height={H - 56} rx={10} fill="#fff1f2" />

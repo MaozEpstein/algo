@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { MATERIALS, builtInVoltage, junctionState, niAt, thermalVoltage } from '../../lib/junction'
+import {
+  MATERIALS,
+  builtInVoltage,
+  dopingFromVbi,
+  dopingFromWidth,
+  junctionState,
+  niAt,
+  thermalVoltage,
+} from '../../lib/junction'
 import { pnJunctionEqLecture } from './index'
 import { LECTURE_LIST } from '../../registry'
 
@@ -59,6 +67,17 @@ describe('PN junction physics', () => {
     const cool = junctionState(1e16, 1e16, MATERIALS.Si, 0, 300)
     const hot = junctionState(1e16, 1e16, MATERIALS.Si, 0, 400)
     expect(hot.Vbi).toBeLessThan(cool.Vbi)
+  })
+
+  it('reverse one-sided p⁺n: recover N_D from the width and N_A from V_bi', () => {
+    // forward: a strongly one-sided junction, then recover its doping back
+    const s = junctionState(1e18, 1e15, MATERIALS.Si)
+    const ndRec = dopingFromWidth(MATERIALS.Si.epsR, s.Vbi, s.d)
+    expect(ndRec).toBeGreaterThan(0.9e15)
+    expect(ndRec).toBeLessThan(1.1e15)
+    const naRec = dopingFromVbi(s.Vbi, ndRec, MATERIALS.Si.ni)
+    expect(naRec).toBeGreaterThan(0.9e18)
+    expect(naRec).toBeLessThan(1.1e18)
   })
 })
 

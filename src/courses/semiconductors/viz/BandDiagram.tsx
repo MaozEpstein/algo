@@ -65,7 +65,7 @@ export default function BandDiagram({ state, Na, mat, T = 300 }: Props) {
   const x0 = sx(0)
 
   return (
-    <div className="ltr w-full overflow-x-auto" dir="ltr">
+    <div className="ltr w-full" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
         {/* depletion region (data-driven: −d_p … +d_n) — violet so it stands out */}
         <rect x={xL} y={TOP - 6} width={Math.max(xR - xL, 0)} height={drawH + 12} fill="#ede9fe" opacity={0.75} />

@@ -88,7 +88,9 @@ function LectureHeader({ lecture }: { lecture: LectureModule }) {
         {(lecture.glossary?.length || lecture.formulas?.length) && (
           <span className="ms-auto flex flex-wrap gap-2">
             {lecture.formulas && lecture.formulas.length > 0 && <FormulasButton formulas={lecture.formulas} />}
-            {lecture.glossary && lecture.glossary.length > 0 && <GlossaryButton terms={lecture.glossary} />}
+            {lecture.glossary && lecture.glossary.length > 0 && (
+              <GlossaryButton terms={lecture.glossary} symbols={lecture.symbols} />
+            )}
           </span>
         )}
       </div>

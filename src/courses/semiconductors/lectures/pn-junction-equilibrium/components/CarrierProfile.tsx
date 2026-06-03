@@ -56,7 +56,7 @@ function Pow10({ x, y, exp }: { x: number; y: number; exp: number }) {
 
 export default function CarrierProfile() {
   return (
-    <div className="ltr w-full overflow-x-auto" dir="ltr">
+    <div className="ltr w-full" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
         {/* depletion strip */}
         <rect x={xOf(0.4)} y={mT} width={xOf(0.6) - xOf(0.4)} height={plotH} fill="#ede9fe" opacity={0.7} />

@@ -262,6 +262,15 @@ export interface FormulaItem {
   note?: string
 }
 
+/** One entry in a lecture's "new variables" dictionary — a symbol (LaTeX) + a
+ *  one-line description (may use $…$ inline math) and an optional unit. Surfaced
+ *  as a "משתנים" tab alongside the glossary concepts. */
+export interface SymbolItem {
+  sym: string
+  he: string
+  unit?: string
+}
+
 /** The single contract the shell knows about. Adding a lecture = implement this. */
 export interface LectureModule {
   id: string
@@ -289,6 +298,9 @@ export interface LectureModule {
   glossary?: GlossaryTerm[]
   /** Key formulas of this lecture — surfaced via a "נוסחאות מרכזיות" button. */
   formulas?: FormulaItem[]
+  /** New variables/symbols introduced in this lecture — a quick-reference
+   *  dictionary shown as a "משתנים" tab inside the "מושגי יסוד" modal. */
+  symbols?: SymbolItem[]
 }
 
 export type LearningMode = 'guided' | 'summary'

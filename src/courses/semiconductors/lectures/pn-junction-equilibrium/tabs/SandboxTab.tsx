@@ -34,6 +34,17 @@ const PRESETS: Preset[] = [
   { labelHe: 'סימום קל', na: 15, nd: 15, noteHe: 'סימום נמוך בשני הצדדים — אזור מחסור רחב ושדה חלש.' },
 ]
 
+// typical orders of magnitude for a moderately-doped Si junction at 300K — a
+// reference table so learners can sanity-check the live readouts above
+const TYPICAL: { he: string; tex: string; val: string }[] = [
+  { he: 'מתח בנוי', tex: 'V_{bi}', val: '0.6\\!-\\!0.9\\,\\mathrm{V}' },
+  { he: 'רוחב המחסור', tex: 'd', val: '0.1\\!-\\!1\\,\\mathrm{\\mu m}' },
+  { he: 'שדה שיא', tex: 'E_{max}', val: '10^{4}\\!-\\!10^{5}\\,\\mathrm{V/cm}' },
+  { he: 'קיבול', tex: 'C/A', val: '\\sim\\!1\\!-\\!100\\,\\mathrm{nF/cm^2}' },
+  { he: 'ריכוז אינטרינסי', tex: 'n_i', val: '1.5\\times10^{10}\\,\\mathrm{cm^{-3}}' },
+  { he: 'מתח תרמי', tex: 'kT/q', val: '25.85\\,\\mathrm{mV}' },
+]
+
 function Readout({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <div className={`rounded-xl border px-3 py-2 text-center ${accent}`}>
@@ -232,6 +243,26 @@ export default function SandboxTab() {
               <JunctionElectrostatics dn={state.dn} dp={state.dp} Emax={state.Emax} Vbi={state.Vbi} Na={Na} Nd={Nd} />
             </div>
           </div>
+        </div>
+
+      </Panel>
+
+      {/* its own collapsible panel — a reference table to sanity-check the live readouts */}
+      <Panel title="📐 סדרי-גודל טיפוסיים — Si, 300K">
+        <p className="leading-relaxed text-slate-600">
+          ערכים מקורבים לצומת צורן בסימום בינוני — להשוואה מול המספרים החיים שבארגז החול.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {TYPICAL.map((t) => (
+            <div key={t.he} className="rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-center">
+              <span className="block text-[11px] text-slate-400">
+                <span dir="ltr"><Tex>{t.tex}</Tex></span> · {t.he}
+              </span>
+              <span className="mt-0.5 block font-mono text-sm font-bold text-slate-700" dir="ltr">
+                <Tex>{t.val}</Tex>
+              </span>
+            </div>
+          ))}
         </div>
       </Panel>
     </div>

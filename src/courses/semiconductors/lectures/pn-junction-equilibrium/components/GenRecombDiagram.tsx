@@ -100,7 +100,7 @@ export default function GenRecombDiagram() {
         </button>
       </div>
 
-      <div className="ltr w-full overflow-x-auto" dir="ltr">
+      <div className="ltr w-full" dir="ltr">
         <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
           <defs>
             <linearGradient id="gr-cb" x1="0" y1="0" x2="0" y2="1">

@@ -66,7 +66,7 @@ export default function JunctionElectrostatics({ dn, dp, Emax, Vbi, Na, Nd, reve
   ]
 
   return (
-    <div className="ltr w-full overflow-x-auto" dir="ltr">
+    <div className="ltr w-full" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
         {/* each of ρ / E / V sits on its own soft rounded panel, so the three
             graphs read as separate plots instead of blurring into one block */}

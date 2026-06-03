@@ -200,6 +200,46 @@ export default function IntroTab() {
         </p>
       </Panel>
 
+      <Panel title="מאיפה מגיע המתח הבנוי? — גזירה קצרה">
+        <p className="leading-relaxed text-slate-600">
+          את הנוסחה כבר ראינו; הנה מאיפה היא נובעת — ישירות מ<b>יחס בולצמן</b> וממה ש-<Tex>{'E_F'}</Tex>{' '}
+          אחידה בשיווי משקל. בארבעה צעדים:
+        </p>
+        <ol className="mt-3 list-decimal space-y-3 ps-6 leading-relaxed text-slate-600 marker:font-bold marker:text-sky-500">
+          <li>
+            ריכוז האלקטרונים בכל צד נקבע ממרחק <Tex>{'E_F'}</Tex> מהרמה האינטרינסית המקומית{' '}
+            <Tex>{'E_i'}</Tex> (יחס בולצמן):
+            <div className="mt-1.5 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2.5 text-center">
+              <Tex block>{'n_{n0} = n_i\\,e^{(E_F-E_{i,n})/kT}, \\qquad n_{p0} = n_i\\,e^{(E_F-E_{i,p})/kT}'}</Tex>
+            </div>
+          </li>
+          <li>
+            מחלקים את השניים — <Tex>{'E_F'}</Tex> ה<b>אחידה</b> מצטמצמת, ונשאר רק הכיפוף בין הצדדים, שהוא
+            בדיוק <Tex>{'qV_{bi}'}</Tex>:
+            <div className="mt-1.5 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2.5 text-center">
+              <Tex block>{'\\frac{n_{n0}}{n_{p0}} = e^{(E_{i,p}-E_{i,n})/kT} = e^{qV_{bi}/kT}'}</Tex>
+            </div>
+          </li>
+          <li>
+            מציבים את ריכוזי שיווי-המשקל <Tex>{'n_{n0}=N_D'}</Tex> ו-<Tex>{'n_{p0}=n_i^2/N_A'}</Tex>{' '}
+            (נושא רוב מול מיעוט):
+            <div className="mt-1.5 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2.5 text-center">
+              <Tex block>{'e^{qV_{bi}/kT} = \\frac{N_D}{\\,n_i^2/N_A\\,} = \\frac{N_A N_D}{n_i^2}'}</Tex>
+            </div>
+          </li>
+          <li>
+            לוקחים <Tex>{'\\ln'}</Tex> ומבודדים את <Tex>{'V_{bi}'}</Tex> — וקיבלנו בדיוק את הנוסחה:
+          </li>
+        </ol>
+        <div className="mt-2 rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-center">
+          <Tex block>{'V_{bi} = \\frac{kT}{q}\\,\\ln\\!\\left(\\frac{N_A N_D}{n_i^2}\\right)'}</Tex>
+        </div>
+        <p className="mt-2 text-sm leading-relaxed text-slate-500">
+          אותה גזירה גם מסבירה את <b>החסם העליון</b>: <Tex>{'V_{bi}'}</Tex> לא יכול לעבור את{' '}
+          <Tex>{'E_g/q'}</Tex>, כי הכיפוף <Tex>{'qV_{bi}'}</Tex> מוגבל לרוחב הפער.
+        </p>
+      </Panel>
+
       <Panel title="גנרציה ורקומבינציה">
         <p className="leading-relaxed text-slate-600">
           נושאים לא רק זזים (דיפוזיה/סחיפה) — הם גם <b>נוצרים</b> ו<b>נעלמים</b>:
