@@ -21,12 +21,19 @@ export interface Material {
   epsR: number
   /** band gap E_g (eV). */
   eg: number
+  /** electron / hole mobilities (cm²/V·s) — set the diffusion coefficients via Einstein. */
+  mun: number
+  mup: number
+  /** minority-carrier lifetimes (s) — set the diffusion lengths L=√(Dτ). */
+  taun: number
+  taup: number
 }
 
+// Representative textbook values (300K). Mobilities cm²/V·s, lifetimes s.
 export const MATERIALS: Record<Material['key'], Material> = {
-  Si: { key: 'Si', he: 'סיליקון · Si', ni: 1.5e10, epsR: 11.8, eg: 1.12 },
-  Ge: { key: 'Ge', he: 'גרמניום · Ge', ni: 2.4e13, epsR: 16, eg: 0.67 },
-  GaAs: { key: 'GaAs', he: 'גליום-ארסניד · GaAs', ni: 1.8e6, epsR: 13.1, eg: 1.42 },
+  Si: { key: 'Si', he: 'סיליקון · Si', ni: 1.5e10, epsR: 11.8, eg: 1.12, mun: 1350, mup: 480, taun: 1e-6, taup: 1e-6 },
+  Ge: { key: 'Ge', he: 'גרמניום · Ge', ni: 2.4e13, epsR: 16, eg: 0.67, mun: 3900, mup: 1900, taun: 1e-3, taup: 1e-3 },
+  GaAs: { key: 'GaAs', he: 'גליום-ארסניד · GaAs', ni: 1.8e6, epsR: 13.1, eg: 1.42, mun: 8500, mup: 400, taun: 1e-8, taup: 1e-8 },
 }
 export const MATERIAL_LIST: Material[] = [MATERIALS.Si, MATERIALS.Ge, MATERIALS.GaAs]
 
@@ -105,6 +112,41 @@ export const dopingFromVbi = (Vbi: number, nKnown: number, ni: number, T = 300):
 export const minorityAtEdge = (n0: number, Va: number, T = 300): number =>
   n0 * Math.exp(Va / thermalVoltage(T))
 
+// ---- ideal diode (Shockley) — lecture 2 ------------------------------------
+/** Einstein relation: diffusion coefficient D = (kT/q)·μ (cm²/s). */
+export const diffusionCoeff = (mu: number, T = 300): number => thermalVoltage(T) * mu
+
+/** Minority diffusion length L = √(Dτ) (cm). */
+export const diffusionLength = (D: number, tau: number): number => Math.sqrt(D * tau)
+
+export interface DiodeCurrents {
+  Js: number // saturation current density (A/cm²)
+  JsP: number // hole contribution (injection into the n-side)
+  JsN: number // electron contribution (injection into the p-side)
+  J: number // total current density at bias Va (A/cm²)
+}
+
+/**
+ * Ideal-diode (Shockley) currents per unit area for an abrupt junction:
+ *   J_S = q·n_i²·(D_p/(L_p·N_D) + D_n/(L_n·N_A)),   J = J_S·(e^{V_A/V_T} − 1).
+ * J_p (holes) is injected into the n-side, J_n (electrons) into the p-side; the
+ * lightly-doped side dominates. Diffusion only (no recombination in the
+ * depletion region) — the ideal model. Saturation current rises steeply with T
+ * (∝ n_i²).
+ */
+export function diodeCurrents(Na: number, Nd: number, mat: Material, Va = 0, T = 300): DiodeCurrents {
+  const ni = niAt(mat, T)
+  const Dp = diffusionCoeff(mat.mup, T)
+  const Dn = diffusionCoeff(mat.mun, T)
+  const Lp = diffusionLength(Dp, mat.taup)
+  const Ln = diffusionLength(Dn, mat.taun)
+  const JsP = (Q * ni * ni * Dp) / (Lp * Nd) // holes into n-side
+  const JsN = (Q * ni * ni * Dn) / (Ln * Na) // electrons into p-side
+  const Js = JsP + JsN
+  const J = Js * (Math.exp(Va / thermalVoltage(T)) - 1)
+  return { Js, JsP, JsN, J }
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4
@@ -127,6 +169,36 @@ export const fmtField = (vPerCm: number): string => `${(vPerCm / 1e3).toFixed(1)
 
 /** Format a voltage (V) with 3 significant places. */
 export const fmtVolt = (v: number): string => `${v.toFixed(3)} V`
+
+/** Format a current density (A/cm²) — scientific notation spans the huge range
+ *  from reverse saturation (~10⁻¹¹) to forward (~10¹). */
+export function fmtCurrentDensity(j: number): string {
+  if (j === 0) return '0 A/cm²'
+  const a = Math.abs(j)
+  const exp = Math.floor(Math.log10(a))
+  const mant = a / 10 ** exp
+  const sign = j < 0 ? '−' : ''
+  return `${sign}${mant.toFixed(1)}×10^${exp} A/cm²`
+}
+
+/**
+ * Visualization helper — a *perceptual* conduction level in [0,1] for the diode
+ * circuit animation (particle count / speed / glow). The real current spans ~13
+ * decades, so we map |J| logarithmically between two reference currents:
+ *   Jlo = 1e-6 A/cm² ("barely conducting")  →  0
+ *   Jhi = 1e2  A/cm² ("fully on")            →  1
+ * Reverse and equilibrium fall below Jlo → 0 (blocked); forward ramps smoothly
+ * to 1. Material-aware through diodeCurrents (a smaller-gap material lights up at
+ * a lower V_A). NOT a physical quantity — purely for driving the animation.
+ */
+export function conductionLevel(Na: number, Nd: number, mat: Material, Va: number, T = 300): number {
+  const J = diodeCurrents(Na, Nd, mat, Va, T).J
+  if (J <= 0) return 0 // reverse / equilibrium → blocked
+  const Jlo = 1e-6
+  const Jhi = 1e2
+  const lvl = (Math.log10(J) - Math.log10(Jlo)) / (Math.log10(Jhi) - Math.log10(Jlo))
+  return Math.max(0, Math.min(1, lvl))
+}
 
 /** Format a carrier concentration (cm⁻³) as a plain "m×10^e" string (readouts). */
 export function fmtCarrier(n: number): string {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
@@ -8,6 +8,7 @@ import Readout from '../components/Readout'
 import ReverseIVKnee from '../components/ReverseIVKnee'
 import AvalancheDiagram from '../components/AvalancheDiagram'
 import ZenerTunnelingDiagram from '../components/ZenerTunnelingDiagram'
+import StepFlow from '../../../components/StepFlow'
 import { MATERIALS, fmtField, fmtLength, fmtVolt, junctionState } from '../../../lib/junction'
 
 const NA = 1e16
@@ -33,14 +34,27 @@ export default function ReverseTab() {
         <p className="leading-relaxed text-slate-600">
           בממתח אחורי (<Tex>{'V_A<0'}</Tex>) המתח החיצוני <b>מחזק</b> את השדה הבנוי. השרשרת מתהפכת:
         </p>
-        <ol className="mt-3 list-decimal space-y-2 ps-6 leading-relaxed text-slate-600 marker:font-bold marker:text-sky-500">
-          <li>מחסום הפוטנציאל <b>עולה</b> ל-<Tex>{'q(V_{bi}+|V_A|)'}</Tex>.</li>
-          <li>אזור המחסור <b>מתרחב</b> (צריך לחשוף יותר מטען), והשדה הבנוי <b>מתחזק</b>.</li>
-          <li>הדיפוזיה כמעט נחסמת; נשאר רק זרם <b>מיעוט</b> זעיר שנסחף — והוא כמעט <b>אינו תלוי</b> במתח (רווי).</li>
-          <li>
-            בממתח אחורי גבוה מאוד מתרחשת <b>פריצה</b> (Breakdown) והזרם מזנק — ראו בהרחבה למטה.
-          </li>
-        </ol>
+        <StepFlow
+          tone="reverse"
+          steps={[
+            {
+              title: <>המחסום <b>עולה</b></>,
+              body: <>ל-<Tex>{'q(V_{bi}+|V_A|)'}</Tex>.</>,
+            },
+            {
+              title: <>אזור המחסור <b>מתרחב</b>, והשדה הבנוי <b>מתחזק</b></>,
+              body: <>צריך לחשוף יותר מטען, ולכן <Tex>{'d'}</Tex> גדל ו-<Tex>{'E_{max}'}</Tex> עולה.</>,
+            },
+            {
+              title: <>הדיפוזיה כמעט <b>נחסמת</b></>,
+              body: <>נשאר רק זרם <b>מיעוט</b> זעיר שנסחף — כמעט <b>אינו תלוי</b> במתח.</>,
+            },
+          ]}
+          outcome={{ label: 'זרם דליפה זעיר — רווי', sub: 'כמעט בלתי תלוי במתח' }}
+        />
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          ובממתח אחורי <b>גבוה מאוד</b> נשברת השרשרת הזו — מתרחשת <b>פריצה</b> (Breakdown) והזרם מזנק (בהרחבה למטה).
+        </p>
       </Panel>
 
       <Panel title="הזיזו את הממתח האחורי">
@@ -100,10 +114,34 @@ export default function ReverseTab() {
           <div className="mt-2 rounded-xl border border-slate-200 bg-white p-2">
             <AvalancheDiagram />
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            בשדה החזק נושא מואץ ו<b>מיינן אטום בהתנגשות</b> → נוצר זוג אלקטרון–חור, והנושאים החדשים מייננים
-            בתורם (<b>כפל-מפולת</b>). אופייני לצמתים <b>מסוממים קלות</b> (מחסור רחב), עם <Tex>{'V_{BR}'}</Tex>{' '}
-            <b>גבוה</b> ומקדם-טמפרטורה <b>חיובי</b>.
+
+          {/* the chain reaction as a flowchart with a multiplication loop */}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {['שדה חזק', 'נושא צובר אנרגיה', 'התנגשות מְיַינֶנֶת', 'זוג אלקטרון-חור נוסף'].map((s, i) => (
+              <Fragment key={i}>
+                <span className="rounded-lg border border-amber-200 bg-white px-2.5 py-1 text-xs font-semibold text-amber-800">{s}</span>
+                <span className="text-base font-bold text-amber-400" aria-hidden>←</span>
+              </Fragment>
+            ))}
+            <span className="rounded-lg border border-amber-300 bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">↺ כל זוג חדש מואץ ומיינן שוב</span>
+            <span className="text-base font-bold text-rose-400" aria-hidden>←</span>
+            <span className="rounded-lg bg-rose-500 px-3 py-1 text-sm font-bold text-white shadow-sm">מפולת — הזרם מזנק</span>
+          </div>
+
+          {/* exponential multiplication */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="shrink-0 text-xs font-medium text-slate-500">מספר הנושאים מוכפל שוב ושוב (גידול מעריכי):</span>
+            <span className="ltr flex items-center gap-1.5 font-mono text-sm font-bold text-amber-700" dir="ltr">
+              <span className="rounded bg-amber-100 px-1.5 py-0.5">1</span>→
+              <span className="rounded bg-amber-100 px-2 py-0.5">2</span>→
+              <span className="rounded bg-amber-200 px-2.5 py-0.5">4</span>→
+              <span className="rounded bg-amber-300 px-3 py-0.5">8</span>→
+              <span className="text-amber-500">…</span>
+            </span>
+          </div>
+
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">
+            אופייני לצמתים <b>מסוממים קלות</b> (מחסור רחב), עם <Tex>{'V_{BR}'}</Tex> <b>גבוה</b> ומקדם-טמפרטורה <b>חיובי</b>.
           </p>
         </div>
 

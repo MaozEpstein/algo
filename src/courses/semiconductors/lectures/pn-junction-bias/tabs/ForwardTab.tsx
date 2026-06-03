@@ -5,6 +5,7 @@ import Slider from '../../../components/Slider'
 import JunctionElectrostatics from '../../../viz/JunctionElectrostatics'
 import BiasedBandDiagram from '../components/BiasedBandDiagram'
 import Readout from '../components/Readout'
+import StepFlow from '../../../components/StepFlow'
 import { MATERIALS, fmtField, fmtLength, fmtVolt, junctionState } from '../../../lib/junction'
 
 const NA = 1e16
@@ -29,12 +30,24 @@ export default function ForwardTab() {
         <p className="leading-relaxed text-slate-600">
           בממתח קדמי (<Tex>{'V_A>0'}</Tex>) המתח החיצוני <b>מתנגד</b> לשדה הבנוי. התוצאה משרשרת:
         </p>
-        <ol className="mt-3 list-decimal space-y-2 ps-6 leading-relaxed text-slate-600 marker:font-bold marker:text-amber-500">
-          <li>מחסום הפוטנציאל <b>יורד</b> מ-<Tex>{'qV_{bi}'}</Tex> ל-<Tex>{'q(V_{bi}-V_A)'}</Tex>.</li>
-          <li>אזור המחסור <b>מצטמצם</b> (פחות מטען חשוף נדרש), והשדה הבנוי <b>נחלש</b>.</li>
-          <li>האיזון נשבר: <b>הדיפוזיה גוברת</b> על הסחיפה, ונושאי רוב חוצים את הצומת בכמות גדולה.</li>
-          <li>נושאים אלה הופכים לנושאי <b>מיעוט מוזרקים</b> בצד השני — וזה זרם הדיודה (בהמשך).</li>
-        </ol>
+        <StepFlow
+          tone="forward"
+          steps={[
+            {
+              title: <>המחסום <b>יורד</b></>,
+              body: <>מ-<Tex>{'qV_{bi}'}</Tex> ל-<Tex>{'q(V_{bi}-V_A)'}</Tex>.</>,
+            },
+            {
+              title: <>אזור המחסור <b>מצטמצם</b>, והשדה הבנוי <b>נחלש</b></>,
+              body: <>נדרש פחות מטען חשוף, ולכן <Tex>{'d'}</Tex> קטן ו-<Tex>{'E_{max}'}</Tex> יורד.</>,
+            },
+            {
+              title: <>האיזון נשבר — <b>הדיפוזיה גוברת</b> על הסחיפה</>,
+              body: <>המחסום הנמוך מאפשר לנושאי <b>רוב</b> לחצות את הצומת בכמות גדולה.</>,
+            },
+          ]}
+          outcome={{ label: 'הזרקת נושאי מיעוט — זרם הדיודה', sub: 'הנושאים שחצו הם מיעוט מוזרק בצד השני (שיעור 2)' }}
+        />
       </Panel>
 
       <Panel title="הזיזו את הממתח הקדמי">

@@ -4,6 +4,7 @@ import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import FormationCartoon from '../components/FormationCartoon'
 import CarrierProfile from '../components/CarrierProfile'
+import FeedbackLoopDiagram from '../components/FeedbackLoopDiagram'
 
 const STEPS: { titleHe: string; bodyHe: string }[] = [
   {
@@ -82,6 +83,17 @@ export default function PnJunctionTab() {
           >
             הבא ←
           </button>
+        </div>
+      </Panel>
+
+      <Panel title="למה זה נעצר מעצמו? — לולאת משוב שלילי">
+        <p className="leading-relaxed text-slate-600">
+          אותה <b>דיפוזיה</b> שמתחילה את התהליך גם <b>בולמת</b> אותו: ככל שנושאים חוצים, נחשף יותר מטען קבוע,
+          ה<b>שדה הבנוי</b> גדל, וה<b>סחיפה</b> שהוא מפעיל מתנגדת לדיפוזיה — עד שהיא מאזנת אותה בדיוק. זוהי{' '}
+          <b>לולאת משוב שלילי</b> שמתכנסת מעצמה לשיווי-משקל (ולכן אזור המחסור מתייצב ברוחב מסוים ולא גדל בלי-גבול).
+        </p>
+        <div className="mt-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3">
+          <FeedbackLoopDiagram />
         </div>
       </Panel>
 
