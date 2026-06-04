@@ -75,6 +75,43 @@ export default function SandboxTab() {
           עם <b>ממתח קדמי/אחורי</b> מקבלים <b>8 מצבים</b>. בחרו מצב, או גררו את <Tex>{'\\varphi_m,\\varphi_s'}</Tex> והממתח.
         </p>
 
+        {/* rule-of-thumb callout — header on its own line, the rules below */}
+        <div className="mt-3 rounded-xl border border-violet-100 bg-violet-50/60 px-4 py-3">
+          <p className="mb-2 text-sm font-semibold text-violet-700">💡 כללי אצבע</p>
+          <ol className="list-decimal space-y-2 ps-6 text-sm leading-relaxed text-slate-600 marker:font-bold marker:text-violet-500">
+            <li>
+              <b>כיוון הכיפוף</b> נקבע מ-<Tex>{'\\mathrm{sign}(\\varphi_m-\\varphi_s)'}</Tex> בלבד (לא תלוי בטיפוס):
+              <span className="mt-1.5 inline-flex flex-wrap items-center gap-2 align-middle">
+                <span className="rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 ring-1 ring-slate-200"><Tex>{'\\varphi_m>\\varphi_s'}</Tex></span>
+                <span className="text-lg font-bold leading-none text-violet-500" aria-hidden>←</span>
+                <span className="rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 ring-1 ring-slate-200">מעלה ↑</span>
+                <span className="text-slate-300" aria-hidden>·</span>
+                <span className="rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 ring-1 ring-slate-200"><Tex>{'\\varphi_m<\\varphi_s'}</Tex></span>
+                <span className="text-lg font-bold leading-none text-violet-500" aria-hidden>←</span>
+                <span className="rounded-full bg-white px-2.5 py-1 font-medium text-slate-600 ring-1 ring-slate-200">מטה ↓</span>
+              </span>
+            </li>
+            <li>
+              <b>מי מיישר תלוי בטיפוס</b>, והקריטריון <b>מתהפך</b>: <b>n</b> מיישר כש-<Tex>{'\\varphi_m>\\varphi_s'}</Tex>,
+              ואילו <b>p</b> מיישר כש-<Tex>{'\\varphi_m<\\varphi_s'}</Tex>.
+            </li>
+            <li>
+              <b>שני המחסומים משלימים ל-</b><Tex>{'E_g'}</Tex>: <Tex>{'\\varphi_{Bn}=\\varphi_m-\\chi'}</Tex> ו-<Tex>{'\\varphi_{Bp}=E_g-\\varphi_{Bn}'}</Tex>.
+              מתכת עם <Tex>{'\\varphi_m'}</Tex> גבוה ⇐ מחסום-אלקטרונים גבוה אך מחסום-חורים נמוך.
+            </li>
+            <li>
+              <b>גובה המחסום קבוע במתח</b> — רק הכיפוף מצד-המל"מ <Tex>{'q(V_{bi}-V_A)'}</Tex> משתנה: קדמי <b>מקטין</b>,
+              אחורי <b>מגדיל</b> (לכן הזרם האחורי רווי).
+            </li>
+            <li>
+              <b>אוהמי = ליניארי וסימטרי</b>: אין מחסום, הזרם זורם חופשי לשני הכיוונים והממתח רק מסיט את מפלס-המתכת ב-<Tex>{'qV_A'}</Tex>.
+            </li>
+            <li>
+              <b>להפוך מיישר לאוהמי</b> בלי להחליף מתכת — מסממים <b>n⁺</b>: המחסום נשאר אך נעשה <b>דק</b> והאלקטרונים <b>מנהרים</b> דרכו.
+            </li>
+          </ol>
+        </div>
+
         <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
           <div className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-slate-600">
             <span aria-hidden>🎛️</span> 8 מצבים בסיסיים (4 × קדמי/אחורי)
