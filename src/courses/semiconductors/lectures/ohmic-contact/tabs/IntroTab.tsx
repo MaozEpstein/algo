@@ -53,10 +53,23 @@ export default function IntroTab() {
       </Panel>
 
       <Panel title="אוהמי מול מיישר — במבט אחד">
-        <p className="leading-relaxed text-slate-600">
-          ההבדל נראה מיד באופיין: מגע <b>מיישר</b> מעביר זרם <b>בכיוון אחד</b> (האקספוננציאלי של שוטקי), בעוד מגע
-          <b> אוהמי</b> הוא <b>קו ישר דרך הראשית</b> — מוליך חופשי לשני הכיוונים, עם התנגדות נמוכה וקבועה.
-        </p>
+        <p className="leading-relaxed text-slate-600">ההבדל נראה מיד באופיין <Tex>{'I\\text{–}V'}</Tex>:</p>
+        <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+          <div className="flex items-start gap-3 rounded-xl border-s-4 border-violet-400 bg-violet-50/50 px-4 py-3">
+            <span className="mt-0.5 text-lg leading-none" aria-hidden>⇥</span>
+            <p className="text-sm leading-relaxed text-slate-700">
+              <b className="text-violet-700">מיישר</b> — מעביר זרם <b>בכיוון אחד</b> בלבד.
+              <span className="mt-0.5 block text-slate-500">האקספוננציאלי של שוטקי.</span>
+            </p>
+          </div>
+          <div className="flex items-start gap-3 rounded-xl border-s-4 border-emerald-400 bg-emerald-50/50 px-4 py-3">
+            <span className="mt-0.5 text-lg leading-none" aria-hidden>↔</span>
+            <p className="text-sm leading-relaxed text-slate-700">
+              <b className="text-emerald-700">אוהמי</b> — <b>קו ישר דרך הראשית</b>, לשני הכיוונים.
+              <span className="mt-0.5 block text-slate-500">התנגדות נמוכה וקבועה.</span>
+            </p>
+          </div>
+        </div>
         <div className="mt-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3">
           <p className="mb-1 text-center text-xs font-semibold text-slate-400">
             <span className="text-slate-500">אופיין I–V · זרם–מתח</span> — אוהמי (ירוק, ליניארי) מול מיישר (סגול)

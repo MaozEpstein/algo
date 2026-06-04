@@ -35,11 +35,17 @@ export default function OhmicVsRectifyingIV() {
 
         {/* ohmic — straight, symmetric */}
         <path d={ohmic} fill="none" stroke="#10b981" strokeWidth={2.75} strokeLinecap="round" />
-        <text x={cx + AX - 4} y={cy - k * AX + 14} textAnchor="end" className="fill-emerald-600" style={{ fontSize: 12, fontWeight: 700 }}>אוהמי (ליניארי)</text>
-
         {/* rectifying — one-way diode */}
         <path d={'M ' + rectPts.join(' L ')} fill="none" stroke="#7c3aed" strokeWidth={2.75} strokeLinejoin="round" />
-        <text x={cx + AX - 4} y={cy - AY + 26} textAnchor="end" className="fill-violet-600" style={{ fontSize: 12, fontWeight: 700 }}>מיישר (שוטקי)</text>
+
+        {/* legend — top-left (empty Q2), off the curves */}
+        <g>
+          <rect x={cx - AX + 6} y={26} width={166} height={42} rx={7} fill="#ffffff" opacity={0.92} stroke="#e2e8f0" />
+          <text x={cx - AX + 134} y={47} textAnchor="end" className="fill-emerald-700" style={{ fontSize: 12, fontWeight: 700 }}>אוהמי (ליניארי)</text>
+          <line x1={cx - AX + 142} y1={43} x2={cx - AX + 160} y2={43} stroke="#10b981" strokeWidth={3.5} strokeLinecap="round" />
+          <text x={cx - AX + 134} y={62} textAnchor="end" className="fill-violet-700" style={{ fontSize: 12, fontWeight: 700 }}>מיישר (שוטקי)</text>
+          <line x1={cx - AX + 142} y1={58} x2={cx - AX + 160} y2={58} stroke="#7c3aed" strokeWidth={3.5} strokeLinecap="round" />
+        </g>
       </svg>
     </div>
   )

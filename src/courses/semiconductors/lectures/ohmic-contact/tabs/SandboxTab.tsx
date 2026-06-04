@@ -116,17 +116,21 @@ export default function SandboxTab() {
           <div className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-slate-600">
             <span aria-hidden>🎛️</span> 8 מצבים בסיסיים (4 × קדמי/אחורי)
           </div>
-          <div className="flex flex-wrap gap-2">
-            {PRESETS.map((p) => (
-              <button
-                key={p.labelHe}
-                onClick={() => applyPreset(p)}
-                className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
-                  activePreset === p.labelHe ? 'border-violet-500 bg-violet-500 text-white shadow' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                }`}
-              >
-                {p.labelHe}
-              </button>
+          <div className="flex flex-col gap-2">
+            {[PRESETS.slice(0, 4), PRESETS.slice(4, 8)].map((row, ri) => (
+              <div key={ri} className="flex flex-wrap gap-2">
+                {row.map((p) => (
+                  <button
+                    key={p.labelHe}
+                    onClick={() => applyPreset(p)}
+                    className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+                      activePreset === p.labelHe ? 'border-violet-500 bg-violet-500 text-white shadow' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    {p.labelHe}
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
           {note && (
