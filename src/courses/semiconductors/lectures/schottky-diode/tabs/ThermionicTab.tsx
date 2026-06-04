@@ -5,6 +5,7 @@ import Slider from '../../../components/Slider'
 import StepFlow from '../../../components/StepFlow'
 import Readout from '../components/Readout'
 import SchottkyIVCurve from '../components/SchottkyIVCurve'
+import MetalSemiconductorBandDiagram from '../components/MetalSemiconductorBandDiagram'
 import { MATERIALS, METALS, fmtCurrentDensity, fmtVolt, schottkyState } from '../../../lib/junction'
 
 const Si = MATERIALS.Si
@@ -77,6 +78,47 @@ export default function ThermionicTab() {
             <SchottkyIVCurve metal={W} mat={Si} Va={Va} mode={mode} showTurnOn />
           </div>
         </div>
+      </Panel>
+
+      <Panel title="שני הזרמים הנגדיים — מהיכן האקספוננט?">
+        <p className="leading-relaxed text-slate-600">
+          הזרם התרמיוני הוא למעשה <b>הפרש של שני שטפי-אלקטרונים</b> נגדיים החוצים את אותו מחסום. בשיווי-משקל
+          (<Tex>{'V_A=0'}</Tex>) הם <b>שווים ומבטלים זה את זה</b> — אין זרם נטו:
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-4">
+            <p className="flex items-center gap-2 font-bold text-blue-700">
+              <span aria-hidden>→</span> <Tex>{'J_{M\\to S}'}</Tex> · <span className="text-sm font-semibold">קבוע</span>
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+              אלקטרונים מ<b>המתכת</b> מעל המחסום <Tex>{'\\varphi_B'}</Tex>. כיוון ש-<Tex>{'\\varphi_B'}</Tex> מצד-המתכת
+              <b> בלתי-תלוי במתח</b>, השטף <b>קבוע</b>: <Tex>{'\\propto e^{-\\varphi_B/V_T}=J_{ST}'}</Tex>.
+            </p>
+          </div>
+          <div className="rounded-xl border border-cyan-200 bg-cyan-50/60 p-4">
+            <p className="flex items-center gap-2 font-bold text-cyan-700">
+              <span aria-hidden>←</span> <Tex>{'J_{S\\to M}'}</Tex> · <span className="text-sm font-semibold">תלוי-מתח</span>
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+              אלקטרונים מ<b>המל"מ</b> מעל המחסום מצד-המל"מ <Tex>{'q(V_{bi}-V_A)'}</Tex>. מתח קדמי <b>מנמיך</b> אותו,
+              ולכן השטף <b>גדל</b>: <Tex>{'\\propto e^{-(V_{bi}-V_A)/V_T}=J_{ST}\\,e^{V_A/V_T}'}</Tex>.
+            </p>
+          </div>
+        </div>
+        <div className="mt-3 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 text-center">
+          <Tex block>{'J=J_{S\\to M}-J_{M\\to S}=J_{ST}\\left(e^{V_A/V_T}-1\\right)'}</Tex>
+        </div>
+        <div className="mt-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3">
+          <p className="mb-1 text-center text-xs font-semibold text-slate-400">
+            <span className="text-slate-500">דיאגרמת פסים · אנרגיה–מיקום</span> — שני השטפים (הזיזו את הממתח למעלה)
+          </p>
+          <MetalSemiconductorBandDiagram metal={W} mat={Si} Nd={ND} Va={Va} phase="joined" showFlux />
+        </div>
+        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-600">
+          <b>קדמי</b> (<Tex>{'V_A>0'}</Tex>): <Tex>{'J_{S\\to M}'}</Tex> גובר מעריכית → זרם קדמי גדול.{' '}
+          <b>אחורי</b> (<Tex>{'V_A<0'}</Tex>): <Tex>{'J_{S\\to M}\\to0'}</Tex>, ונשאר רק <Tex>{'-J_{M\\to S}=-J_{ST}'}</Tex> —
+          <b> זו הרוויה האחורית</b>. <Tex>{'J_{M\\to S}'}</Tex> הקבוע הוא שמסביר למה הזרם האחורי אינו תלוי במתח.
+        </p>
       </Panel>
 
       <Panel title="אפקט שוטקי — הנמכת המחסום">

@@ -19,6 +19,9 @@ interface Props {
   Va: number
   phase: 'separated' | 'joined'
   T?: number
+  /** Overlay the two opposing thermionic electron fluxes J_{S→M} (bias-dependent)
+   *  and J_{M→S} (fixed, over φ_B). Only meaningful in the 'joined' phase. */
+  showFlux?: boolean
 }
 
 const W = 560
@@ -66,11 +69,15 @@ function Defs() {
       <marker id="ms-cap-a" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill={AMBER} /></marker>
       <marker id="ms-cap-v" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill={VIOLET} /></marker>
       <marker id="ms-cap-g" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill="#16a34a" /></marker>
+      {/* single-headed flux arrowheads — fixed px size (userSpaceOnUse) so a thick
+          stroke doesn't blow the head up */}
+      <marker id="ms-flux-ms" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1.5 L9,5 L0,8.5 Z" fill="#1d4ed8" /></marker>
+      <marker id="ms-flux-sm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1.5 L9,5 L0,8.5 Z" fill="#06b6d4" /></marker>
     </defs>
   )
 }
 
-export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phase, T = 300 }: Props) {
+export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phase, T = 300, showFlux = false }: Props) {
   const phiB = schottkyBarrier(metal.phiM, mat.chi)
   const xi = Math.max(0, bulkOffset(mat.nc, Nd, T))
   const Vbi = phiB - xi
@@ -216,6 +223,41 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
             <text x={xJ - 16} y={(eToY(0) + eToY(eFm)) / 2 + 3} className="fill-emerald-600" style={{ fontSize: FS - 2, fontWeight: 700 }}>qV<tspan dy={3} style={{ fontSize: FSUB }}>A</tspan></text>
           </>
         )}
+
+        {/* two opposing thermionic electron fluxes */}
+        {showFlux && (() => {
+          const yPeak = eToY(ecInterface)
+          const yEcBulk = eToY(ecBulk)
+          const yFm = eToY(eFm)
+          // J_{S→M}/J_{M→S} = e^{V_A/V_T}; render width on a bounded, smooth scale
+          const wSM = Math.max(1.2, 4 + 6 * Math.tanh(Va / 0.13)) // ≈1 (reverse) … 4 (eq) … 10 (forward)
+          const stateHe = Va > 0.02 ? 'גדל (קדמי)' : Va < -0.02 ? 'דק → רוויה (אחורי)' : 'שיווי-משקל'
+          const xL = xJ - 52
+          const xR = xJ + 30 // bounded to the metal side — clears the φ_B & q(V_bi−V_A) markers
+          return (
+            <g style={{ pointerEvents: 'none' }}>
+              {/* J_{M→S} — metal → semiconductor over the FIXED φ_B (constant); UPPER lane */}
+              <path
+                d={`M ${xL},${yFm - 4} Q ${xJ - 2},${yPeak - 5} ${xR},${yEcBulk - 4}`}
+                fill="none" stroke="#1d4ed8" strokeWidth={4.5} strokeLinecap="round" markerEnd="url(#ms-flux-ms)"
+              />
+              {/* J_{S→M} — semiconductor → metal over the bias-dependent barrier (∝bias); LOWER lane */}
+              <path
+                d={`M ${xR},${yEcBulk + 9} Q ${xJ + 2},${yPeak + 8} ${xL},${yFm + 9}`}
+                fill="none" stroke="#06b6d4" strokeWidth={wSM} strokeLinecap="round" markerEnd="url(#ms-flux-sm)"
+                style={{ filter: 'drop-shadow(0 0 2px rgba(6,182,212,0.5))' }}
+              />
+              {/* compact legend (top-left) — keeps all text off the bands and markers */}
+              <g>
+                <rect x={MX + 6} y={TOP + 4} width={156} height={34} rx={6} fill="#ffffff" opacity={0.86} stroke="#e2e8f0" />
+                <rect x={MX + 13} y={TOP + 11} width={15} height={4} rx={2} fill="#1d4ed8" />
+                <text x={MX + 33} y={TOP + 16} className="fill-blue-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>M→S</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· קבוע</tspan></text>
+                <rect x={MX + 13} y={TOP + 25} width={15} height={4} rx={2} fill="#06b6d4" />
+                <text x={MX + 33} y={TOP + 30} className="fill-cyan-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>S→M</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· {stateHe}</tspan></text>
+              </g>
+            </g>
+          )
+        })()}
 
         {/* neutral-bulk region label */}
         <text x={(Math.max(xW, xJ + 30) + PR) / 2} y={yBot - 10} textAnchor="middle" className="fill-sky-700" style={{ fontSize: FSR, fontWeight: 800 }}>מל"מ-n · בולק</text>
