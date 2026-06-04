@@ -37,11 +37,12 @@ const MISTAKES: { wrong: ReactNode; right: ReactNode }[] = [
 ]
 
 // The four parts of lecture 2 — each a kind of junction/contact — side by side.
-const JUNCTIONS: { part: string; name: string; accent: string; mech: ReactNode; iv: ReactNode; use: ReactNode }[] = [
+const JUNCTIONS: { part: string; name: string; accent: string; id: ReactNode; mech: ReactNode; iv: ReactNode; use: ReactNode }[] = [
   {
     part: '2א',
     name: 'דיודת PN אידיאלית',
     accent: 'text-sky-700',
+    id: <>צומת <b>p–n</b> (שני חצאי מל"מ); המודל ה<b>אידיאלי</b> — דיפוזיית מיעוט בלבד, <Tex>{'n=1'}</Tex>.</>,
     mech: <>דיפוזיית נושאי <b>מיעוט</b> מוזרקים מעבר לצומת.</>,
     iv: <><Tex>{'I=I_S(e^{V/V_T}-1)'}</Tex> — מיישר, מעריכי.</>,
     use: <><b>יישור (AC→DC)</b> בגשרי-מתח וספקי-כוח. הבסיס התיאורטי שכל דיודה נמדדת מולו.</>,
@@ -50,6 +51,7 @@ const JUNCTIONS: { part: string; name: string; accent: string; mech: ReactNode; 
     part: '2ב',
     name: 'דיודת PN לא-אידיאלית',
     accent: 'text-rose-600',
+    id: <>אותו צומת <b>p–n</b>, אך עם ה<b>סטיות הממשיות</b>: רקומבינציה (<Tex>{'n\\approx2'}</Tex>), הזרקה-גבוהה, התנגדות טורית.</>,
     mech: <>מתווספים <b>רקומבינציה/גנרציה</b>, הזרקה-גבוהה והתנגדות טורית (מקדם אי-אידיאליות <Tex>{'n'}</Tex>).</>,
     iv: <>סוטה מהאידיאלי — אזורים שונים, שיפוע <Tex>{'n\\approx1\\text{–}2'}</Tex>.</>,
     use: <><b>תאים סולאריים ו-LED</b>: דווקא זרם הרקומבינציה הוא "ההתקן". וגם מידול-מעגלים מדויק.</>,
@@ -58,6 +60,7 @@ const JUNCTIONS: { part: string; name: string; accent: string; mech: ReactNode; 
     part: '2ג',
     name: 'דיודת שוטקי',
     accent: 'text-violet-700',
+    id: <>מגע <b>מתכת–מל"מ</b> (לא p–n) עם <Tex>{'\\varphi_m>\\varphi_s'}</Tex> (ל-n) — נוצר מחסום מיישר.</>,
     mech: <>פליטה <b>תרמיונית</b> של נושאי <b>רוב</b> מעל מחסום <Tex>{'\\varphi_B'}</Tex>.</>,
     iv: <>מיישר, אך <Tex>{'J_{ST}\\gg J_S'}</Tex> → <b>מתח-הצתה נמוך</b>.</>,
     use: <><b>מיתוג מהיר ומפל-מתח נמוך</b>: ספקי-מיתוג, RF, הגנה (clamp). אין אגירת-מיעוט → אין reverse-recovery.</>,
@@ -66,6 +69,7 @@ const JUNCTIONS: { part: string; name: string; accent: string; mech: ReactNode; 
     part: '2ד',
     name: 'מגע אוהמי',
     accent: 'text-emerald-700',
+    id: <>מגע <b>מתכת–מל"מ</b> עם <Tex>{'\\varphi_m<\\varphi_s'}</Tex> (ל-n), או סימום <b>n⁺</b> כבד — <b>לא</b> מיישר.</>,
     mech: <>נושאי <b>רוב</b> זורמים חופשי (צבירה / מנהור דרך מחסום דק).</>,
     iv: <><b>לא</b> מיישר — <Tex>{'V=I\\rho_c'}</Tex> ליניארי וסימטרי.</>,
     use: <><b>כל הדק של כל התקן</b> (טרנזיסטור/דיודה) — חיבור למעגל ללא דיודה טפילית והתנגדות נמוכה.</>,
@@ -140,10 +144,11 @@ export default function SummaryTab() {
           כל ארבעת חלקי שיעור 2 הם <b>סוג של צומת/דיודה</b>. הנה ההבדלים — והיכן פוגשים כל אחד בעולם האמיתי:
         </p>
         <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[40rem] border-collapse text-start text-sm">
+          <table className="w-full min-w-[52rem] border-collapse text-start text-sm">
             <thead>
               <tr className="border-b-2 border-slate-200">
                 <th className="px-3 py-2 text-start font-semibold text-slate-400">הסוג</th>
+                <th className="px-3 py-2 text-start font-semibold text-slate-400">איך מבחינים</th>
                 <th className="px-3 py-2 text-start font-semibold text-slate-400">מנגנון הזרם</th>
                 <th className="px-3 py-2 text-start font-semibold text-slate-400">אופיין <Tex>{'I\\text{–}V'}</Tex></th>
                 <th className="px-3 py-2 text-start font-semibold text-slate-400">שימוש בעולם — ולמה</th>
@@ -156,6 +161,7 @@ export default function SummaryTab() {
                     <span className="block text-xs font-semibold text-slate-400">{j.part}</span>
                     <span className={`font-bold ${j.accent}`}>{j.name}</span>
                   </td>
+                  <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.id}</td>
                   <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.mech}</td>
                   <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.iv}</td>
                   <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.use}</td>
