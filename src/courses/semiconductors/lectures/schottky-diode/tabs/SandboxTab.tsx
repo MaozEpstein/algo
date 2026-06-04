@@ -112,6 +112,27 @@ export default function SandboxTab() {
               </div>
               <Slider label={<>סימום · <Tex>{'N_D'}</Tex></>} value={expNd} min={15} max={19} onChange={(v) => { setExpNd(v); clear() }} display={<Tex>{`${fmtDoping(Nd)}\\,\\mathrm{cm^{-3}}`}</Tex>} />
               <Slider label={<>ממתח · <Tex>{'V_A'}</Tex></>} value={Va} min={-0.4} max={0.6} step={0.02} onChange={setVa} display={fmtVolt(Va)} />
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-medium text-slate-600">ממתח מהיר:</span>
+                {([
+                  { he: 'אחורי', v: -0.3 },
+                  { he: 'שיווי-משקל', v: 0 },
+                  { he: 'קדמי', v: 0.4 },
+                ] as const).map((bq) => {
+                  const on = Math.abs(Va - bq.v) < 0.011
+                  return (
+                    <button
+                      key={bq.he}
+                      onClick={() => setVa(bq.v)}
+                      className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+                        on ? 'border-amber-500 bg-amber-500 text-white shadow' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                      }`}
+                    >
+                      {bq.he}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
               <Readout label="מחסום $\varphi_B$" value={`${st.phiB.toFixed(2)} eV`} accent="border-violet-100 bg-violet-50" />

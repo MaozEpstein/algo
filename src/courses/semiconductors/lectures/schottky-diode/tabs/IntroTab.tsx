@@ -1,6 +1,7 @@
 import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
+import RectifyingCriterionCard from '../../../components/RectifyingCriterionCard'
 import SchottkyIVCurve from '../components/SchottkyIVCurve'
 import { MATERIALS, METALS } from '../../../lib/junction'
 
@@ -37,6 +38,15 @@ const TRAITS: { icon: string; titleHe: string; body: React.ReactNode; accent: st
 export default function IntroTab() {
   return (
     <div className="flex flex-col gap-5">
+      <RectifyingCriterionCard
+        framing={
+          <>
+            מגע מתכת–מל"מ יכול להיות <b>מיישר</b> או <b>אוהמי</b>, לפי הפרש פונקציות-העבודה. <b>השיעור הזה (2ג)</b> עוסק
+            במקרה ה<b>מיישר</b> — <Tex>{'\\varphi_m>\\varphi_s'}</Tex> (דיודת שוטקי). המקרה ה<b>אוהמי</b> (<Tex>{'\\varphi_m<\\varphi_s'}</Tex>)
+            הוא נושא <b>החלק הבא (2ד)</b>.
+          </>
+        }
+      />
       <Panel title="מתכת פוגשת מוליך-למחצה">
         <p className="leading-relaxed text-slate-700">
           עד עכשיו הצומת היה בין שני חצאי מל"מ (p ו-n). דיודת <b>שוטקי</b> נוצרת ממגע <b>מתכת–מל"מ</b>: כשמתכת
