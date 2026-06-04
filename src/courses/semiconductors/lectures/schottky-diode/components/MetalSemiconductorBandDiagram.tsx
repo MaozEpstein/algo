@@ -149,6 +149,7 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
   const N = 60
   const ecPts: [number, number][] = []
   const evPts: [number, number][] = []
+  const eiPts: [number, number][] = []
   for (let i = 0; i <= N; i++) {
     const px = xJ + ((PR - xJ) * i) / N
     const within = px <= xW && xW > xJ
@@ -156,6 +157,7 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
     const ec = ecBulk + drive * (1 - u) * (1 - u)
     ecPts.push([px, eToY(ec)])
     evPts.push([px, eToY(ec - eg)])
+    eiPts.push([px, eToY(ec - eg / 2)])
   }
   const toPath = (pts: [number, number][]) => 'M ' + pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L ')
   const gapFill = toPath(ecPts) + ' L ' + [...evPts].reverse().map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L ') + ' Z'
@@ -187,10 +189,12 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
         <line x1={xJ} y1={eToY(0)} x2={PR} y2={eToY(0)} stroke="#0f172a" strokeWidth={1.5} strokeDasharray="6 3" />
         <text x={PR + 4} y={eToY(0) + 4} className="fill-slate-700" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>F</tspan></text>
 
-        {/* bands with glow */}
+        {/* bands with glow + intrinsic level (dashed) */}
+        <path d={toPath(eiPts)} fill="none" stroke="#94a3b8" strokeWidth={1.25} strokeDasharray="3 3" />
         <path d={toPath(ecPts)} fill="none" stroke={SKY} strokeWidth={3} strokeLinejoin="round" style={{ filter: GLOW_C }} />
         <path d={toPath(evPts)} fill="none" stroke={ROSE} strokeWidth={3} strokeLinejoin="round" style={{ filter: GLOW_V }} />
         <text x={PR + 4} y={eToY(ecBulk) + 4} className="fill-sky-700" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>c</tspan></text>
+        <text x={PR + 4} y={eToY(ecBulk - eg / 2) + 4} className="fill-slate-400" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>i</tspan></text>
         <text x={PR + 4} y={eToY(ecBulk - eg) + 4} className="fill-rose-600" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>v</tspan></text>
 
         {/* φ_B (fixed, metal side) */}

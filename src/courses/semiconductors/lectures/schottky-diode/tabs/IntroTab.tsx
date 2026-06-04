@@ -37,11 +37,8 @@ const TRAITS: { icon: string; titleHe: string; body: React.ReactNode; accent: st
 export default function IntroTab() {
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-2xl border border-violet-200 bg-gradient-to-l from-violet-50 to-white p-4 shadow-card">
-        <p className="flex items-center gap-2 text-base font-bold text-violet-800">
-          <span aria-hidden>🤝</span> מתכת פוגשת מוליך-למחצה
-        </p>
-        <p className="mt-1.5 leading-relaxed text-slate-700">
+      <Panel title="מתכת פוגשת מוליך-למחצה">
+        <p className="leading-relaxed text-slate-700">
           עד עכשיו הצומת היה בין שני חצאי מל"מ (p ו-n). דיודת <b>שוטקי</b> נוצרת ממגע <b>מתכת–מל"מ</b>: כשמתכת
           נוגעת במל"מ מסוג n, נוצר <b>מחסום</b> שגובהו נקבע מ<b>הפרש פונקציות-העבודה</b> בין השניים. התוצאה היא
           דיודה <b>מיישרת</b> — אבל מסוג שונה לגמרי מדיודת PN: הזרם נישא ב<b>נושאי רוב</b> דרך <b>פליטה תרמיונית</b>.
@@ -70,7 +67,32 @@ export default function IntroTab() {
             </div>
           ))}
         </dl>
-      </div>
+      </Panel>
+
+      <Panel title="זיקה אלקטרונית — אפיניות">
+        <p className="leading-relaxed text-slate-700">
+          <Tex>{'\\chi'}</Tex> היא המרחק מקצה פס ההולכה <Tex>{'E_c'}</Tex> עד לרמת הוואקום — בעצם <b>כמה החומר
+          "מעוניין" לקלוט אלקטרון</b>:
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="flex items-start gap-3 rounded-xl border border-sky-200 bg-sky-50/60 p-3">
+            <span className="text-2xl leading-none" aria-hidden>🧲</span>
+            <p className="text-sm leading-relaxed text-slate-700">
+              <Tex>{'\\chi'}</Tex> <b>גבוהה</b> — החומר אוחז חזק באלקטרונים ונוטה ל<b>ספוג</b> אותם (קשה להם להימלט).
+            </p>
+          </div>
+          <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/60 p-3">
+            <span className="text-2xl leading-none" aria-hidden>💨</span>
+            <p className="text-sm leading-relaxed text-slate-700">
+              <Tex>{'\\chi'}</Tex> <b>נמוכה</b> — אחיזה חלשה, החומר נוטה ל<b>שחרר</b> אלקטרונים בקלות.
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          ה<b>הפרש בנטיות</b> בין המתכת (<Tex>{'\\varphi_m'}</Tex>) למל"מ (<Tex>{'\\varphi_s=\\chi+\\xi'}</Tex>) הוא
+          שקובע אם נוצר מחסום מיישר — וכמה גבוה.
+        </p>
+      </Panel>
 
       <Panel title="למה דיודת שוטקי מיוחדת?">
         <div className="grid gap-3 sm:grid-cols-3">

@@ -28,11 +28,11 @@ const PRESETS: Preset[] = [
 ]
 
 /** Local ideality factor n = (1/V_T)·dV/d(ln J_tot) at the operating point. */
-function localN(Na: number, Nd: number, mat: Material, Vj: number, tau0: number, T: number): number {
+function localN(Na: number, Nd: number, mat: Material, Vj: number, tau0: number, T: number, jkf: number): number {
   const VT = thermalVoltage(T)
   const h = 0.01
-  const j1 = nonIdealCurrents(Na, Nd, mat, Vj - h, tau0, T).Jtot
-  const j2 = nonIdealCurrents(Na, Nd, mat, Vj + h, tau0, T).Jtot
+  const j1 = nonIdealCurrents(Na, Nd, mat, Vj - h, tau0, T, jkf).Jtot
+  const j2 = nonIdealCurrents(Na, Nd, mat, Vj + h, tau0, T, jkf).Jtot
   return (2 * h) / (VT * Math.log(j2 / j1))
 }
 
@@ -42,13 +42,17 @@ function localN(Na: number, Nd: number, mat: Material, Vj: number, tau0: number,
  * dashed ideal line and a dashed lumped-n model whose n is the EMERGENT local
  * slope (a read-out, not a dial). Sliders for τ₀, R_s, doping, T, material + presets.
  */
+// illustrative high-injection knee (A/cm²) — chosen so the four domains are
+// visible and separated from the R_s bend in the plotted range.
+const JKF = 2e-3
+
 export default function FullPictureTab() {
   const [matKey, setMatKey] = useState<Material['key']>('Si')
   const [expNa, setExpNa] = useState(16)
   const [expNd, setExpNd] = useState(17)
-  const [tauExp, setTauExp] = useState(-7)
-  const [rs, setRs] = useState(1)
-  const [Vj, setVj] = useState(0.45)
+  const [tauExp, setTauExp] = useState(-5)
+  const [rs, setRs] = useState(1.5)
+  const [Vj, setVj] = useState(0.4)
   const [T, setT] = useState(300)
   const [activePreset, setActivePreset] = useState<string | null>(null)
 
@@ -60,8 +64,8 @@ export default function FullPictureTab() {
   const { Js, Jr0, c, nLoc, drop } = useMemo(() => {
     const Js = diodeCurrents(Na, Nd, mat, 0, T).Js
     const Jr0 = logFloor(Na, Nd, mat, tau0, T)
-    const c = nonIdealCurrents(Na, Nd, mat, Vj, tau0, T)
-    return { Js, Jr0, c, nLoc: localN(Na, Nd, mat, Vj, tau0, T), drop: c.Jtot * rs }
+    const c = nonIdealCurrents(Na, Nd, mat, Vj, tau0, T, JKF)
+    return { Js, Jr0, c, nLoc: localN(Na, Nd, mat, Vj, tau0, T, JKF), drop: c.Jtot * rs }
   }, [Na, Nd, mat, tau0, Vj, T, rs])
 
   const applyPreset = (p: Preset) => {
@@ -137,8 +141,10 @@ export default function FullPictureTab() {
           </div>
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-3">
-              <p className="mb-1 text-center text-xs font-semibold text-slate-400">ממשי (סגול) · אידיאלי n=1 (אפור) · מודל הנדסי n נמדד (תכלת)</p>
-              <NonIdealIVCurve Na={Na} Nd={Nd} mat={mat} Vj={Vj} tau0={tau0} rs={rs} T={T} mode="log" curves={['tot']} showIdeal showLumped n={nLoc} regions />
+              <p className="mb-1 text-center text-xs font-semibold text-slate-400">
+                <span className="text-slate-500">אופיין I–V · זרם–מתח</span> — ממשי (סגול) מול אידיאלי n=1 (אפור מקווקו)
+              </p>
+              <NonIdealIVCurve Na={Na} Nd={Nd} mat={mat} Vj={Vj} tau0={tau0} rs={rs} T={T} mode="log" curves={['tot']} showIdeal jkf={JKF} regions4 />
               <p className="mt-2 px-1 text-xs leading-relaxed text-slate-500">
                 מתח-הדק בנקודת העבודה: <Tex>{'V_{term}'}</Tex> = <span dir="ltr">{fmtVolt(terminalVoltage(Vj, c.Jtot, rs))}</span>{' '}
                 (מתוכו <span dir="ltr">{fmtVolt(drop)}</span> על <Tex>{'R_S'}</Tex>).
@@ -146,7 +152,7 @@ export default function FullPictureTab() {
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-3">
               <p className="mb-1 text-center text-xs font-semibold text-slate-400">מקדם אי-האידיאליות הנמדד <Tex>{'n'}</Tex> לאורך המתח</p>
-              <IdealityCurve Na={Na} Nd={Nd} mat={mat} tau0={tau0} rs={rs} Vj={Vj} T={T} />
+              <IdealityCurve Na={Na} Nd={Nd} mat={mat} tau0={tau0} rs={rs} Vj={Vj} T={T} jkf={JKF} />
               <p className="mt-2 px-1 text-xs leading-relaxed text-slate-500">
                 כפונקציית מתח-הצומת <Tex>{'V_j'}</Tex>: <Tex>{'n'}</Tex> מתחיל ≈2 (רקומבינציה), צונח ל-≈1 (דיפוזיה),
                 ובזרם גבוה מזנק כש-<Tex>{'R_S'}</Tex> משטח את השיפוע (<Tex>{'n'}</Tex> מדומה מתפוצץ).

@@ -9,6 +9,7 @@ const FORMULAS: { he: string; tex: string }[] = [
   { he: 'זרם רוויה תרמיוני', tex: 'J_{ST}=A^{*}T^2e^{-\\varphi_B/V_T}' },
   { he: 'רוחב מחסור', tex: 'W=\\sqrt{2\\varepsilon_s(V_{bi}-V_A)/(qN_D)}' },
   { he: 'קריטריון מיישר', tex: '\\varphi_m>\\chi+\\xi' },
+  { he: 'אפקט שוטקי (הנמכת המחסום)', tex: '\\Delta\\varphi_B\\propto\\sqrt{E_{max}}' },
 ]
 
 const MISTAKES: { wrong: ReactNode; right: ReactNode }[] = [

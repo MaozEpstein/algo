@@ -79,10 +79,10 @@ export default function ThermionicTab() {
         </div>
       </Panel>
 
-      <Panel title="הסתייגות — הזרם האחורי לא שטוח לגמרי">
+      <Panel title="אפקט שוטקי — הנמכת המחסום">
         <p className="leading-relaxed text-slate-600">
-          במודל האידיאלי האחורי רווי בדיוק ב-<Tex>{'-J_{ST}'}</Tex>. במציאות יש <b>הנמכת מחסום בכוח-דמות</b>:
-          השדה החשמלי מנמיך מעט את <Tex>{'\\varphi_B'}</Tex> (<Tex>{'\\Delta\\varphi_B\\propto\\sqrt{E_{max}}'}</Tex>),
+          במודל האידיאלי האחורי רווי בדיוק ב-<Tex>{'-J_{ST}'}</Tex>. במציאות פועל <b>אפקט שוטקי</b> — <b>הנמכת מחסום
+          בכוח-דמות</b>: השדה החשמלי מנמיך מעט את <Tex>{'\\varphi_B'}</Tex> (<Tex>{'\\Delta\\varphi_B\\propto\\sqrt{E_{max}}'}</Tex>),
           כך שהזרם האחורי <b>עולה לאט</b> עם המתח — בדיוק האנלוג של זרם הגנרציה הלא-רווי שראינו בדיודה הלא-אידיאלית.
         </p>
       </Panel>

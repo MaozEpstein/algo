@@ -22,6 +22,7 @@ interface Props {
   rs: number
   Vj: number // operating point
   T?: number
+  jkf?: number // high-injection knee (A/cm²); Infinity = off
 }
 
 const W = 460
@@ -35,7 +36,7 @@ const PH = H - mT - mB
 const yBot = mT + PH
 const N_MAX = 3 // y-axis top (n is clamped here; the R_s knee pushes n past it)
 
-export default function IdealityCurve({ Na, Nd, mat, tau0, rs, Vj, T = 300 }: Props) {
+export default function IdealityCurve({ Na, Nd, mat, tau0, rs, Vj, T = 300, jkf = Infinity }: Props) {
   const VT = thermalVoltage(T)
   const Vbi = builtInVoltage(Na, Nd, niAt(mat, T), T)
   const Jref = 100
@@ -44,7 +45,7 @@ export default function IdealityCurve({ Na, Nd, mat, tau0, rs, Vj, T = 300 }: Pr
   const NS = 140
 
   // local measured ideality at junction voltage vj (parametric in V_term)
-  const J = (v: number) => nonIdealCurrents(Na, Nd, mat, v, tau0, T).Jtot
+  const J = (v: number) => nonIdealCurrents(Na, Nd, mat, v, tau0, T, jkf).Jtot
   const nOf = (vj: number) => {
     const h = 0.002
     const Jv = J(vj)

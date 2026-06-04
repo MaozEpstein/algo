@@ -233,15 +233,27 @@ export function recombCurrent(Na: number, Nd: number, mat: Material, Vj: number,
  * the crossover (low forward → recombination dominates, higher → diffusion) and
  * the non-saturating reverse current. Series resistance is applied separately
  * via `terminalVoltage` (parametric), not here — this is the junction-voltage law.
+ *
+ * Optional `jkf` (knee current, A/cm²) turns on HIGH-LEVEL INJECTION (Webster /
+ * SPICE-IKF): above J_KF the diffusion current rolls from slope 1/V_T to 1/2V_T
+ * (apparent n → 2), via J_diff/√(1+J_diff/J_KF). Default Infinity = low injection.
  */
-export function nonIdealCurrents(Na: number, Nd: number, mat: Material, Vj: number, tau0: number, T = 300): NonIdealCurrents {
+export function nonIdealCurrents(Na: number, Nd: number, mat: Material, Vj: number, tau0: number, T = 300, jkf = Infinity): NonIdealCurrents {
   const ni = niAt(mat, T)
   const W = junctionState(Na, Nd, mat, Vj, T).d
   const Jr0 = (Q * ni * W) / (2 * tau0)
-  const Jdiff = diodeCurrents(Na, Nd, mat, Vj, T).J
+  const JdiffIdeal = diodeCurrents(Na, Nd, mat, Vj, T).J
+  const Jdiff = JdiffIdeal > 0 && Number.isFinite(jkf) ? JdiffIdeal / Math.sqrt(1 + JdiffIdeal / jkf) : JdiffIdeal
   const Jrec = Jr0 * (Math.exp(Vj / (2 * thermalVoltage(T))) - 1)
   return { Jdiff, Jrec, Jtot: Jdiff + Jrec, W, Jr0 }
 }
+
+/**
+ * Small-signal (dynamic) resistance of the junction: r_d = dV/dI = n·V_T/|J|
+ * (Ω·cm², per unit area). Bias-dependent — drops as 1/I — unlike the fixed series
+ * resistance R_S. `n` is the local ideality factor at the operating point.
+ */
+export const diodeDynamicResistance = (n: number, J: number, T = 300): number => (n * thermalVoltage(T)) / Math.abs(J)
 
 /**
  * Terminal voltage after the specific series-resistance drop:

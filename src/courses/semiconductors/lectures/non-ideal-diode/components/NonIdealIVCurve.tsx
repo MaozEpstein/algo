@@ -38,6 +38,8 @@ interface Props {
   n?: number // ideality factor for the lumped overlay
   curves?: ('diff' | 'rec' | 'tot')[] // physical branches to draw
   regions?: boolean // annotate the n=2 / n=1 / R_s regions
+  jkf?: number // high-injection knee current (A/cm²); Infinity = off
+  regions4?: boolean // label all four domains: recomb / ideal / high-injection / R_s
 }
 
 const W = 460
@@ -64,6 +66,8 @@ export default function NonIdealIVCurve({
   n = 1.5,
   curves = ['tot'],
   regions = false,
+  jkf = Infinity,
+  regions4 = false,
 }: Props) {
   const VT = thermalVoltage(T)
   const Vbi = builtInVoltage(Na, Nd, niAt(mat, T), T)
@@ -116,7 +120,7 @@ export default function NonIdealIVCurve({
   let maxJ = Js
   for (let i = 0; i <= NS; i++) {
     const vj = (vCapJ * i) / NS
-    const c = nonIdealCurrents(Na, Nd, mat, vj, tau0, T)
+    const c = nonIdealCurrents(Na, Nd, mat, vj, tau0, T, jkf)
     if (c.Jtot > Jref) break
     tot.push({ vt: terminalVoltage(vj, c.Jtot, rs), J: c.Jtot })
     if (c.Jtot > maxJ) maxJ = c.Jtot
@@ -149,9 +153,29 @@ export default function NonIdealIVCurve({
   }
   const totPath = 'M ' + tot.map((p) => `${xOf(p.vt).toFixed(1)},${yOf(p.J).toFixed(1)}`).join(' L ')
 
-  const opC = nonIdealCurrents(Na, Nd, mat, Math.max(0, Math.min(vCapJ, Vj)), tau0, T)
-  const opX = xOf(terminalVoltage(Math.max(0, Math.min(vCapJ, Vj)), opC.Jtot, rs))
+  const opVj = Math.max(0, Math.min(vCapJ, Vj))
+  const opC = nonIdealCurrents(Na, Nd, mat, opVj, tau0, T, jkf)
+  const opX = xOf(terminalVoltage(opVj, opC.Jtot, rs))
   const opY = yOf(Math.max(floor, opC.Jtot))
+
+  // --- four-domain boundaries (terminal-voltage x), for the regions4 overlay ---
+  const termX = (vj: number) => {
+    const c = nonIdealCurrents(Na, Nd, mat, vj, tau0, T, jkf)
+    return xOf(terminalVoltage(vj, c.Jtot, rs))
+  }
+  const clampV = (v: number) => Math.max(0.05, Math.min(vCapJ * 0.99, v))
+  const b1 = clampV(2 * VT * Math.log(Math.max(floor, Js * 1.01) / Js)) // recombination → ideal crossover
+  const b2 = Number.isFinite(jkf) ? clampV(VT * Math.log(jkf / Js)) : vCapJ // ideal → high-injection knee
+  const rsHit = rs > 0 ? tot.find((p) => p.J * rs > 0.04) : undefined // R_s onset (≈40 mV drop)
+  const xB1 = termX(b1)
+  const xB2 = Math.max(xB1, termX(b2)) // enforce ordering — a collapsed zone just drops its label
+  const xB3 = Math.max(xB2, rsHit ? xOf(rsHit.vt) : mL + PW)
+  const dom = [
+    { x0: mL, x1: xB1, label: 'רקומבינציה', fill: '#10b981' },
+    { x0: xB1, x1: xB2, label: 'דיודה אידיאלית', fill: '#f59e0b' },
+    { x0: xB2, x1: xB3, label: 'הזרקה חזקה', fill: '#0ea5e9' },
+    { x0: xB3, x1: mL + PW, label: 'התנגדות טורית', fill: '#7c3aed' },
+  ]
 
   return (
     <div className="ltr w-full" dir="ltr">
@@ -176,9 +200,16 @@ export default function NonIdealIVCurve({
           </>
         )}
 
-        {/* ideal n=1 dashed overlay */}
+        {/* ideal n=1 dashed overlay (∝ e^{qV/kT}) */}
         {showIdeal && (
-          <path d={branchPath((v) => Js * (Math.exp(v / VT) - 1))} fill="none" stroke="#94a3b8" strokeWidth={1.75} strokeDasharray="5 4" />
+          <>
+            <path d={branchPath((v) => Js * (Math.exp(v / VT) - 1))} fill="none" stroke="#94a3b8" strokeWidth={1.75} strokeDasharray="5 4" />
+            {mode === 'log' && (
+              <text x={xOf(VT * Math.log((maxJ * 0.012) / Js + 1)) + 4} y={yLog(maxJ * 0.012) + 14} className="fill-slate-400" style={{ fontSize: 10, fontWeight: 700 }}>
+                אידיאלי ∝ exp(qV/kT)
+              </text>
+            )}
+          </>
         )}
         {/* lumped-n dashed overlay */}
         {showLumped && (
@@ -193,8 +224,8 @@ export default function NonIdealIVCurve({
         )}
         {curves.includes('tot') && <path d={totPath} fill="none" stroke="#7c3aed" strokeWidth={2.75} strokeLinejoin="round" />}
 
-        {/* region annotations */}
-        {regions && mode === 'log' && (
+        {/* region annotations (3-zone short form) */}
+        {regions && !regions4 && mode === 'log' && (
           <>
             <text x={mL + PW * 0.18} y={yBot - 8} className="fill-emerald-600" style={{ fontSize: 10, fontWeight: 700 }}>שיפוע n≈2</text>
             <text x={mL + PW * 0.5} y={mT + 26} className="fill-amber-600" style={{ fontSize: 10, fontWeight: 700 }}>שיפוע n≈1</text>
@@ -202,6 +233,24 @@ export default function NonIdealIVCurve({
               <text x={mL + PW * 0.78} y={mT + 14} className="fill-violet-600" style={{ fontSize: 10, fontWeight: 700 }}>
                 ברך R<tspan dy={2} style={{ fontSize: 7 }}>S</tspan>
               </text>
+            )}
+          </>
+        )}
+
+        {/* four labelled domains + dashed dividers (matches the lecture sketch) */}
+        {regions4 && mode === 'log' && (
+          <>
+            {[xB1, xB2, xB3].map((x, i) =>
+              x > mL + 6 && x < mL + PW - 6 ? (
+                <line key={i} x1={x} y1={mT} x2={x} y2={yBot} stroke="#f43f5e" strokeWidth={1} strokeDasharray="4 4" opacity={0.45} />
+              ) : null,
+            )}
+            {dom.map((d, i) =>
+              d.x1 - d.x0 > 34 ? (
+                <text key={i} x={(d.x0 + d.x1) / 2} y={mT + 11} textAnchor="middle" style={{ fontSize: 9.5, fontWeight: 700, fill: d.fill }}>
+                  {d.label}
+                </text>
+              ) : null,
             )}
           </>
         )}

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   MATERIALS,
   diodeCurrents,
+  diodeDynamicResistance,
   lumpedDiodeCurrent,
   nonIdealCurrents,
   recombCurrent,
@@ -95,6 +96,25 @@ describe('non-ideal diode — ideal limit', () => {
     const grow = v2 / v1
     expect(grow).toBeGreaterThan(4)
     expect(grow).toBeLessThan(Math.exp(0.1 / thermalVoltage(300)))
+  })
+})
+
+describe('non-ideal diode — high-level injection & dynamic resistance', () => {
+  it('high injection rolls the diffusion slope toward n=2 above the knee', () => {
+    const jkf = 1e-3
+    const jHL = (v: number) => nonIdealCurrents(NA, ND, Si, v, 1e30, 300, jkf).Jdiff // τ₀ huge → isolate diffusion
+    const jId = (v: number) => nonIdealCurrents(NA, ND, Si, v, 1e30, 300).Jdiff
+    const slope = (f: (v: number) => number, v: number, h = 1e-3) => (Math.log(f(v + h)) - Math.log(f(v - h))) / (2 * h)
+    expect(jHL(0.6)).toBeLessThan(jId(0.6)) // rolled below the ideal line
+    const r = slope(jId, 0.6) / slope(jHL, 0.6)
+    expect(r).toBeGreaterThan(1.9) // ≈ ×2 (half the log-slope ⇒ n→2)
+    expect(r).toBeLessThan(2.1)
+  })
+
+  it('dynamic resistance r_d = n·V_T/I scales with n and drops as 1/I', () => {
+    expect(diodeDynamicResistance(1, 1e-3)).toBeCloseTo(thermalVoltage(300) / 1e-3, 8)
+    expect(diodeDynamicResistance(2, 1e-3)).toBeCloseTo(2 * diodeDynamicResistance(1, 1e-3), 8)
+    expect(diodeDynamicResistance(1, 1e-2)).toBeLessThan(diodeDynamicResistance(1, 1e-3))
   })
 })
 

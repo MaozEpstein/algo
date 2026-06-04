@@ -5,12 +5,21 @@ import Slider from '../../../components/Slider'
 import StepFlow from '../../../components/StepFlow'
 import Readout from '../components/Readout'
 import NonIdealIVCurve from '../components/NonIdealIVCurve'
-import { MATERIALS, fmtCurrentDensity, fmtVolt, nonIdealCurrents, terminalVoltage } from '../../../lib/junction'
+import { MATERIALS, diodeDynamicResistance, fmtCurrentDensity, fmtVolt, nonIdealCurrents, terminalVoltage, thermalVoltage } from '../../../lib/junction'
 
 const Si = MATERIALS.Si
 const NA = 1e16
 const ND = 1e17
 const TAU0 = 1e-7
+
+/** Local ideality factor n = (1/V_T)·dV/d(ln J_tot) at the operating point. */
+function localN(Vj: number): number {
+  const VT = thermalVoltage(300)
+  const h = 0.01
+  const j1 = nonIdealCurrents(NA, ND, Si, Vj - h, TAU0).Jtot
+  const j2 = nonIdealCurrents(NA, ND, Si, Vj + h, TAU0).Jtot
+  return (2 * h) / (VT * Math.log(j2 / j1))
+}
 
 /**
  * Lecture 2ב — series resistance. The bulk and contacts carry the diode current
@@ -24,6 +33,8 @@ export default function SeriesResistanceTab() {
   const c = useMemo(() => nonIdealCurrents(NA, ND, Si, Vj, TAU0), [Vj])
   const drop = c.Jtot * rs
   const vTerm = terminalVoltage(Vj, c.Jtot, rs)
+  const nLoc = useMemo(() => localN(Vj), [Vj])
+  const rd = diodeDynamicResistance(nLoc, c.Jtot) // dynamic (small-signal) resistance, Ω·cm²
 
   return (
     <div className="flex flex-col gap-5">
@@ -89,6 +100,40 @@ export default function SeriesResistanceTab() {
             </div>
           </div>
         </div>
+      </Panel>
+
+      <Panel title="שתי התנגדויות — דינמית מול טורית">
+        <p className="leading-relaxed text-slate-600">
+          חשוב לא לבלבל בין שתי "התנגדויות" של הדיודה. ל-<Tex>{'R_S'}</Tex> ה<b>טורית</b> מצטרפת ה<b>התנגדות
+          הדינמית</b> (אות-קטן) של הצומת עצמו — <b>שיפוע</b> האופיין בנקודת העבודה:
+        </p>
+        <div className="mt-3 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 text-center">
+          <Tex block>{'r_d=\\frac{dV}{dI}=\\frac{n\\,V_T}{I}'}</Tex>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-violet-200 bg-violet-50/50 p-4">
+            <p className="font-bold text-slate-800">התנגדות דינמית <Tex>{'r_d'}</Tex></p>
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+              של ה<b>צומת</b>, <b>תלוית-מתח</b>: יורדת כ-<Tex>{'1/I'}</Tex> ככל שמגבירים את הזרם. זהו השיפוע שמשמש
+              ב<b>מודל אות-קטן</b> של הדיודה.
+            </p>
+          </div>
+          <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-4">
+            <p className="font-bold text-slate-800">התנגדות טורית <Tex>{'R_S'}</Tex></p>
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+              של ה<b>בולק והמגעים</b>, <b>קבועה</b> (אוהמית) ובלתי-תלויה במתח. שולטת רק בזרם <b>גבוה</b>, כשהיא
+              עולה על <Tex>{'r_d'}</Tex>.
+            </p>
+          </div>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Readout label="התנגדות דינמית $r_d=nV_T/I$" value={`${rd < 1e4 ? rd.toFixed(2) : rd.toExponential(1)} Ω·cm²`} accent="border-violet-100 bg-violet-50" />
+          <Readout label="התנגדות טורית $R_S$" value={`${rs.toFixed(1)} Ω·cm²`} accent="border-rose-100 bg-rose-50" />
+        </div>
+        <p className="mt-2 text-sm leading-relaxed text-slate-500">
+          ההתנגדות הכוללת שהמקור "רואה" היא בקירוב <Tex>{'r_d+R_S'}</Tex>: בזרם נמוך <Tex>{'r_d\\gg R_S'}</Tex>{' '}
+          (הצומת שולט), ובזרם גבוה <Tex>{'r_d'}</Tex> צונח עד ש-<Tex>{'R_S'}</Tex> משתלט — וזו הברך הרזיסטיבית.
+        </p>
       </Panel>
     </div>
   )
