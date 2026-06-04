@@ -226,34 +226,42 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
 
         {/* two opposing thermionic electron fluxes */}
         {showFlux && (() => {
-          const yPeak = eToY(ecInterface)
-          const yEcBulk = eToY(ecBulk)
-          const yFm = eToY(eFm)
+          const yPeak = eToY(ecInterface) // barrier top
+          const yFm = eToY(eFm) // metal Fermi reservoir
           // J_{S→M}/J_{M→S} = e^{V_A/V_T}; render width on a bounded, smooth scale
-          const wSM = Math.max(1.2, 4 + 6 * Math.tanh(Va / 0.13)) // ≈1 (reverse) … 4 (eq) … 10 (forward)
+          const wSM = Math.max(1.4, 4 + 6 * Math.tanh(Va / 0.13)) // ≈1.4 (reverse) … 4 (eq) … 10 (forward)
           const stateHe = Va > 0.02 ? 'גדל (קדמי)' : Va < -0.02 ? 'דק → רוויה (אחורי)' : 'שיווי-משקל'
-          const xL = xJ - 52
-          const xR = xJ + 30 // bounded to the metal side — clears the φ_B & q(V_bi−V_A) markers
+          // FIXED-amplitude NESTED arcs (never bunch when the barrier is small, never cross):
+          // both rise above the barrier top from a baseline at the Fermi reservoir.
+          const yBase = yFm
+          const apexOut = Math.max(TOP + 12, Math.min(yBase - 56, yPeak - 24)) // J_{M→S} — outer/higher
+          let apexIn = Math.max(TOP + 30, Math.min(yBase - 34, yPeak - 8)) //      J_{S→M} — inner/lower
+          if (apexIn < apexOut + 14) apexIn = apexOut + 14 // guarantee a clear gap
+          const outerL = xJ - 66, outerR = xJ + 62
+          const innerL = xJ - 50, innerR = xJ + 48
           return (
             <g style={{ pointerEvents: 'none' }}>
-              {/* J_{M→S} — metal → semiconductor over the FIXED φ_B (constant); UPPER lane */}
+              {/* J_{M→S} — metal → semiconductor over the FIXED φ_B (constant width, outer arc) */}
               <path
-                d={`M ${xL},${yFm - 4} Q ${xJ - 2},${yPeak - 5} ${xR},${yEcBulk - 4}`}
+                d={`M ${outerL},${yBase - 1} Q ${xJ},${apexOut} ${outerR},${yBase - 1}`}
                 fill="none" stroke="#1d4ed8" strokeWidth={4.5} strokeLinecap="round" markerEnd="url(#ms-flux-ms)"
+                style={{ filter: 'drop-shadow(0 0.5px 1.5px rgba(29,78,216,0.35))' }}
               />
-              {/* J_{S→M} — semiconductor → metal over the bias-dependent barrier (∝bias); LOWER lane */}
+              <circle cx={outerL} cy={yBase - 1} r={3.2} fill="#1d4ed8" />
+              {/* J_{S→M} — semiconductor → metal over the bias-dependent barrier (width ∝ bias, inner arc) */}
               <path
-                d={`M ${xR},${yEcBulk + 9} Q ${xJ + 2},${yPeak + 8} ${xL},${yFm + 9}`}
+                d={`M ${innerR},${yBase + 5} Q ${xJ},${apexIn} ${innerL},${yBase + 5}`}
                 fill="none" stroke="#06b6d4" strokeWidth={wSM} strokeLinecap="round" markerEnd="url(#ms-flux-sm)"
-                style={{ filter: 'drop-shadow(0 0 2px rgba(6,182,212,0.5))' }}
+                style={{ filter: 'drop-shadow(0 0 2px rgba(6,182,212,0.55))' }}
               />
+              <circle cx={innerR} cy={yBase + 5} r={3.2} fill="#06b6d4" />
               {/* compact legend (top-left) — keeps all text off the bands and markers */}
               <g>
-                <rect x={MX + 6} y={TOP + 4} width={156} height={34} rx={6} fill="#ffffff" opacity={0.86} stroke="#e2e8f0" />
-                <rect x={MX + 13} y={TOP + 11} width={15} height={4} rx={2} fill="#1d4ed8" />
-                <text x={MX + 33} y={TOP + 16} className="fill-blue-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>M→S</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· קבוע</tspan></text>
-                <rect x={MX + 13} y={TOP + 25} width={15} height={4} rx={2} fill="#06b6d4" />
-                <text x={MX + 33} y={TOP + 30} className="fill-cyan-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>S→M</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· {stateHe}</tspan></text>
+                <rect x={MX + 6} y={TOP + 4} width={158} height={36} rx={7} fill="#ffffff" opacity={0.9} stroke="#e2e8f0" />
+                <rect x={MX + 13} y={TOP + 11} width={16} height={4.5} rx={2} fill="#1d4ed8" />
+                <text x={MX + 34} y={TOP + 16} className="fill-blue-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>M→S</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· קבוע</tspan></text>
+                <rect x={MX + 13} y={TOP + 26} width={16} height={4.5} rx={2} fill="#06b6d4" />
+                <text x={MX + 34} y={TOP + 31} className="fill-cyan-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>S→M</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· {stateHe}</tspan></text>
               </g>
             </g>
           )
