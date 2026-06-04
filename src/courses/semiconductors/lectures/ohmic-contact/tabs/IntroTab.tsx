@@ -54,20 +54,22 @@ export default function IntroTab() {
 
       <Panel title="אוהמי מול מיישר — במבט אחד">
         <p className="leading-relaxed text-slate-600">ההבדל נראה מיד באופיין <Tex>{'I\\text{–}V'}</Tex>:</p>
-        <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-          <div className="flex items-start gap-3 rounded-xl border-s-4 border-violet-400 bg-violet-50/50 px-4 py-3">
-            <span className="mt-0.5 text-lg leading-none" aria-hidden>⇥</span>
-            <p className="text-sm leading-relaxed text-slate-700">
-              <b className="text-violet-700">מיישר</b> — מעביר זרם <b>בכיוון אחד</b> בלבד.
-              <span className="mt-0.5 block text-slate-500">האקספוננציאלי של שוטקי.</span>
-            </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border-s-4 border-violet-400 bg-gradient-to-l from-violet-50/70 to-white p-4 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-violet-500/10 text-lg leading-none text-violet-600" aria-hidden>▷</span>
+              <span className="font-bold text-violet-700">מיישר</span>
+              <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-700">כיוון אחד</span>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">מעביר זרם <b>בכיוון אחד</b> בלבד — האקספוננציאלי של שוטקי.</p>
           </div>
-          <div className="flex items-start gap-3 rounded-xl border-s-4 border-emerald-400 bg-emerald-50/50 px-4 py-3">
-            <span className="mt-0.5 text-lg leading-none" aria-hidden>↔</span>
-            <p className="text-sm leading-relaxed text-slate-700">
-              <b className="text-emerald-700">אוהמי</b> — <b>קו ישר דרך הראשית</b>, לשני הכיוונים.
-              <span className="mt-0.5 block text-slate-500">התנגדות נמוכה וקבועה.</span>
-            </p>
+          <div className="rounded-2xl border-s-4 border-emerald-400 bg-gradient-to-l from-emerald-50/70 to-white p-4 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-500/10 text-lg leading-none text-emerald-600" aria-hidden>⇄</span>
+              <span className="font-bold text-emerald-700">אוהמי</span>
+              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">דו-כיווני</span>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600"><b>קו ישר דרך הראשית</b> — מוליך לשני הכיוונים, התנגדות נמוכה וקבועה.</p>
           </div>
         </div>
         <div className="mt-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3">

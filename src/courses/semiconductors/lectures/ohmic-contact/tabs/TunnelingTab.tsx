@@ -5,6 +5,7 @@ import Slider from '../../../components/Slider'
 import Readout from '../components/Readout'
 import ContactResistanceCurve from '../components/ContactResistanceCurve'
 import OhmicBandDiagram from '../components/OhmicBandDiagram'
+import TunnelingIllustration from '../components/TunnelingIllustration'
 import { MATERIALS, METALS, METAL_LIST, fmtDoping, fmtLength, ohmicState } from '../../../lib/junction'
 
 const Si = MATERIALS.Si
@@ -29,6 +30,29 @@ export default function TunnelingTab() {
 
   return (
     <div className="flex flex-col gap-5">
+      <Panel title="מה זה מנהור?">
+        <p className="leading-relaxed text-slate-700">
+          <b>קלאסית</b>, אלקטרון שאין לו מספיק אנרגיה לטפס <b>מעל</b> המחסום פשוט נחסם ומוחזר — כמו כדור שנזרק על קיר
+          ולא עובר אותו. <b>אבל אלקטרון הוא גם גל</b>: פונקציית-הגל שלו לא נעצרת בקיר אלא <b>דועכת מעריכית בתוכו</b>, ואם
+          המחסום <b>דק מספיק</b> נשארת לה משרעת גם בצד השני — כלומר יש <b>הסתברות</b> שהאלקטרון "יופיע" מעבר למחסום מבלי
+          לטפס מעליו. זהו <b>מנהור</b>.
+        </p>
+        <div className="mt-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3">
+          <p className="mb-1 text-center text-xs font-semibold text-slate-400">
+            <span className="text-slate-500">פונקציית-הגל של האלקטרון</span> — דועכת במחסום, יוצאת מוקטנת בצד השני
+          </p>
+          <TunnelingIllustration />
+        </div>
+        <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+          <div className="rounded-xl border-s-4 border-sky-300 bg-sky-50/50 px-4 py-2.5 text-sm leading-relaxed text-slate-700">
+            ההסתברות <b>צונחת מעריכית עם רוחב המחסום</b> — לכן סימום כבד, שמדקק את <Tex>{'W'}</Tex>, <b>מקפיץ</b> את המנהור.
+          </div>
+          <div className="rounded-xl border-s-4 border-amber-300 bg-amber-50/50 px-4 py-2.5 text-sm leading-relaxed text-slate-700">
+            המנהור <b>אלסטי</b>: האנרגיה נשמרת, ולכן האלקטרון עובר <b>אופקית</b> ברמת פרמי (לא מטפס ולא מאבד אנרגיה).
+          </div>
+        </div>
+      </Panel>
+
       <Panel title="מנהור: מסממים כבד → המחסום מתדקק">
         <p className="leading-relaxed text-slate-600">
           רוחב המחסום <Tex>{'W=\\sqrt{2\\varepsilon_s V_{bi}/(qN_D)}\\propto 1/\\sqrt{N_D}'}</Tex> מצטמצם עם הסימום. ב-<Tex>{'N_D\\sim10^{20}'}</Tex>

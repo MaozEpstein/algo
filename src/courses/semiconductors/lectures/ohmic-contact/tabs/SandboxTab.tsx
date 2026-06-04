@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import Tex from '@/core/components/Tex'
-import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
 import Readout from '../components/Readout'
@@ -60,11 +59,38 @@ export default function SandboxTab() {
     setActivePreset(p.labelHe)
   }
   const clear = () => setActivePreset(null)
-  const note = PRESETS.find((p) => p.labelHe === activePreset)?.noteHe
 
   // 2×2 matrix cell helper — which case for (row type, column sign)
   const cellKind = (t: CarrierType, gt: boolean) => contactKind(t, gt ? 1 : 0, gt ? 0 : 1) // gt: φ_m>φ_s
   const isActiveCell = (t: CarrierType, gt: boolean) => t === type && gt === st.bendUp
+
+  // a live flow-chart of the contact logic — always reflects the current controls
+  const FLOW: { t: string; tex?: boolean; tone: 'plain' | 'barrier' | 'free' | 'rect' | 'ohmic' }[] = [
+    { t: type === 'n' ? 'מל"מ n' : 'מל"מ p', tone: 'plain' },
+    { t: st.bendUp ? '\\varphi_m>\\varphi_s' : '\\varphi_m<\\varphi_s', tex: true, tone: 'plain' },
+    { t: st.bendUp ? 'כיפוף מעלה ↑' : 'כיפוף מטה ↓', tone: 'plain' },
+    { t: st.rectifying ? 'מחסום נוצר' : 'אין מחסום', tone: st.rectifying ? 'barrier' : 'free' },
+    { t: st.rectifying ? 'מיישר' : 'אוהמי', tone: st.rectifying ? 'rect' : 'ohmic' },
+  ]
+  const biasLine = st.rectifying
+    ? Va > 0.02
+      ? 'ממתח קדמי → המחסום מצד-המל"מ קטֵן, הזרם גדל מעריכית.'
+      : Va < -0.02
+        ? 'ממתח אחורי → המחסום גדל, הזרם רווי (כמעט קבוע).'
+        : 'שיווי-משקל → שני שטפי-הנושאים מתאזנים, אין זרם נטו.'
+    : Math.abs(Va) > 0.02
+      ? 'מגע אוהמי → הזרם זורם חופשי; הממתח רק מסיט את מפלס-המתכת (ליניארי).'
+      : 'מגע אוהמי → אין מחסום, הולכה חופשית וליניארית לשני הכיוונים.'
+  const pillCls = (tone: string) =>
+    tone === 'rect'
+      ? 'rounded-full bg-violet-500 px-3 py-1 text-sm font-bold text-white shadow'
+      : tone === 'ohmic'
+        ? 'rounded-full bg-emerald-500 px-3 py-1 text-sm font-bold text-white shadow'
+        : tone === 'barrier'
+          ? 'rounded-full bg-violet-50 px-3 py-1 text-sm font-medium text-violet-700 ring-1 ring-violet-200'
+          : tone === 'free'
+            ? 'rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200'
+            : 'rounded-full bg-white px-3 py-1 text-sm font-medium text-slate-600 ring-1 ring-slate-200'
 
   return (
     <div className="flex flex-col gap-5">
@@ -133,11 +159,18 @@ export default function SandboxTab() {
               </div>
             ))}
           </div>
-          {note && (
-            <p className="mt-3 rounded-lg bg-violet-50/70 px-3 py-2 text-sm leading-relaxed text-slate-600">
-              <RichText>{note}</RichText>
-            </p>
-          )}
+          {/* live flow-chart — what the current state means, step by step */}
+          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              {FLOW.map((s, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5">
+                  <span className={pillCls(s.tone)}>{s.tex ? <Tex>{s.t}</Tex> : s.t}</span>
+                  {i < FLOW.length - 1 && <span className="text-base font-bold text-slate-300" aria-hidden>←</span>}
+                </span>
+              ))}
+            </div>
+            <p className="mt-2.5 text-center text-sm leading-relaxed text-slate-600">{biasLine}</p>
+          </div>
         </div>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-2 lg:items-start">
