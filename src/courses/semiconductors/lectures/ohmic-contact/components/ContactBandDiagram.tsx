@@ -23,6 +23,8 @@ interface Props {
   /** semiconductor work function φ_s = χ + (E_c − E_F). */
   phiS: number
   Va: number
+  /** 'separated' = before contact (vacuum levels aligned); 'joined' = after contact (default). */
+  phase?: 'separated' | 'joined'
 }
 
 const W = 560
@@ -43,6 +45,7 @@ const ROSE = '#f43f5e'
 const VIOLET = '#7c3aed'
 const AMBER = '#f59e0b'
 const EMERALD = '#10b981'
+const SLATE = '#94a3b8'
 const GLOW_C = 'drop-shadow(0 1.5px 2px rgba(14,165,233,0.28))'
 const GLOW_V = 'drop-shadow(0 1.5px 2px rgba(244,63,94,0.25))'
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
@@ -77,11 +80,13 @@ function Defs() {
       <marker id="cbd-cap-a" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill={AMBER} /></marker>
       <marker id="cbd-cap-g" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill="#16a34a" /></marker>
       <marker id="cbd-tip-e" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill={EMERALD} /></marker>
+      <marker id="cbd-cap" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill="#475569" /></marker>
+      <marker id="cbd-cap-s" viewBox="0 0 8 8" refX="6.6" refY="4" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M1,1 L7,4 L1,7 Z" fill="#0369a1" /></marker>
     </defs>
   )
 }
 
-export default function ContactBandDiagram({ type, phiM, chi, eg, phiS, Va }: Props) {
+export default function ContactBandDiagram({ type, phiM, chi, eg, phiS, Va, phase = 'joined' }: Props) {
   const xJ = MX + 0.34 * PW
   const toPath = (pts: [number, number][]) => 'M ' + pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L ')
 
@@ -90,6 +95,81 @@ export default function ContactBandDiagram({ type, phiM, chi, eg, phiS, Va }: Pr
   const ecBulk = xi
   const evBulk = xi - eg
   const Vbi = Math.abs(phiM - phiS)
+
+  // ── SEPARATED phase: metal & SC apart, vacuum levels aligned (BEFORE contact) ──
+  // Type-agnostic: E_F sits at E_c−xi (n: near E_c; p: near E_v). Additive branch —
+  // the joined render below is untouched.
+  if (phase === 'separated') {
+    const gap = 46 // a clear empty gap → the two materials are visibly NOT touching
+    const scL = xJ + gap
+    const eFm = -phiM
+    const ecv = -chi // E_c
+    const evv = -chi - eg // E_v
+    const efv = -chi - xi // E_F (SC)
+    const eBotS = Math.min(eFm, evv) - 0.5
+    const eTopS = 0.5
+    const yS = (e: number) => TOP + ((eTopS - e) / (eTopS - eBotS)) * PLOT_H
+    const scColorSep = type === 'n' ? 'fill-sky-700' : 'fill-rose-600'
+    return (
+      <div className="ltr w-full" dir="ltr">
+        <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
+          <Defs />
+          <rect x={2} y={2} width={W - 4} height={H - 4} rx={14} fill="#fcfcff" stroke="#eef2f7" />
+
+          {/* vacuum level (aligned across both) */}
+          <line x1={MX} y1={yS(0)} x2={PR} y2={yS(0)} stroke={SLATE} strokeWidth={1.75} strokeDasharray="7 4" />
+          <text x={PR + 4} y={yS(0) + 4} className="fill-slate-500" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>0</tspan></text>
+          <text x={(MX + PR) / 2} y={yS(0) - 7} textAnchor="middle" className="fill-slate-400" style={{ fontSize: FSR, fontWeight: 700 }}>רמת ואקום</text>
+
+          {/* metal Fermi sea */}
+          <rect x={MX} y={yS(eFm)} width={xJ - MX} height={yBot - yS(eFm)} fill="url(#cbd-metal)" rx={3} />
+          <line x1={MX} y1={yS(eFm)} x2={xJ} y2={yS(eFm)} stroke="#475569" strokeWidth={2.25} />
+          <text x={(MX + xJ) / 2} y={yBot - 10} textAnchor="middle" className="fill-slate-700" style={{ fontSize: FSR, fontWeight: 800 }}>מתכת (M)</text>
+          <text x={MX + 5} y={yS(eFm) - 6} className="fill-slate-700" style={{ fontSize: FS - 2, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>Fm</tspan></text>
+          {/* φ_m */}
+          <line x1={MX + 34} y1={yS(0)} x2={MX + 34} y2={yS(eFm)} stroke="#475569" strokeWidth={1.75} markerStart="url(#cbd-cap)" markerEnd="url(#cbd-cap)" />
+          <text x={MX + 39} y={(yS(0) + yS(eFm)) / 2} className="fill-slate-700" style={{ fontSize: FS, fontWeight: 800 }}>φ<tspan dy={3} style={{ fontSize: FSUB }}>m</tspan></text>
+
+          {/* semiconductor slab — a faint body so the SC side reads as clearly as the
+              solid metal block on the left (sky for n, rose for p) */}
+          <rect
+            x={scL} y={yS(0) + 6} width={PR - scL} height={yBot - yS(0) - 6} rx={8}
+            fill={type === 'n' ? '#0ea5e9' : '#f43f5e'} fillOpacity={0.05}
+            stroke={type === 'n' ? '#bae6fd' : '#fecdd3'} strokeWidth={1}
+          />
+
+          {/* forbidden-gap shading */}
+          <rect x={scL} y={yS(ecv)} width={PR - scL} height={yS(evv) - yS(ecv)} fill="url(#cbd-gap)" />
+          <text x={PR - 8} y={(yS(ecv) + yS(evv)) / 2 + 4} textAnchor="end" className="fill-slate-300" style={{ fontSize: FSUB + 1, fontWeight: 700 }}>פס אסור</text>
+
+          {/* SC flat bands */}
+          <line x1={scL} y1={yS(ecv)} x2={PR} y2={yS(ecv)} stroke={SKY} strokeWidth={3} style={{ filter: GLOW_C }} />
+          <line x1={scL} y1={yS(evv)} x2={PR} y2={yS(evv)} stroke={ROSE} strokeWidth={3} style={{ filter: GLOW_V }} />
+          <line x1={scL} y1={yS(efv)} x2={PR} y2={yS(efv)} stroke="#0f172a" strokeWidth={1.5} strokeDasharray="6 3" />
+          <text x={PR + 4} y={yS(ecv) - 3} className="fill-sky-700" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>c</tspan></text>
+          <text x={PR + 4} y={yS(evv) + 5} className="fill-rose-600" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>v</tspan></text>
+          <text x={PR + 4} y={yS(efv) + (xi < eg / 2 ? 13 : -4)} className="fill-slate-700" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>F</tspan></text>
+          <text x={(scL + PR) / 2} y={yBot - 10} textAnchor="middle" className={scColorSep} style={{ fontSize: FSR, fontWeight: 800 }}>{type === 'n' ? 'מל"מ-n (SC)' : 'מל"מ-p (SC)'}</text>
+          {/* χ (vacuum → E_c) */}
+          <line x1={scL + 30} y1={yS(0)} x2={scL + 30} y2={yS(ecv)} stroke="#0369a1" strokeWidth={1.75} markerStart="url(#cbd-cap-s)" markerEnd="url(#cbd-cap-s)" />
+          <text x={scL + 35} y={(yS(0) + yS(ecv)) / 2} className="fill-sky-700" style={{ fontSize: FS, fontWeight: 800 }}>χ</text>
+          {/* φ_s (vacuum → E_F) */}
+          <line x1={scL + 80} y1={yS(0)} x2={scL + 80} y2={yS(efv)} stroke="#0369a1" strokeWidth={1.75} markerStart="url(#cbd-cap-s)" markerEnd="url(#cbd-cap-s)" />
+          <text x={scL + 85} y={(yS(0) + yS(efv)) / 2} className="fill-sky-700" style={{ fontSize: FS, fontWeight: 800 }}>φ<tspan dy={3} style={{ fontSize: FSUB }}>s</tspan></text>
+
+          {/* Fermi misalignment qV_bi (the drive that will bend the bands on contact) */}
+          <line x1={xJ + gap / 2} y1={yS(eFm)} x2={xJ + gap / 2} y2={yS(efv)} stroke={AMBER} strokeWidth={2.25} markerStart="url(#cbd-cap-a)" markerEnd="url(#cbd-cap-a)" />
+          <text x={xJ + gap / 2 + 5} y={(yS(eFm) + yS(efv)) / 2} className="fill-amber-600" style={{ fontSize: FS - 2, fontWeight: 700 }}>qV<tspan dy={3} style={{ fontSize: FSUB }}>bi</tspan></text>
+
+          {/* badge */}
+          <g>
+            <rect x={PR - 92} y={TOP + 4} width={88} height={22} rx={6} fill="#f8fafc" stroke="#e2e8f0" />
+            <text x={PR - 48} y={TOP + 19} textAnchor="middle" className="fill-slate-500" style={{ fontSize: FSUB + 3, fontWeight: 800 }}>לפני מגע</text>
+          </g>
+        </svg>
+      </div>
+    )
+  }
   const rectifying = contactKind(type, phiM, phiS) === 'rectifying'
   const bendUp = phiM > phiS
   const sgn = bendUp ? 1 : -1
@@ -106,7 +186,7 @@ export default function ContactBandDiagram({ type, phiM, chi, eg, phiS, Va }: Pr
   const eToY = (e: number) => TOP + ((eHi - e) / (eHi - eLo)) * PLOT_H
 
   // bending curve (1−u)²
-  const wFrac = rectifying ? (Vbi > 0 ? Math.min(0.9, Math.sqrt(drive / Vbi) * 0.55) : 0) : 0.42
+  const wFrac = rectifying ? (Vbi > 0 ? Math.min(0.6, Math.sqrt(drive / Vbi) * 0.4) : 0) : 0.42
   const xRegion = xJ + wFrac * (PR - xJ)
   const N = 60
   const ecPts: [number, number][] = []
@@ -123,7 +203,7 @@ export default function ContactBandDiagram({ type, phiM, chi, eg, phiS, Va }: Pr
   }
   const gapFill = toPath(ecPts) + ' L ' + [...evPts].reverse().map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L ') + ' Z'
 
-  const scLabel = type === 'n' ? 'מל"מ-n' : 'מל"מ-p'
+  const scLabel = type === 'n' ? 'מל"מ-n (SC)' : 'מל"מ-p (SC)'
   const scColor = type === 'n' ? 'fill-sky-700' : 'fill-rose-600'
 
   return (
@@ -135,7 +215,13 @@ export default function ContactBandDiagram({ type, phiM, chi, eg, phiS, Va }: Pr
         {/* ── BRANCH 1: region shading ── */}
         {rectifying ? (
           <>
-            {xRegion > xJ && <rect x={xJ} y={TOP} width={xRegion - xJ} height={PLOT_H} fill="url(#cbd-dep)" />}
+            {xRegion > xJ && (
+              <>
+                {/* gentle, uniform tint + a soft dashed edge so the depletion region reads clearly */}
+                <rect x={xJ} y={TOP} width={xRegion - xJ} height={PLOT_H} fill="#ddd6fe" fillOpacity={0.55} />
+                <line x1={xRegion} y1={TOP} x2={xRegion} y2={yBot} stroke="#a78bfa" strokeWidth={1} strokeDasharray="3 3" opacity={0.7} />
+              </>
+            )}
             {xRegion - xJ > 30 && (
               <text x={(xJ + xRegion) / 2} y={TOP + 14} textAnchor="middle" className="fill-violet-500" style={{ fontSize: FSR - 1, fontWeight: 700 }}>אזור מחסור</text>
             )}

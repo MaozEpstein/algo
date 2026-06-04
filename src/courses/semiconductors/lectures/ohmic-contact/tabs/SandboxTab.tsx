@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
@@ -38,7 +39,9 @@ export default function SandboxTab() {
   const [phiM, setPhiM] = useState(5.1)
   const [phiS, setPhiS] = useState(4.25)
   const [Va, setVa] = useState(0.3)
+  const [phase, setPhase] = useState<'separated' | 'joined'>('joined')
   const [activePreset, setActivePreset] = useState<string | null>('① n · מיישר · קדמי')
+  const reduce = useReducedMotion()
 
   const st = useMemo(() => {
     const kind = contactKind(type, phiM, phiS)
@@ -243,7 +246,42 @@ export default function SandboxTab() {
             <p className="mb-1 text-center text-xs font-semibold text-slate-400">
               <span className="text-slate-500">דיאגרמת פסים · אנרגיה–מיקום</span> — מתכת (M) משמאל · מל"מ (SC) מימין
             </p>
-            <ContactBandDiagram type={type} phiM={phiM} chi={CHI} eg={EG} phiS={phiS} Va={Va} />
+            {/* connect / disconnect — see the bands before and after contact */}
+            <div className="mb-2 flex items-center justify-center gap-2">
+              {([
+                { p: 'separated', he: '🔌 לפני מגע (נפרד)' },
+                { p: 'joined', he: '🔗 אחרי מגע (מחובר)' },
+              ] as const).map((b) => (
+                <button
+                  key={b.p}
+                  onClick={() => setPhase(b.p)}
+                  aria-pressed={phase === b.p}
+                  className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+                    phase === b.p ? 'border-slate-700 bg-slate-700 text-white shadow' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  {b.he}
+                </button>
+              ))}
+            </div>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={phase}
+                initial={{ opacity: 0, y: reduce ? 0 : 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: reduce ? 0 : -6 }}
+                transition={{ duration: reduce ? 0 : 0.28, ease: 'easeInOut' }}
+              >
+                <ContactBandDiagram type={type} phiM={phiM} chi={CHI} eg={EG} phiS={phiS} Va={Va} phase={phase} />
+              </motion.div>
+            </AnimatePresence>
+            <p className="mt-1.5 text-center text-xs leading-relaxed text-slate-500">
+              {phase === 'separated' ? (
+                <>שני החומרים בנפרד — רמות הוואקום מיושרות, ורמות פרמי שונות (<Tex>{'\\varphi_m'}</Tex> מול <Tex>{'\\varphi_s'}</Tex>).</>
+              ) : (
+                <>אחרי מגע — רמות פרמי משתוות, הפסים מתכופפים, ונוצר (או לא) מחסום.</>
+              )}
+            </p>
           </div>
         </div>
       </Panel>

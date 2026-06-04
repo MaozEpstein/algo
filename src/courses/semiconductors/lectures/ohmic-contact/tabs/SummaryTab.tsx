@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
+import EnrichmentBadge from '../../../components/EnrichmentBadge'
 
 const FORMULAS: { he: string; tex: string }[] = [
   { he: 'אנרגיית מנהור', tex: 'E_{00}=1.857\\times10^{-11}\\sqrt{N_D/(\\varepsilon_r m_r)}' },
@@ -37,12 +38,14 @@ const MISTAKES: { wrong: ReactNode; right: ReactNode }[] = [
 ]
 
 // The four parts of lecture 2 — each a kind of junction/contact — side by side.
-const JUNCTIONS: { part: string; name: string; accent: string; bar: string; id: ReactNode; mech: ReactNode; iv: ReactNode; use: ReactNode }[] = [
+const JUNCTIONS: { part: string; name: string; accent: string; bar: string; tint: string; thread: string; id: ReactNode; mech: ReactNode; iv: ReactNode; use: ReactNode }[] = [
   {
     part: '2א',
     name: 'דיודת PN אידיאלית',
     accent: 'text-sky-700',
-    bar: 'border-sky-400 bg-sky-50/50',
+    bar: 'border-sky-400',
+    tint: 'bg-sky-50/40',
+    thread: 'הצורה המעריכית',
     id: <>צומת <b>p–n</b> (שני חצאי מל"מ); המודל ה<b>אידיאלי</b> — דיפוזיית מיעוט בלבד, <Tex>{'n=1'}</Tex>.</>,
     mech: <>דיפוזיית נושאי <b>מיעוט</b> מוזרקים מעבר לצומת.</>,
     iv: <><Tex>{'I=I_S(e^{V/V_T}-1)'}</Tex> — מיישר, מעריכי.</>,
@@ -52,7 +55,9 @@ const JUNCTIONS: { part: string; name: string; accent: string; bar: string; id: 
     part: '2ב',
     name: 'דיודת PN לא-אידיאלית',
     accent: 'text-rose-600',
-    bar: 'border-rose-400 bg-rose-50/50',
+    bar: 'border-rose-400',
+    tint: 'bg-rose-50/40',
+    thread: '+ המציאות: רקומבינציה, הזרקה-גבוהה',
     id: <>אותו צומת <b>p–n</b>, אך עם ה<b>סטיות הממשיות</b>: רקומבינציה (<Tex>{'n\\approx2'}</Tex>), הזרקה-גבוהה, התנגדות טורית.</>,
     mech: <>מתווספים <b>רקומבינציה/גנרציה</b>, הזרקה-גבוהה והתנגדות טורית (מקדם אי-אידיאליות <Tex>{'n'}</Tex>).</>,
     iv: <>סוטה מהאידיאלי — אזורים שונים, שיפוע <Tex>{'n\\approx1\\text{–}2'}</Tex>.</>,
@@ -62,7 +67,9 @@ const JUNCTIONS: { part: string; name: string; accent: string; bar: string; id: 
     part: '2ג',
     name: 'דיודת שוטקי',
     accent: 'text-violet-700',
-    bar: 'border-violet-400 bg-violet-50/50',
+    bar: 'border-violet-400',
+    tint: 'bg-violet-50/40',
+    thread: 'מנגנון חדש: תרמיוני, נושאי רוב',
     id: <>מגע <b>מתכת–מל"מ</b> (לא p–n) עם <Tex>{'\\varphi_m>\\varphi_s'}</Tex> (ל-n) — נוצר מחסום מיישר.</>,
     mech: <>פליטה <b>תרמיונית</b> של נושאי <b>רוב</b> מעל מחסום <Tex>{'\\varphi_B'}</Tex>.</>,
     iv: <>מיישר, אך <Tex>{'J_{ST}\\gg J_S'}</Tex> → <b>מתח-הצתה נמוך</b>.</>,
@@ -72,7 +79,9 @@ const JUNCTIONS: { part: string; name: string; accent: string; bar: string; id: 
     part: '2ד',
     name: 'מגע אוהמי',
     accent: 'text-emerald-700',
-    bar: 'border-emerald-400 bg-emerald-50/50',
+    bar: 'border-emerald-400',
+    tint: 'bg-emerald-50/40',
+    thread: 'המגע הלא-מיישר שמחבר למעגל',
     id: <>מגע <b>מתכת–מל"מ</b> עם <Tex>{'\\varphi_m<\\varphi_s'}</Tex> (ל-n), או סימום <b>n⁺</b> כבד — <b>לא</b> מיישר.</>,
     mech: <>נושאי <b>רוב</b> זורמים חופשי (צבירה / מנהור דרך מחסום דק).</>,
     iv: <><b>לא</b> מיישר — <Tex>{'V=I\\rho_c'}</Tex> ליניארי וסימטרי.</>,
@@ -104,6 +113,7 @@ export default function SummaryTab() {
       </Panel>
 
       <Panel title="שלושת המשטרים">
+        <div className="mb-2.5"><EnrichmentBadge /></div>
         <div className="grid gap-2 sm:grid-cols-3">
           {REGIMES.map((r, i) => (
             <div key={i} className={`flex flex-col items-center gap-1 rounded-xl border px-3 py-3 text-center ${r.accent}`}>
@@ -143,7 +153,7 @@ export default function SummaryTab() {
             </thead>
             <tbody>
               {JUNCTIONS.map((j, i) => (
-                <tr key={i} className="border-t border-slate-100 transition hover:bg-slate-50/50">
+                <tr key={i} className={`border-t border-slate-100 ${j.tint}`}>
                   <td className={`border-s-4 px-3 py-3 align-top ${j.bar}`}>
                     <span className="block text-xs font-semibold text-slate-400">{j.part}</span>
                     <span className={`font-bold ${j.accent}`}>{j.name}</span>
@@ -157,10 +167,23 @@ export default function SummaryTab() {
             </tbody>
           </table>
         </div>
-        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-500">
-          <b>החוט המקשר:</b> 2א נותן את הצורה המעריכית, 2ב מוסיף את המציאות (רקומבינציה/הזרקה-גבוהה), 2ג מחליף את מנגנון
-          הזרם לפליטה תרמיונית של רוב, ו-2ד הוא המגע ה<b>לא</b>-מיישר שמחבר את כולם למעגל.
-        </p>
+        {/* the connecting thread — a subtle horizontal flow across the four parts */}
+        <div className="mt-4">
+          <p className="mb-2 text-xs font-semibold tracking-wide text-slate-400">החוט המקשר</p>
+          <div className="flex flex-wrap items-stretch justify-center gap-1.5">
+            {JUNCTIONS.map((j, i) => (
+              <span key={i} className="inline-flex items-stretch gap-1.5">
+                <span className={`flex w-36 flex-col justify-center rounded-lg border-s-2 ${j.bar} ${j.tint} px-2.5 py-1.5`}>
+                  <span className={`text-xs font-bold ${j.accent}`}>{j.part}</span>
+                  <span className="mt-0.5 text-xs leading-snug text-slate-500">{j.thread}</span>
+                </span>
+                {i < JUNCTIONS.length - 1 && (
+                  <span className="self-center text-lg font-bold text-slate-300" aria-hidden>←</span>
+                )}
+              </span>
+            ))}
+          </div>
+        </div>
       </Panel>
 
       <Panel title="טעויות נפוצות">

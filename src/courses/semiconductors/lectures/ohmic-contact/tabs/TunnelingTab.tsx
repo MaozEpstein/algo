@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
+import EnrichmentBadge from '../../../components/EnrichmentBadge'
 import Slider from '../../../components/Slider'
 import Readout from '../components/Readout'
 import ContactResistanceCurve from '../components/ContactResistanceCurve'
@@ -52,6 +53,14 @@ export default function TunnelingTab() {
           </div>
         </div>
       </Panel>
+
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50/60 px-4 py-2.5 text-sm leading-relaxed text-slate-600">
+        <EnrichmentBadge className="shrink-0" />
+        <span>
+          <b>רעיון</b> המנהור הוא ליבת הקורס. הניתוח ה<b>כמותי</b> שלהלן — <Tex>{'E_{00}'}</Tex>, המשטרים (TE/TFE/FE)
+          וההתנגדות <Tex>{'\\rho_c'}</Tex> — אינו בדף-הנוסחאות; זו <b>העשרה</b> (מבוסס Sze).
+        </span>
+      </div>
 
       <Panel title="מנהור: מסממים כבד → המחסום מתדקק">
         <p className="leading-relaxed text-slate-600">
