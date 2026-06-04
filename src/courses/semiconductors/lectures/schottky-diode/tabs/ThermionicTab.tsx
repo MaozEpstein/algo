@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
@@ -22,6 +23,30 @@ export default function ThermionicTab() {
   const [Va, setVa] = useState(0.2)
   const [mode, setMode] = useState<'linear' | 'log'>('log')
   const st = useMemo(() => schottkyState(W, Si, ND, Va), [Va])
+  const reduce = useReducedMotion()
+  // forward / reverse regime cards — the one matching the live V_A is highlighted
+  const REGIMES = [
+    {
+      key: 'fwd',
+      on: Va > 0.02,
+      he: 'ממתח קדמי',
+      cond: 'V_A>0',
+      icon: '▲',
+      onCls: 'border-emerald-300 bg-emerald-50 ring-2 ring-emerald-200',
+      titleCls: 'text-emerald-700',
+      body: <>השטף <Tex>{'J_{S\\to M}'}</Tex> גובר מעריכית, ומכאן <b>זרם קדמי גדול</b>.</>,
+    },
+    {
+      key: 'rev',
+      on: Va < -0.02,
+      he: 'ממתח אחורי',
+      cond: 'V_A<0',
+      icon: '▼',
+      onCls: 'border-amber-300 bg-amber-50 ring-2 ring-amber-200',
+      titleCls: 'text-amber-700',
+      body: <>השטף <Tex>{'J_{S\\to M}'}</Tex> מתאפס, ונשאר רק <Tex>{'-J_{ST}'}</Tex> — <b>רוויה אחורית</b>.</>,
+    },
+  ] as const
 
   return (
     <div className="flex flex-col gap-5">
@@ -114,10 +139,26 @@ export default function ThermionicTab() {
           </p>
           <MetalSemiconductorBandDiagram metal={W} mat={Si} Nd={ND} Va={Va} phase="joined" showFlux />
         </div>
-        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-600">
-          <b>קדמי</b> (<Tex>{'V_A>0'}</Tex>): <Tex>{'J_{S\\to M}'}</Tex> גובר מעריכית → זרם קדמי גדול.{' '}
-          <b>אחורי</b> (<Tex>{'V_A<0'}</Tex>): <Tex>{'J_{S\\to M}\\to0'}</Tex>, ונשאר רק <Tex>{'-J_{M\\to S}=-J_{ST}'}</Tex> —
-          <b> זו הרוויה האחורית</b>. <Tex>{'J_{M\\to S}'}</Tex> הקבוע הוא שמסביר למה הזרם האחורי אינו תלוי במתח.
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {REGIMES.map((r) => (
+            <motion.div
+              key={r.key}
+              animate={{ scale: r.on && !reduce ? 1.025 : 1 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`rounded-xl border p-3 transition-colors ${r.on ? r.onCls : 'border-slate-200 bg-white'}`}
+            >
+              <p className={`flex items-center gap-2 font-bold ${r.on ? r.titleCls : 'text-slate-500'}`}>
+                <span aria-hidden>{r.icon}</span>
+                {r.he}
+                <span className="text-xs font-normal opacity-70" dir="ltr">(<Tex>{r.cond}</Tex>)</span>
+                {r.on && <span className="ms-auto rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-semibold">פעיל עכשיו</span>}
+              </p>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{r.body}</p>
+            </motion.div>
+          ))}
+        </div>
+        <p className="mt-2.5 text-center text-sm leading-relaxed text-slate-500">
+          השטף <Tex>{'J_{M\\to S}'}</Tex> קבוע בכל מתח — ולכן הזרם האחורי <b>אינו תלוי במתח</b> (רווי).
         </p>
       </Panel>
 

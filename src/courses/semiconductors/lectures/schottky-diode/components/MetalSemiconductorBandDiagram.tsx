@@ -72,7 +72,7 @@ function Defs() {
       {/* single-headed flux arrowheads — fixed px size (userSpaceOnUse) so a thick
           stroke doesn't blow the head up */}
       <marker id="ms-flux-ms" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1.5 L9,5 L0,8.5 Z" fill="#1d4ed8" /></marker>
-      <marker id="ms-flux-sm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1.5 L9,5 L0,8.5 Z" fill="#06b6d4" /></marker>
+      <marker id="ms-flux-sm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1.5 L9,5 L0,8.5 Z" fill="#ea580c" /></marker>
     </defs>
   )
 }
@@ -108,7 +108,7 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
           {/* metal Fermi sea */}
           <rect x={MX} y={eToY(eFm)} width={xJ - MX} height={yBot - eToY(eFm)} fill="url(#ms-metal)" rx={3} />
           <line x1={MX} y1={eToY(eFm)} x2={xJ} y2={eToY(eFm)} stroke="#475569" strokeWidth={2.25} />
-          <text x={(MX + xJ) / 2} y={yBot - 10} textAnchor="middle" className="fill-slate-700" style={{ fontSize: FSR, fontWeight: 800 }}>מתכת ({metal.key})</text>
+          <text x={(MX + xJ) / 2} y={yBot - 10} textAnchor="middle" className="fill-slate-700" style={{ fontSize: FSR, fontWeight: 800 }}>מתכת ({showFlux ? 'M' : metal.key})</text>
           <text x={MX + 5} y={eToY(eFm) - 6} className="fill-slate-700" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>Fm</tspan></text>
           {/* φ_m */}
           <line x1={MX + 34} y1={eToY(0)} x2={MX + 34} y2={eToY(eFm)} stroke="#475569" strokeWidth={1.75} markerStart="url(#ms-cap)" markerEnd="url(#ms-cap)" />
@@ -187,7 +187,7 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
         {/* metal Fermi sea */}
         <rect x={MX} y={eToY(eFm)} width={xJ - MX} height={yBot - eToY(eFm)} fill="url(#ms-metal)" rx={3} />
         <line x1={MX} y1={eToY(eFm)} x2={xJ} y2={eToY(eFm)} stroke="#475569" strokeWidth={2.25} />
-        <text x={(MX + xJ) / 2} y={yBot - 10} textAnchor="middle" className="fill-slate-700" style={{ fontSize: FSR, fontWeight: 800 }}>מתכת ({metal.key})</text>
+        <text x={(MX + xJ) / 2} y={yBot - 10} textAnchor="middle" className="fill-slate-700" style={{ fontSize: FSR, fontWeight: 800 }}>מתכת ({showFlux ? 'M' : metal.key})</text>
 
         {/* interface */}
         <line x1={xJ} y1={TOP} x2={xJ} y2={yBot} stroke="#cbd5e1" strokeWidth={1} />
@@ -204,64 +204,65 @@ export default function MetalSemiconductorBandDiagram({ metal, mat, Nd, Va, phas
         <text x={PR + 4} y={eToY(ecBulk - eg / 2) + 4} className="fill-slate-400" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>i</tspan></text>
         <text x={PR + 4} y={eToY(ecBulk - eg) + 4} className="fill-rose-600" style={{ fontSize: FS, fontWeight: 700 }}>E<tspan dy={3} style={{ fontSize: FSUB }}>v</tspan></text>
 
-        {/* φ_B (fixed, metal side) */}
-        <line x1={xJ + 9} y1={eToY(eFm)} x2={xJ + 9} y2={eToY(ecInterface)} stroke={VIOLET} strokeWidth={2.5} markerStart="url(#ms-cap-v)" markerEnd="url(#ms-cap-v)" />
-        <text x={xJ + 14} y={(eToY(eFm) + eToY(ecInterface)) / 2} className="fill-violet-700" style={{ fontSize: FS, fontWeight: 800 }}>φ<tspan dy={3} style={{ fontSize: FSUB }}>B</tspan></text>
-
-        {/* q(V_bi−V_A) bending */}
-        {drive > 0.02 && (
+        {/* dimension markers (φ_B, q(V_bi−V_A), qV_A) — hidden in flux mode so the
+            two current arcs sit on a clean canvas (they live in the band-diagram tab) */}
+        {!showFlux && (
           <>
-            <line x1={xW + 3} y1={eToY(ecBulk)} x2={xW + 3} y2={eToY(ecInterface)} stroke={AMBER} strokeWidth={1.75} markerStart="url(#ms-cap-a)" markerEnd="url(#ms-cap-a)" />
-            <text x={xW + 8} y={(eToY(ecBulk) + eToY(ecInterface)) / 2} className="fill-amber-600" style={{ fontSize: FS - 2, fontWeight: 700 }}>q(V<tspan dy={3} style={{ fontSize: FSUB }}>bi</tspan><tspan dy={-3}>−V</tspan><tspan dy={3} style={{ fontSize: FSUB }}>A</tspan><tspan dy={-3}>)</tspan></text>
-          </>
-        )}
-
-        {/* qV_A split */}
-        {Math.abs(Va) > 0.02 && (
-          <>
-            <line x1={xJ - 18} y1={eToY(0)} x2={xJ - 18} y2={eToY(eFm)} stroke="#16a34a" strokeWidth={1.75} markerStart="url(#ms-cap-g)" markerEnd="url(#ms-cap-g)" />
-            <text x={xJ - 16} y={(eToY(0) + eToY(eFm)) / 2 + 3} className="fill-emerald-600" style={{ fontSize: FS - 2, fontWeight: 700 }}>qV<tspan dy={3} style={{ fontSize: FSUB }}>A</tspan></text>
+            {/* φ_B (fixed, metal side) */}
+            <line x1={xJ + 9} y1={eToY(eFm)} x2={xJ + 9} y2={eToY(ecInterface)} stroke={VIOLET} strokeWidth={2.5} markerStart="url(#ms-cap-v)" markerEnd="url(#ms-cap-v)" />
+            <text x={xJ + 14} y={(eToY(eFm) + eToY(ecInterface)) / 2} className="fill-violet-700" style={{ fontSize: FS, fontWeight: 800 }}>φ<tspan dy={3} style={{ fontSize: FSUB }}>B</tspan></text>
+            {/* q(V_bi−V_A) bending */}
+            {drive > 0.02 && (
+              <>
+                <line x1={xW + 3} y1={eToY(ecBulk)} x2={xW + 3} y2={eToY(ecInterface)} stroke={AMBER} strokeWidth={1.75} markerStart="url(#ms-cap-a)" markerEnd="url(#ms-cap-a)" />
+                <text x={xW + 8} y={(eToY(ecBulk) + eToY(ecInterface)) / 2} className="fill-amber-600" style={{ fontSize: FS - 2, fontWeight: 700 }}>q(V<tspan dy={3} style={{ fontSize: FSUB }}>bi</tspan><tspan dy={-3}>−V</tspan><tspan dy={3} style={{ fontSize: FSUB }}>A</tspan><tspan dy={-3}>)</tspan></text>
+              </>
+            )}
+            {/* qV_A split */}
+            {Math.abs(Va) > 0.02 && (
+              <>
+                <line x1={xJ - 18} y1={eToY(0)} x2={xJ - 18} y2={eToY(eFm)} stroke="#16a34a" strokeWidth={1.75} markerStart="url(#ms-cap-g)" markerEnd="url(#ms-cap-g)" />
+                <text x={xJ - 16} y={(eToY(0) + eToY(eFm)) / 2 + 3} className="fill-emerald-600" style={{ fontSize: FS - 2, fontWeight: 700 }}>qV<tspan dy={3} style={{ fontSize: FSUB }}>A</tspan></text>
+              </>
+            )}
           </>
         )}
 
         {/* two opposing thermionic electron fluxes */}
         {showFlux && (() => {
           const yPeak = eToY(ecInterface) // barrier top
-          const yFm = eToY(eFm) // metal Fermi reservoir
-          // J_{S→M}/J_{M→S} = e^{V_A/V_T}; render width on a bounded, smooth scale
-          const wSM = Math.max(1.4, 4 + 6 * Math.tanh(Va / 0.13)) // ≈1.4 (reverse) … 4 (eq) … 10 (forward)
+          // J_{S→M}/J_{M→S} = e^{V_A/V_T}; bounded width (thin enough to stay clean)
+          const wSM = Math.max(1.6, 2.5 + 3 * Math.tanh(Va / 0.13)) // ≈1.6 (reverse) … 2.5 (eq) … 5.3 (forward)
           const stateHe = Va > 0.02 ? 'גדל (קדמי)' : Va < -0.02 ? 'דק → רוויה (אחורי)' : 'שיווי-משקל'
-          // FIXED-amplitude NESTED arcs (never bunch when the barrier is small, never cross):
-          // both rise above the barrier top from a baseline at the Fermi reservoir.
-          const yBase = yFm
-          const apexOut = Math.max(TOP + 12, Math.min(yBase - 56, yPeak - 24)) // J_{M→S} — outer/higher
-          let apexIn = Math.max(TOP + 30, Math.min(yBase - 34, yPeak - 8)) //      J_{S→M} — inner/lower
-          if (apexIn < apexOut + 14) apexIn = apexOut + 14 // guarantee a clear gap
-          const outerL = xJ - 66, outerR = xJ + 62
-          const innerL = xJ - 50, innerR = xJ + 48
+          // two SHALLOW nested arcs hugging the barrier crest, with a clear vertical gap so
+          // they read as two distinct opposing streams (not one thick blob).
+          const apexBlue = Math.max(TOP + 8, yPeak - 18) // J_{M→S} — outer/higher
+          const apexCyan = Math.max(apexBlue + 16, yPeak - 2) // J_{S→M} — inner/lower
+          const yEndBlue = yPeak + 12
+          const yEndCyan = yPeak + 26
+          const xL = xJ - 56
+          const xR = xJ + 54
           return (
             <g style={{ pointerEvents: 'none' }}>
               {/* J_{M→S} — metal → semiconductor over the FIXED φ_B (constant width, outer arc) */}
               <path
-                d={`M ${outerL},${yBase - 1} Q ${xJ},${apexOut} ${outerR},${yBase - 1}`}
-                fill="none" stroke="#1d4ed8" strokeWidth={4.5} strokeLinecap="round" markerEnd="url(#ms-flux-ms)"
-                style={{ filter: 'drop-shadow(0 0.5px 1.5px rgba(29,78,216,0.35))' }}
+                d={`M ${xL},${yEndBlue} Q ${xJ},${apexBlue} ${xR},${yEndBlue}`}
+                fill="none" stroke="#1d4ed8" strokeWidth={2.75} strokeLinecap="round" markerEnd="url(#ms-flux-ms)"
               />
-              <circle cx={outerL} cy={yBase - 1} r={3.2} fill="#1d4ed8" />
+              <circle cx={xL} cy={yEndBlue} r={2.6} fill="#1d4ed8" />
               {/* J_{S→M} — semiconductor → metal over the bias-dependent barrier (width ∝ bias, inner arc) */}
               <path
-                d={`M ${innerR},${yBase + 5} Q ${xJ},${apexIn} ${innerL},${yBase + 5}`}
-                fill="none" stroke="#06b6d4" strokeWidth={wSM} strokeLinecap="round" markerEnd="url(#ms-flux-sm)"
-                style={{ filter: 'drop-shadow(0 0 2px rgba(6,182,212,0.55))' }}
+                d={`M ${xR},${yEndCyan} Q ${xJ},${apexCyan} ${xL},${yEndCyan}`}
+                fill="none" stroke="#ea580c" strokeWidth={wSM} strokeLinecap="round" markerEnd="url(#ms-flux-sm)"
               />
-              <circle cx={innerR} cy={yBase + 5} r={3.2} fill="#06b6d4" />
+              <circle cx={xR} cy={yEndCyan} r={2.6} fill="#ea580c" />
               {/* compact legend (top-left) — keeps all text off the bands and markers */}
               <g>
                 <rect x={MX + 6} y={TOP + 4} width={158} height={36} rx={7} fill="#ffffff" opacity={0.9} stroke="#e2e8f0" />
                 <rect x={MX + 13} y={TOP + 11} width={16} height={4.5} rx={2} fill="#1d4ed8" />
                 <text x={MX + 34} y={TOP + 16} className="fill-blue-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>M→S</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· קבוע</tspan></text>
-                <rect x={MX + 13} y={TOP + 26} width={16} height={4.5} rx={2} fill="#06b6d4" />
-                <text x={MX + 34} y={TOP + 31} className="fill-cyan-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>S→M</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· {stateHe}</tspan></text>
+                <rect x={MX + 13} y={TOP + 26} width={16} height={4.5} rx={2} fill="#ea580c" />
+                <text x={MX + 34} y={TOP + 31} className="fill-orange-700" style={{ fontSize: FSUB + 2, fontWeight: 800 }}>J<tspan dy={2} style={{ fontSize: FSUB - 1 }}>S→M</tspan><tspan dy={-2} dx={2} style={{ fontWeight: 600 }}>· {stateHe}</tspan></text>
               </g>
             </g>
           )
