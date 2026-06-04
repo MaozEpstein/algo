@@ -358,6 +358,108 @@ export function schottkyState(metal: Metal, mat: Material, Nd: number, Va: numbe
   }
 }
 
+// ---- ohmic metal–semiconductor contact — lecture 2ד ------------------------
+export type OhmicRegime = 'TE' | 'TFE' | 'FE'
+export interface OhmicState {
+  phiB: number // Schottky barrier φ_B = φ_m − χ (eV)
+  xi: number // bulk offset ξ (eV)
+  Vbi: number // built-in potential (V); <0 ⇒ accumulation/ohmic
+  accumulation: boolean // φ_m < φ_s ⇒ no barrier, electron accumulation (ideal-ohmic route)
+  E00: number // tunneling characteristic energy (eV)
+  regime: OhmicRegime // transport regime by E_00 vs kT
+  W: number // one-sided depletion width at equilibrium (cm); 0 in accumulation
+  rhoC: number // specific contact resistance (Ω·cm²)
+  degenerate: boolean
+}
+
+/**
+ * Tunneling (conductivity) effective-mass ratio m* / m₀ — the mass that sets the
+ * tunnel probability. NOT the DOS mass implied by A* (≈120·m_DOS): for tunneling
+ * Si≈0.26, Ge≈0.12, GaAs≈0.067. A small local lookup so `Material` stays untouched.
+ */
+export const tunnelingMass = (mat: Material): number => ({ Si: 0.26, Ge: 0.12, GaAs: 0.067 }[mat.key])
+
+/**
+ * Tunneling characteristic energy E₀₀ = (qℏ/2)·√(N_D/(ε_s·m*)) (eV). Worked into a
+ * closed form with N_D in cm⁻³: E₀₀[eV] = 1.857e-11·√(N_D/(ε_r·m_r)) (SI constants
+ * folded in; verified Si,1e19 → 33.5 meV). Rises with √N_D; bigger for lighter m*.
+ */
+export const e00 = (mat: Material, Nd: number): number => 1.857e-11 * Math.sqrt(Nd / (mat.epsR * tunnelingMass(mat)))
+
+/**
+ * Transport regime of the contact, by E₀₀ vs kT: thermionic emission (TE, low
+ * doping → rectifying), thermionic-field (TFE), or field emission (FE, heavy
+ * doping → tunneling → ohmic). Boundaries 0.5·kT and 5·kT.
+ */
+export function tunnelRegime(mat: Material, Nd: number, T = 300): OhmicRegime {
+  const kT = KB_EV * T
+  const E = e00(mat, Nd)
+  if (E < 0.5 * kT) return 'TE'
+  if (E <= 5 * kT) return 'TFE'
+  return 'FE'
+}
+
+/**
+ * Specific contact resistance ρ_c (Ω·cm²). Uses the Padovani–Stratton crossover
+ * energy E₀ = E₀₀·coth(E₀₀/kT) so the single formula spans all regimes WITHOUT
+ * overflow: in TE (E₀₀≪kT) E₀→kT ⇒ ρ_c = (k_B/qA*T)·e^{φ_B/kT} (finite, ~Ω·cm²
+ * for light doping); in FE (E₀₀≫kT) E₀→E₀₀ ⇒ ρ_c ∝ e^{φ_B/E₀₀} ∝ e^{C·φ_B/√N_D}
+ * (the exponential collapse). The prefactor is the thermionic k_B/(q·A*·T).
+ */
+export function specificContactResistance(metal: Metal, mat: Material, Nd: number, T = 300): number {
+  const phiB = schottkyBarrier(metal.phiM, mat.chi)
+  const E = e00(mat, Nd)
+  const kT = KB_EV * T
+  const E0 = E / Math.tanh(E / kT) // E₀₀·coth(E₀₀/kT)
+  const RHO0 = KB / (Q * mat.astar * T) // thermionic prefactor (Ω·cm²)
+  return RHO0 * Math.exp(phiB / E0)
+}
+
+/** Ohmic via low barrier / accumulation: φ_m < φ_s (n-type) ⇔ V_bi < 0 (not φ_B<0). */
+export const isAccumulation = (metal: Metal, mat: Material, Nd: number, T = 300): boolean =>
+  !isRectifying(metal.phiM, mat.chi, mat.nc, Nd, T)
+
+/** Everything the ohmic-contact widgets need, from one call (mirrors schottkyState). */
+export function ohmicState(metal: Metal, mat: Material, Nd: number, T = 300): OhmicState {
+  const phiB = schottkyBarrier(metal.phiM, mat.chi)
+  const xi = bulkOffset(mat.nc, Nd, T)
+  const Vbi = phiB - xi
+  return {
+    phiB,
+    xi,
+    Vbi,
+    accumulation: Vbi < 0,
+    E00: e00(mat, Nd),
+    regime: tunnelRegime(mat, Nd, T),
+    W: schottkyWidth(mat, Nd, 0, Vbi),
+    rhoC: specificContactResistance(metal, mat, Nd, T),
+    degenerate: Nd >= mat.nc,
+  }
+}
+
+// ---- general metal–semiconductor contact (n OR p) --------------------------
+/** Majority-carrier type of the semiconductor. */
+export type CarrierType = 'n' | 'p'
+
+/**
+ * The four fundamental metal–semiconductor cases reduce to one rule. φ_s=χ+(E_c−E_F).
+ * The band-bending direction is sign(φ_m−φ_s), INDEPENDENT of type; whether that
+ * bending rectifies depends on the type:
+ *  • n-type rectifies when φ_m>φ_s (electron depletion, Schottky barrier);
+ *  • p-type rectifies when φ_m<φ_s (hole depletion).
+ * Otherwise the contact is ohmic (majority-carrier accumulation, no barrier).
+ */
+export const contactKind = (type: CarrierType, phiM: number, phiS: number): 'rectifying' | 'ohmic' =>
+  (type === 'n' ? phiM > phiS : phiM < phiS) ? 'rectifying' : 'ohmic'
+
+/**
+ * Barrier height seen from the metal (eV), bias-independent. For n-type it is the
+ * electron barrier φ_Bn=φ_m−χ; for p-type the hole barrier φ_Bp=χ+E_g−φ_m=E_g−φ_Bn.
+ * (Meaningful for the rectifying cases; returned regardless so callers can label.)
+ */
+export const contactBarrier = (type: CarrierType, phiM: number, chi: number, eg: number): number =>
+  type === 'n' ? phiM - chi : chi + eg - phiM
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4
