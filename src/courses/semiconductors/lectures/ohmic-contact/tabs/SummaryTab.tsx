@@ -37,11 +37,12 @@ const MISTAKES: { wrong: ReactNode; right: ReactNode }[] = [
 ]
 
 // The four parts of lecture 2 — each a kind of junction/contact — side by side.
-const JUNCTIONS: { part: string; name: string; accent: string; id: ReactNode; mech: ReactNode; iv: ReactNode; use: ReactNode }[] = [
+const JUNCTIONS: { part: string; name: string; accent: string; bar: string; id: ReactNode; mech: ReactNode; iv: ReactNode; use: ReactNode }[] = [
   {
     part: '2א',
     name: 'דיודת PN אידיאלית',
     accent: 'text-sky-700',
+    bar: 'border-sky-400 bg-sky-50/50',
     id: <>צומת <b>p–n</b> (שני חצאי מל"מ); המודל ה<b>אידיאלי</b> — דיפוזיית מיעוט בלבד, <Tex>{'n=1'}</Tex>.</>,
     mech: <>דיפוזיית נושאי <b>מיעוט</b> מוזרקים מעבר לצומת.</>,
     iv: <><Tex>{'I=I_S(e^{V/V_T}-1)'}</Tex> — מיישר, מעריכי.</>,
@@ -51,6 +52,7 @@ const JUNCTIONS: { part: string; name: string; accent: string; id: ReactNode; me
     part: '2ב',
     name: 'דיודת PN לא-אידיאלית',
     accent: 'text-rose-600',
+    bar: 'border-rose-400 bg-rose-50/50',
     id: <>אותו צומת <b>p–n</b>, אך עם ה<b>סטיות הממשיות</b>: רקומבינציה (<Tex>{'n\\approx2'}</Tex>), הזרקה-גבוהה, התנגדות טורית.</>,
     mech: <>מתווספים <b>רקומבינציה/גנרציה</b>, הזרקה-גבוהה והתנגדות טורית (מקדם אי-אידיאליות <Tex>{'n'}</Tex>).</>,
     iv: <>סוטה מהאידיאלי — אזורים שונים, שיפוע <Tex>{'n\\approx1\\text{–}2'}</Tex>.</>,
@@ -60,6 +62,7 @@ const JUNCTIONS: { part: string; name: string; accent: string; id: ReactNode; me
     part: '2ג',
     name: 'דיודת שוטקי',
     accent: 'text-violet-700',
+    bar: 'border-violet-400 bg-violet-50/50',
     id: <>מגע <b>מתכת–מל"מ</b> (לא p–n) עם <Tex>{'\\varphi_m>\\varphi_s'}</Tex> (ל-n) — נוצר מחסום מיישר.</>,
     mech: <>פליטה <b>תרמיונית</b> של נושאי <b>רוב</b> מעל מחסום <Tex>{'\\varphi_B'}</Tex>.</>,
     iv: <>מיישר, אך <Tex>{'J_{ST}\\gg J_S'}</Tex> → <b>מתח-הצתה נמוך</b>.</>,
@@ -69,6 +72,7 @@ const JUNCTIONS: { part: string; name: string; accent: string; id: ReactNode; me
     part: '2ד',
     name: 'מגע אוהמי',
     accent: 'text-emerald-700',
+    bar: 'border-emerald-400 bg-emerald-50/50',
     id: <>מגע <b>מתכת–מל"מ</b> עם <Tex>{'\\varphi_m<\\varphi_s'}</Tex> (ל-n), או סימום <b>n⁺</b> כבד — <b>לא</b> מיישר.</>,
     mech: <>נושאי <b>רוב</b> זורמים חופשי (צבירה / מנהור דרך מחסום דק).</>,
     iv: <><b>לא</b> מיישר — <Tex>{'V=I\\rho_c'}</Tex> ליניארי וסימטרי.</>,
@@ -122,6 +126,43 @@ export default function SummaryTab() {
         </div>
       </Panel>
 
+      <Panel title="ארבעת צמתי שיעור 2 — השוואה">
+        <p className="leading-relaxed text-slate-600">
+          כל ארבעת חלקי שיעור 2 הם <b>סוג של צומת/דיודה</b>. הנה ההבדלים — והיכן פוגשים כל אחד בעולם האמיתי:
+        </p>
+        <div className="mt-3 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+          <table className="w-full min-w-[52rem] border-collapse text-start text-sm">
+            <thead>
+              <tr className="bg-slate-50/80">
+                {['הסוג', 'איך מבחינים', 'מנגנון הזרם', null, 'שימוש בעולם — ולמה'].map((h, k) => (
+                  <th key={k} className="border-b border-slate-200 px-3 py-2.5 text-start text-xs font-bold tracking-wide text-slate-500">
+                    {h ?? <>אופיין <Tex>{'I\\text{–}V'}</Tex></>}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {JUNCTIONS.map((j, i) => (
+                <tr key={i} className="border-t border-slate-100 transition hover:bg-slate-50/50">
+                  <td className={`border-s-4 px-3 py-3 align-top ${j.bar}`}>
+                    <span className="block text-xs font-semibold text-slate-400">{j.part}</span>
+                    <span className={`font-bold ${j.accent}`}>{j.name}</span>
+                  </td>
+                  <td className="px-3 py-3 align-top leading-relaxed text-slate-600">{j.id}</td>
+                  <td className="px-3 py-3 align-top leading-relaxed text-slate-600">{j.mech}</td>
+                  <td className="px-3 py-3 align-top leading-relaxed text-slate-600">{j.iv}</td>
+                  <td className="px-3 py-3 align-top leading-relaxed text-slate-600">{j.use}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-500">
+          <b>החוט המקשר:</b> 2א נותן את הצורה המעריכית, 2ב מוסיף את המציאות (רקומבינציה/הזרקה-גבוהה), 2ג מחליף את מנגנון
+          הזרם לפליטה תרמיונית של רוב, ו-2ד הוא המגע ה<b>לא</b>-מיישר שמחבר את כולם למעגל.
+        </p>
+      </Panel>
+
       <Panel title="טעויות נפוצות">
         <ul className="flex flex-col gap-3">
           {MISTAKES.map((m, i) => (
@@ -137,43 +178,6 @@ export default function SummaryTab() {
             </li>
           ))}
         </ul>
-      </Panel>
-
-      <Panel title="ארבעת צמתי שיעור 2 — השוואה">
-        <p className="leading-relaxed text-slate-600">
-          כל ארבעת חלקי שיעור 2 הם <b>סוג של צומת/דיודה</b>. הנה ההבדלים — והיכן פוגשים כל אחד בעולם האמיתי:
-        </p>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[52rem] border-collapse text-start text-sm">
-            <thead>
-              <tr className="border-b-2 border-slate-200">
-                <th className="px-3 py-2 text-start font-semibold text-slate-400">הסוג</th>
-                <th className="px-3 py-2 text-start font-semibold text-slate-400">איך מבחינים</th>
-                <th className="px-3 py-2 text-start font-semibold text-slate-400">מנגנון הזרם</th>
-                <th className="px-3 py-2 text-start font-semibold text-slate-400">אופיין <Tex>{'I\\text{–}V'}</Tex></th>
-                <th className="px-3 py-2 text-start font-semibold text-slate-400">שימוש בעולם — ולמה</th>
-              </tr>
-            </thead>
-            <tbody>
-              {JUNCTIONS.map((j, i) => (
-                <tr key={i} className={i % 2 ? 'bg-slate-50/40' : ''}>
-                  <td className="border-b border-slate-100 px-3 py-2.5 align-top">
-                    <span className="block text-xs font-semibold text-slate-400">{j.part}</span>
-                    <span className={`font-bold ${j.accent}`}>{j.name}</span>
-                  </td>
-                  <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.id}</td>
-                  <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.mech}</td>
-                  <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.iv}</td>
-                  <td className="border-b border-slate-100 px-3 py-2.5 align-top leading-relaxed text-slate-600">{j.use}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-500">
-          <b>החוט המקשר:</b> 2א נותן את הצורה המעריכית, 2ב מוסיף את המציאות (רקומבינציה/הזרקה-גבוהה), 2ג מחליף את מנגנון
-          הזרם לפליטה תרמיונית של רוב, ו-2ד הוא המגע ה<b>לא</b>-מיישר שמחבר את כולם למעגל.
-        </p>
       </Panel>
 
       <Panel title="מה הלאה?">
