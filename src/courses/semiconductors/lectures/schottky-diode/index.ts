@@ -30,7 +30,8 @@ export const schottkyDiodeLecture: LectureModule = {
     { term: 'שני הזרמים הנגדיים $J_{S\\to M},\\,J_{M\\to S}$', def: 'הזרם הוא הפרש שני שטפי-אלקטרונים מעל אותו מחסום: $J_{M\\to S}$ (מהמתכת, מעל $\\varphi_B$ הקבוע) $=J_{ST}$ קבוע; $J_{S\\to M}$ (מהמל"מ, מעל $q(V_{bi}-V_A)$) תלוי-מתח. ההפרש נותן את אופיין הדיודה, והאחורי רווי כי נשאר רק $-J_{M\\to S}$.', tex: 'J=J_{S\\to M}-J_{M\\to S}' },
     { term: 'קבוע ריצׁרדסון $A^{*}$', def: 'הקדם בפליטה התרמיונית, תלוי-חומר (Si≈110, GaAs≈8.2 A·cm⁻²K⁻²).' },
     { term: 'התקן נושאי-רוב', def: 'בשוטקי הזרם נישא בנושאי הרוב — אין אגירת מיעוט, ולכן מיתוג מהיר מאוד (ללא reverse-recovery).' },
-    { term: 'קיבוע רמת-פרמי (Bardeen)', def: 'במציאות מצבי-שטח בממשק "מקבעים" את $\\varphi_B$ כך שהוא כמעט בלתי-תלוי במתכת — סטייה מהמודל האידיאלי $\\varphi_m-\\chi$.' },
+    { term: 'מצבי-שטח (קשרים תלויים) $D_{it}$', def: 'רצף מצבים מותרים בתוך הפער בממשק (צפיפות $D_{it}$, יח׳ $\\mathrm{cm^{-2}eV^{-1}}$), מקשרים תלויים על פני-השטח. מתחת לרמת-הנייטרליות $\\varphi_0$ ($E_0=E_v+\\varphi_0\\approx\\tfrac13E_g$) מאוכלסים, מעליה ריקים.' },
+    { term: 'קיבוע רמת-פרמי (Bardeen)', def: 'מצבי-שטח צפופים "מקבעים" את רמת פרמי ל-$E_0$, כך ש-$\\varphi_B$ כמעט בלתי-תלוי במתכת ($\\approx\\tfrac23E_g$) — סטייה מהאידיאל $\\varphi_m-\\chi$. גורם-הקיבוע $S$ נע מ-1 (אידיאלי) ל-0 (מקובע).' },
     { term: 'אפקט שוטקי (הנמכת המחסום)', def: 'הנמכת מחסום בכוח-דמות: השדה החשמלי מנמיך מעט את $\\varphi_B$ ($\\Delta\\varphi_B\\propto\\sqrt{E_{max}}$) — לכן הזרם האחורי אינו רווי לחלוטין.', tex: '\\Delta\\varphi_B\\propto\\sqrt{E_{max}}' },
   ],
   formulas: [
@@ -41,6 +42,7 @@ export const schottkyDiodeLecture: LectureModule = {
     { name: 'זרם הרוויה התרמיוני', tex: 'J_{ST}=A^{*}T^2e^{-\\varphi_B/V_T}', note: '$\\gg$ זרם הרוויה של דיודת PN.' },
     { name: 'רוחב המחסור (חד-צדדי)', tex: 'W=\\sqrt{\\tfrac{2\\varepsilon_s(V_{bi}-V_A)}{qN_D}}' },
     { name: 'קריטריון מיישר (n)', tex: '\\varphi_m>\\varphi_s=\\chi+\\xi' },
+    { name: 'מחסום עם קיבוע (מצבי-שטח)', tex: '\\varphi_{Bn}=S(\\varphi_m-\\chi)+(1-S)\\tfrac23E_g', note: '$S=\\tfrac{1}{1+D_{it}/D_{crit}}$; $S{\\to}0$ מקובע.' },
   ],
   symbols: [
     { sym: '\\varphi_m', he: 'פונקציית העבודה של המתכת', unit: 'eV' },
@@ -58,5 +60,8 @@ export const schottkyDiodeLecture: LectureModule = {
     { sym: 'N_c', he: 'צפיפות מצבים אפקטיבית בפס ההולכה', unit: 'cm^{-3}' },
     { sym: 'E_{Fm}', he: 'רמת פרמי של המתכת', unit: 'eV' },
     { sym: 'E_0', he: 'רמת הוואקום', unit: 'eV' },
+    { sym: 'D_{it}', he: 'צפיפות מצבי-שטח בממשק', unit: 'cm^{-2}eV^{-1}' },
+    { sym: '\\varphi_0', he: 'רמת-נייטרליות ($E_0=E_v+\\varphi_0$)', unit: 'eV' },
+    { sym: 'S', he: 'גורם קיבוע (1=אידיאלי, 0=מקובע)', unit: '' },
   ],
 }

@@ -1,17 +1,19 @@
 import { useSearchParams } from 'react-router-dom'
 import IntroTab from './tabs/IntroTab'
 import BandDiagramTab from './tabs/BandDiagramTab'
+import SurfaceStatesTab from './tabs/SurfaceStatesTab'
 import ThermionicTab from './tabs/ThermionicTab'
 import VsPnTab from './tabs/VsPnTab'
 import SandboxTab from './tabs/SandboxTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'intro' | 'bands' | 'thermionic' | 'vspn' | 'sandbox' | 'practice' | 'summary'
+type TabId = 'intro' | 'bands' | 'surface' | 'thermionic' | 'vspn' | 'sandbox' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'intro', labelHe: 'מבוא — מתכת ומל"מ', icon: '📘' },
   { id: 'bands', labelHe: 'מחסום שוטקי', icon: '📊' },
+  { id: 'surface', labelHe: 'מצבי שטח / קיבוע', icon: '📌' },
   { id: 'thermionic', labelHe: 'פליטה תרמיונית', icon: '🔥' },
   { id: 'vspn', labelHe: 'שוטקי מול PN', icon: '⚡' },
   { id: 'sandbox', labelHe: 'ארגז חול', icon: '🎛️' },
@@ -22,6 +24,7 @@ const TABS: { id: TabId; labelHe: string; icon: string }[] = [
 const PANELS: Record<TabId, React.FC> = {
   intro: IntroTab,
   bands: BandDiagramTab,
+  surface: SurfaceStatesTab,
   thermionic: ThermionicTab,
   vspn: VsPnTab,
   sandbox: SandboxTab,

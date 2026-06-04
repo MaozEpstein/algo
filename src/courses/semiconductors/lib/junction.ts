@@ -340,6 +340,32 @@ export const schottkyTurnOn = (astar: number, phiB: number, Jref = 1, T = 300): 
 export const imageForceLowering = (mat: Material, Emax: number): number =>
   Math.sqrt((Q * Math.max(Emax, 0)) / (4 * Math.PI * mat.epsR * EPS0))
 
+// ---- surface states / Fermi-level pinning (the OTHER non-ideal effect, n-type) ----
+/** Charge-neutrality level φ_0 measured UP from E_v (Si-like): φ_0 = E_g/3. States below
+ *  E_0=E_v+φ_0 are donor-like (filled at neutrality), above acceptor-like (empty). */
+export const neutralLevel = (eg: number): number => eg / 3
+
+/** Fully-pinned (Bardeen) electron barrier φ_Bn = E_c−E_0 = E_g−φ_0 = ⅔E_g (eV). Si≈0.75. */
+export const pinnedBarrier = (eg: number): number => eg - neutralLevel(eg)
+
+/** Classic pinning threshold (interface-trap density, cm⁻²eV⁻¹) ≈ ε_i/(q²δ). */
+export const PIN_DCRIT = 1e13
+/** Cowley–Sze pinning factor S∈(0,1]: S=1 ideal (Schottky-Mott), S→0 fully pinned.
+ *  S=1/(1+D_it/D_crit) ≡ ε_i/(ε_i+q²δD_it). */
+export const pinningFactor = (Dit: number, Dcrit = PIN_DCRIT): number => 1 / (1 + Math.max(Dit, 0) / Dcrit)
+
+/** Interpolated n-type barrier φ_Bn = S·(φ_m−χ) + (1−S)·⅔E_g, clamped to [0,E_g].
+ *  small D_it → φ_m−χ (metal-dependent, ideal); large D_it → ⅔E_g (pinned, metal-independent). */
+export function surfaceBarrier(phiM: number, chi: number, eg: number, Dit: number, Dcrit = PIN_DCRIT): number {
+  const S = pinningFactor(Dit, Dcrit)
+  return Math.min(Math.max(S * schottkyBarrier(phiM, chi) + (1 - S) * pinnedBarrier(eg), 0), eg)
+}
+
+/** Where E_F sits above the neutral level E_0 at the surface (eV): φ_B(pinned) − φ_B(D_it).
+ *  → 0 as D_it→∞ (E_F pinned to E_0); = (φ_m−χ)−⅔E_g in the ideal limit. */
+export const fermiAboveNeutral = (phiM: number, chi: number, eg: number, Dit: number, Dcrit = PIN_DCRIT): number =>
+  pinnedBarrier(eg) - surfaceBarrier(phiM, chi, eg, Dit, Dcrit)
+
 /** Everything the Schottky widgets need, from one call (mirrors junctionState/diodeCurrents). */
 export function schottkyState(metal: Metal, mat: Material, Nd: number, Va: number, T = 300): SchottkyState {
   const phiB = schottkyBarrier(metal.phiM, mat.chi)

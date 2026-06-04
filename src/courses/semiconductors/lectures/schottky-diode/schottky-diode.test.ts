@@ -2,15 +2,21 @@ import { describe, it, expect } from 'vitest'
 import {
   MATERIALS,
   METALS,
+  METAL_LIST,
   bulkOffset,
   diodeCurrents,
+  fermiAboveNeutral,
   isRectifying,
+  neutralLevel,
+  pinnedBarrier,
+  pinningFactor,
   schottkyBarrier,
   schottkyCurrent,
   schottkyState,
   schottkyTurnOn,
   schottkyVbi,
   schottkyWidth,
+  surfaceBarrier,
   thermalVoltage,
   thermionicJst,
 } from '../../lib/junction'
@@ -100,6 +106,46 @@ describe('Schottky — one-sided depletion width', () => {
     const w0 = schottkyWidth(Si, ND, 0, Vbi)
     expect(schottkyWidth(Si, ND, 0.3, Vbi)).toBeLessThan(w0)
     expect(schottkyWidth(Si, ND, -2, Vbi)).toBeGreaterThan(w0)
+  })
+})
+
+describe('Schottky — surface states / Fermi-level pinning', () => {
+  const eg = Si.eg // 1.12
+  const chi = Si.chi // 4.05
+  const Dcrit = 1e13
+
+  it('neutral level is E_g/3 above E_v; pinned barrier is ⅔E_g', () => {
+    expect(neutralLevel(eg)).toBeCloseTo(eg / 3, 10)
+    expect(pinnedBarrier(eg)).toBeCloseTo((2 / 3) * eg, 10) // ≈0.747 for Si
+  })
+
+  it('pinning factor: S(0)=1, S(Dcrit)=0.5, S→0 as D_it→∞, monotone decreasing', () => {
+    expect(pinningFactor(0)).toBe(1)
+    expect(pinningFactor(Dcrit)).toBeCloseTo(0.5, 10)
+    expect(pinningFactor(1e18)).toBeLessThan(1e-3)
+    expect(pinningFactor(1e12)).toBeGreaterThan(pinningFactor(1e13))
+  })
+
+  it('passivated surface (~1e11) near-ideal; real Si (~1e14) strongly pinned', () => {
+    expect(pinningFactor(1e11)).toBeGreaterThan(0.9)
+    expect(pinningFactor(1e14)).toBeLessThan(0.1)
+  })
+
+  it('surfaceBarrier → φ_m−χ at small D_it, → ⅔E_g at large D_it', () => {
+    expect(surfaceBarrier(Au.phiM, chi, eg, 1e10)).toBeCloseTo(schottkyBarrier(Au.phiM, chi), 2)
+    expect(surfaceBarrier(Au.phiM, chi, eg, 1e16)).toBeCloseTo(pinnedBarrier(eg), 2)
+  })
+
+  it('pinning collapses the metal spread (metal-independent at high D_it)', () => {
+    const hi = METAL_LIST.map((m) => surfaceBarrier(m.phiM, chi, eg, 1e15))
+    expect(Math.max(...hi) - Math.min(...hi)).toBeLessThan(0.05)
+    const lo = METAL_LIST.map((m) => surfaceBarrier(m.phiM, chi, eg, 1e10))
+    expect(Math.max(...lo) - Math.min(...lo)).toBeGreaterThan(0.8) // wide spread (clamped at E_g)
+  })
+
+  it('barrier clamped to [0, E_g]; E_F−E_0 collapses to 0 under strong pinning', () => {
+    expect(surfaceBarrier(10, chi, eg, 0)).toBeLessThanOrEqual(eg)
+    expect(fermiAboveNeutral(Au.phiM, chi, eg, 1e16)).toBeCloseTo(0, 2)
   })
 })
 

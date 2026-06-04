@@ -74,14 +74,9 @@ export default function BandDiagramTab() {
           <Readout label="היסט בולק $\xi$" value={`${st.xi.toFixed(2)} eV`} accent="border-sky-100 bg-sky-50" />
           <Readout label="מתח בנוי $V_{bi}$" value={fmtVolt(st.Vbi)} accent="border-amber-100 bg-amber-50" />
         </div>
-      </Panel>
-
-      <Panel title="אידיאלי מול ממשי — קיבוע רמת-פרמי">
-        <p className="leading-relaxed text-slate-600">
-          המודל כאן הוא ה<b>אידיאלי</b> (Schottky-Mott): <Tex>{'\\varphi_B=\\varphi_m-\\chi'}</Tex>. במציאות, על
-          סיליקון, <b>מצבי-שטח</b> בממשק "מקבעים" את רמת פרמי (Bardeen), כך שהמחסום הנמדד <b>כמעט בלתי-תלוי
-          במתכת</b> ונע סביב <Tex>{'\\sim\\!0.6\\!-\\!0.8\\,\\mathrm{eV}'}</Tex>. זו אותה רוח של "אידיאלי ואז ממשי"
-          שראינו בדיודת PN.
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          המודל כאן הוא ה<b>אידיאלי</b> (<Tex>{'\\varphi_B=\\varphi_m-\\chi'}</Tex>). למודל ה<b>ממשי</b> — איך
+          מצבי-שטח "מקבעים" את <Tex>{'\\varphi_B'}</Tex> כמעט בלי-תלות במתכת — ראו את לשונית <b>«מצבי שטח / קיבוע»</b>.
         </p>
       </Panel>
     </div>
