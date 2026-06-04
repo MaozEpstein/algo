@@ -23,10 +23,23 @@ export default function GlossaryButton({ terms, symbols = [] }: { terms: Glossar
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
+  // global shortcut: Ctrl+Shift+A toggles the foundations modal (e.code → layout-independent)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && !e.altKey && e.code === 'KeyA') {
+        e.preventDefault()
+        setOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
+        title="מושגי יסוד · Ctrl+Shift+A"
         className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-3.5 py-2 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-100"
       >
         <span aria-hidden>📖</span>

@@ -19,10 +19,23 @@ export default function FormulasButton({ formulas }: { formulas: FormulaItem[] }
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
+  // global shortcut: Ctrl+Shift+D toggles the formulas modal (e.code → layout-independent)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && !e.altKey && e.code === 'KeyD') {
+        e.preventDefault()
+        setOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
+        title="נוסחאות מרכזיות · Ctrl+Shift+D"
         className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-100"
       >
         <span aria-hidden>📐</span>
