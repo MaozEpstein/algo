@@ -506,6 +506,17 @@ export const contactKind = (type: CarrierType, phiM: number, phiS: number): 'rec
 export const contactBarrier = (type: CarrierType, phiM: number, chi: number, eg: number): number =>
   type === 'n' ? phiM - chi : chi + eg - phiM
 
+// ---- BJT — lecture 3א ------------------------------------------------------
+/**
+ * Base transport factor b = I_C/I_E(injected) = 1/cosh(W_B/L_B) — the fraction of
+ * minority carriers injected at the emitter edge that survive diffusion across the
+ * neutral base of width W_B to reach the collector (L_B = base diffusion length).
+ * A thin base (W_B ≪ L_B) → b ≈ 1 − W_B²/2L_B² → 1: almost everything gets through,
+ * which (with high injection efficiency γ) is *why* the transistor amplifies.
+ * Quantitative α=b·γ, β=α/(1−α) are developed in 3ב.
+ */
+export const baseTransportFactor = (WB: number, L: number): number => 1 / Math.cosh(WB / L)
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4
