@@ -263,6 +263,26 @@ export const diodeDynamicResistance = (n: number, J: number, T = 300): number =>
  */
 export const terminalVoltage = (Vj: number, Jtot: number, rs: number): number => Vj + Jtot * rs
 
+// ---- switching / transients (charge storage, reverse recovery) — lecture 2ב ----
+/** Effective transit/storage time τ_F (s): 1/τ_F = 1/τ + 2D/W². Long base (W≫L, or W
+ *  omitted) → τ_F=τ; short base (W≪L) → τ_F=W²/(2D). W = neutral-base width (NOT the
+ *  depletion width). D cm²/s, τ s, W cm. */
+export const transitTime = (D: number, tau: number, W = Infinity): number =>
+  Number.isFinite(W) ? 1 / (1 / tau + (2 * D) / (W * W)) : tau
+
+/** Diffusion (storage) capacitance per area (F/cm²): C_diff = τ_F/r_d = τ_F·|J|/(n·V_T).
+ *  Grows ∝ forward current → dominates C_dep in forward bias (where C_dep is small). */
+export const diffusionCapacitancePerArea = (tauF: number, n: number, J: number, T = 300): number =>
+  (tauF * Math.abs(J)) / (n * thermalVoltage(T))
+
+/** Stored minority charge per area in forward conduction (C/cm²): Q = |J|·τ (charge-control). */
+export const storedCharge = (J: number, tau: number): number => Math.abs(J) * tau
+
+/** Reverse-recovery storage time (s), charge-control long-base step: t_s = τ·ln(1+I_F/I_R).
+ *  τ = minority lifetime (long base) or τ_F (short). → 0 as τ→0 (Schottky: no stored charge). */
+export const storageTime = (tau: number, If: number, Ir: number): number =>
+  tau * Math.log(1 + If / Math.max(Ir, 1e-300))
+
 /**
  * Lumped "engineering" diode model J = J_S·(e^{V_j/(n·V_T)} − 1) with a single
  * ideality factor `n` (1 = pure diffusion, 2 = recombination/high-injection).

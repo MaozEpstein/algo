@@ -3,17 +3,19 @@ import IntroTab from './tabs/IntroTab'
 import RecombinationTab from './tabs/RecombinationTab'
 import HighInjectionTab from './tabs/HighInjectionTab'
 import SeriesResistanceTab from './tabs/SeriesResistanceTab'
+import SwitchingTab from './tabs/SwitchingTab'
 import FullPictureTab from './tabs/FullPictureTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'intro' | 'recombination' | 'highInjection' | 'seriesR' | 'full' | 'practice' | 'summary'
+type TabId = 'intro' | 'recombination' | 'highInjection' | 'seriesR' | 'switching' | 'full' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'intro', labelHe: 'מבוא — מהאידיאלי למציאות', icon: '📘' },
   { id: 'recombination', labelHe: 'זרם רקומבינציה', icon: '♻️' },
   { id: 'highInjection', labelHe: 'הזרקה חזקה', icon: '🌊' },
   { id: 'seriesR', labelHe: 'התנגדות טורית', icon: '🧱' },
+  { id: 'switching', labelHe: 'מיתוג ומעברי-זמן', icon: '⚡' },
   { id: 'full', labelHe: 'התמונה המלאה — n', icon: '🎛️' },
   { id: 'practice', labelHe: 'תרגול', icon: '✏️' },
   { id: 'summary', labelHe: 'סיכום', icon: '📋' },
@@ -24,6 +26,7 @@ const PANELS: Record<TabId, React.FC> = {
   recombination: RecombinationTab,
   highInjection: HighInjectionTab,
   seriesR: SeriesResistanceTab,
+  switching: SwitchingTab,
   full: FullPictureTab,
   practice: PracticeTab,
   summary: SummaryTab,

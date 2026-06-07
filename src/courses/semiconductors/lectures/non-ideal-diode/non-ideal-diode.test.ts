@@ -1,13 +1,18 @@
 import { describe, it, expect } from 'vitest'
 import {
   MATERIALS,
+  diffusionCapacitancePerArea,
+  diffusionCoeff,
   diodeCurrents,
   diodeDynamicResistance,
   lumpedDiodeCurrent,
   nonIdealCurrents,
   recombCurrent,
+  storageTime,
+  storedCharge,
   terminalVoltage,
   thermalVoltage,
+  transitTime,
 } from '../../lib/junction'
 import { nonIdealDiodeLecture } from './index'
 import { LECTURE_LIST } from '../../registry'
@@ -115,6 +120,41 @@ describe('non-ideal diode — high-level injection & dynamic resistance', () => 
     expect(diodeDynamicResistance(1, 1e-3)).toBeCloseTo(thermalVoltage(300) / 1e-3, 8)
     expect(diodeDynamicResistance(2, 1e-3)).toBeCloseTo(2 * diodeDynamicResistance(1, 1e-3), 8)
     expect(diodeDynamicResistance(1, 1e-2)).toBeLessThan(diodeDynamicResistance(1, 1e-3))
+  })
+})
+
+describe('diode switching / transients', () => {
+  const Dh = diffusionCoeff(Si.mup) // ≈ 12.4 cm²/s
+  const tau = 1e-6
+
+  it('transitTime: long (no W) = τ; short (W≪L) ≈ W²/(2D); always ≤ τ', () => {
+    expect(transitTime(Dh, tau)).toBe(tau)
+    const W = 1e-4
+    expect(transitTime(Dh, tau, W)).toBeCloseTo((W * W) / (2 * Dh), 12)
+    expect(transitTime(Dh, tau, 1e-4)).toBeLessThan(tau)
+    const L = Math.sqrt(Dh * tau)
+    expect(transitTime(Dh, tau, 50 * L)).toBeCloseTo(tau, 8)
+  })
+
+  it('C_diff rises ∝ |J|, equals τ_F/r_d, and scales with τ_F', () => {
+    const lo = diffusionCapacitancePerArea(tau, 1, 1e-2)
+    const hi = diffusionCapacitancePerArea(tau, 1, 1e0)
+    expect(hi).toBeGreaterThan(lo)
+    expect(hi / lo).toBeCloseTo(100, 6)
+    expect(hi).toBeCloseTo(tau / diodeDynamicResistance(1, 1e0), 12)
+    expect(diffusionCapacitancePerArea(2e-6, 1, 1)).toBeCloseTo(2 * diffusionCapacitancePerArea(1e-6, 1, 1), 12)
+  })
+
+  it('storedCharge Q=|J|·τ (sign-independent)', () => {
+    expect(storedCharge(0.5, tau)).toBeCloseTo(0.5 * tau, 15)
+    expect(storedCharge(-0.5, tau)).toBeCloseTo(0.5 * tau, 15)
+  })
+
+  it('storageTime = τ·ln2 at I_F=I_R, grows with I_F/I_R and τ, → 0 as τ→0', () => {
+    expect(storageTime(tau, 1, 1)).toBeCloseTo(tau * Math.LN2, 15)
+    expect(storageTime(tau, 5, 1)).toBeGreaterThan(storageTime(tau, 1, 1))
+    expect(storageTime(2 * tau, 3, 1)).toBeCloseTo(2 * storageTime(tau, 3, 1), 15)
+    expect(storageTime(1e-15, 10, 1)).toBeLessThan(1e-13)
   })
 })
 

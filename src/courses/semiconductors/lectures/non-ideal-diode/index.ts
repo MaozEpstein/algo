@@ -28,6 +28,9 @@ export const nonIdealDiodeLecture: LectureModule = {
     { term: 'התנגדות טורית $R_S$', def: 'התנגדות הבולק והמגעים (לשטח-יחידה, Ω·cm²). בזרם גבוה חלק מהמתח נופל עליה: $V_{term}=V_j+JR_S$, והעקומה מתכופפת ומתיישרת.', tex: 'V_{term}=V_j+J\\,R_S' },
     { term: 'זמן-חיים אפקטיבי $\\tau_0$', def: 'זמן-החיים של נושאי המיעוט במלכודות SRH (קונבנציה סימטרית $\\tau_n=\\tau_p=\\tau_0$). קובע את גודל זרם הרקומבינציה/גנרציה.' },
     { term: 'מלכודות SRH', def: 'מצבי-אנרגיה בתוך הפער האסור (פגמים/זיהומים) המאיצים גנרציה-רקומבינציה. ככל שיש יותר מלכודות $\\tau_0$ קטֵן והזרם הלא-אידיאלי גדל.' },
+    { term: 'אגירת מטען $Q$ וזמן-מעבר $\\tau_F$', def: 'בהולכה נאגר מטען-מיעוט $Q=I_F\\tau$. זמן-המעבר: $1/\\tau_F=1/\\tau_h+2D_h/W^2$ — בסיס ארוך $\\tau_F=\\tau_h$, קצר $\\tau_F=W^2/2D_h$.', tex: 'Q=I_F\\tau' },
+    { term: 'קיבול דיפוזיה $C_{diff}$', def: 'הקיבול הנובע מהמטען האגור: $C_{diff}=\\tau_F/r_d=\\tau_F|J|/(nV_T)$. גדל עם הזרם הקדמי ושולט שם (מול $C_{dep}$ ששולט באחורי).', tex: 'C_{diff}=\\tau_F/r_d' },
+    { term: 'מעבר כיבוי / זמן אגירה $t_s$', def: 'כשממתחים דיודה-בהולכה לאחורי, היא ממשיכה להוליך $-I_R$ עד ששוטפים את המטען: $t_s=\\tau\\ln(1+I_F/I_R)$, ואז מתאוששת. בשוטקי אין מטען אגור → $t_s\\to0$.', tex: 't_s=\\tau\\ln\\!\\left(1+\\tfrac{I_F}{I_R}\\right)' },
   ],
   formulas: [
     { name: 'אופיין כללי — מקדם אי-אידיאליות', tex: 'J=J_S\\left(e^{V_A/nV_T}-1\\right)', note: '$1\\le n\\le 2$.' },
@@ -35,6 +38,9 @@ export const nonIdealDiodeLecture: LectureModule = {
     { name: 'הזרם הכולל', tex: '\\begin{aligned}J&=J_{diff}+J_{rec}\\\\&=J_S\\!\\left(e^{V_A/V_T}\\!-\\!1\\right)+\\tfrac{qn_iW}{2\\tau_0}\\!\\left(e^{V_A/2V_T}\\!-\\!1\\right)\\end{aligned}' },
     { name: 'מתח-הדק עם התנגדות טורית', tex: 'V_{term}=V_j+J\\,R_S', note: 'הברך בזרם גבוה.' },
     { name: 'זרם גנרציה אחורי', tex: 'J_{gen}\\approx-\\frac{q\\,n_i\\,W(V_A)}{2\\tau_0}', note: '$\\propto W\\propto\\sqrt{V_{bi}+|V_A|}$ — לא רווי.' },
+    { name: 'זמן מעבר (אגירה)', tex: '\\tfrac{1}{\\tau_F}=\\tfrac{1}{\\tau_h}+\\tfrac{2D_h}{W^2}', note: 'ארוך $\\to\\tau_h$; קצר $\\to W^2/2D_h$.' },
+    { name: 'קיבול דיפוזיה / מחסור', tex: 'C_{diff}=\\tau_F/r_d,\\quad C_{dep}=\\varepsilon_s/d', note: 'דיפוזיה שולט בקדמי, מחסור באחורי.' },
+    { name: 'זמן אגירה (reverse recovery)', tex: 't_s=\\tau\\ln\\!\\left(1+\\tfrac{I_F}{I_R}\\right),\\; t_{rr}=t_s+t_r' },
   ],
   symbols: [
     { sym: 'n', he: 'מקדם אי-אידיאליות (1–2)', unit: '—' },
@@ -44,5 +50,12 @@ export const nonIdealDiodeLecture: LectureModule = {
     { sym: 'W', he: 'רוחב אזור המחסור (תלוי במתח)', unit: 'cm' },
     { sym: 'R_S', he: 'התנגדות טורית סגולית (לשטח-יחידה)', unit: '\\Omega\\cdot cm^2' },
     { sym: '\\Delta n', he: 'עודף נושאי המיעוט המוזרק', unit: 'cm^{-3}' },
+    { sym: '\\tau_F', he: 'זמן מעבר (אגירה)', unit: 's' },
+    { sym: 'C_{diff}', he: 'קיבול דיפוזיה (אגירת מטען)', unit: 'F/cm^2' },
+    { sym: 'C_{dep}', he: 'קיבול מחסור', unit: 'F/cm^2' },
+    { sym: 't_s', he: 'זמן אגירה (reverse recovery)', unit: 's' },
+    { sym: 't_r', he: 'זמן התאוששות (דעיכת הזרם)', unit: 's' },
+    { sym: 't_{rr}', he: 'זמן התאוששות כולל ($t_s+t_r$)', unit: 's' },
+    { sym: 'Q', he: 'מטען-מיעוט אגור ($I_F\\tau$)', unit: 'C/cm^2' },
   ],
 }
