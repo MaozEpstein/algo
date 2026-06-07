@@ -5,6 +5,7 @@ import BjtStructure from '../components/BjtStructure'
 import BjtSymbol from '../components/BjtSymbol'
 import BjtOperationFlow from '../components/BjtOperationFlow'
 import DopingBars from '../components/DopingBars'
+import TypicalValues from '../components/TypicalValues'
 
 /** Lecture 3א — intro & structure (merged): what a BJT is, what it does (E→B→C),
  *  why it isn't two diodes, the cross-section + symbol, the doping rationale, and a
@@ -39,7 +40,7 @@ export default function IntroTab() {
             <b className="text-rose-700">שתי דיודות נפרדות</b> (בסיס עבה): המטען המוזרק <b>נעלם ברקומבינציה</b> בדרך. אין צימוד — אין הגבר.
           </div>
           <div className="rounded-xl border-s-4 border-emerald-300 bg-emerald-50/50 p-3 text-sm leading-relaxed text-slate-700">
-            <b className="text-emerald-700">טרנזיסטור</b> (בסיס דק, <Tex>{'W_B\\ll L_B'}</Tex>): כמעט כל המטען <b>חוצה</b> אל הקולט → זרם-בסיס זעיר שולט בזרם-קולט גדול.
+            <b className="text-emerald-700">טרנזיסטור</b> (בסיס דק, <Tex>{'W_B\\ll L_B'}</Tex>): כמעט כל המטען <b>חוצה</b> אל הקולט ← זרם-בסיס זעיר שולט בזרם-קולט גדול.
           </div>
         </div>
       </Panel>
@@ -74,6 +75,9 @@ export default function IntroTab() {
 
       <Panel title="סימום שלושת האזורים — ולמה דווקא כך">
         <DopingBars kind={kind} />
+        <div className="mt-4">
+          <TypicalValues />
+        </div>
       </Panel>
 
       <Panel title="מה נלמד בהמשך">

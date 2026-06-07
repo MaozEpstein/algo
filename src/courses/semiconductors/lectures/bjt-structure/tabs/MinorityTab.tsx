@@ -25,8 +25,9 @@ export default function MinorityTab() {
     <div className="flex flex-col gap-5">
       <Panel title="הפרופיל בבסיס הוא-הוא הזרם">
         <p className="leading-relaxed text-slate-700">
-          בפעיל-קדמי הפולט מזריק מיעוט לבסיס בריכוז <Tex>{'\\Delta n(0)'}</Tex>, ובקצה הקולט הוא כמעט אפס (השדה האחורי
-          שואב אותו). בין שתי הקצוות הריכוז יורד <b>כמעט לינארית</b>. זרם-הקולט הוא זרם-<b>דיפוזיה</b>, ולכן{' '}
+          השרטוט הוא במצב <b>פעיל-קדמי</b> (<b>עם ממתח</b>: B-E קדמי, C-B אחורי). הצומת ה-B-E הקדמי גורם לפולט להזריק
+          מיעוט לבסיס בריכוז <Tex>{'\\Delta n(0)'}</Tex>, ובקצה הקולט הריכוז כמעט אפס — הצומת ה-C-B ה<b>אחורי</b>{' '}
+          שואב אותו. בין שתי הקצוות הריכוז יורד <b>כמעט לינארית</b>. זרם-הקולט הוא זרם-<b>דיפוזיה</b>, ולכן{' '}
           <b>פרופורציוני לשיפוע</b>: <Tex>{'I_C\\propto \\dfrac{\\Delta n(0)}{W_B}'}</Tex>. גררו את רוחב-הבסיס:
         </p>
         <div className="mt-3 grid gap-4 lg:grid-cols-2 lg:items-start">
@@ -61,16 +62,16 @@ export default function MinorityTab() {
       <Panel title="למה דווקא בסיס דק">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-xl border-s-4 border-emerald-300 bg-emerald-50/50 p-3 text-sm leading-relaxed text-slate-700">
-            <b className="text-emerald-700">בסיס דק</b> → שיפוע <b>תלול</b> → <b>זרם-קולט גדול</b>, ו-<Tex>{'b\\to1'}</Tex>{' '}
-            (כמעט אין רקומבינציה בדרך). זה לב-ליבו של ההגבר.
+            <b className="text-emerald-700">בסיס דק</b> ← שיפוע <b>תלול</b> ← <b>זרם-קולט גדול</b>. גם מקדם-המעבר{' '}
+            <Tex>{'b\\to1'}</Tex>: כמעט כל המטען המוזרק חוצה את הבסיס ומגיע לקולט (בלי לאבד ברקומבינציה). זהו לב-ההגבר.
           </div>
           <div className="rounded-xl border-s-4 border-rose-300 bg-rose-50/50 p-3 text-sm leading-relaxed text-slate-700">
-            <b className="text-rose-700">בסיס עבה</b> → שיפוע מתון → זרם קטן, ויותר מהמטען <b>נעלם ברקומבינציה</b> בבסיס{' '}
-            (<Tex>{'b'}</Tex> יורד) — בדיוק "שתי הדיודות" שאינן מגבירות.
+            <b className="text-rose-700">בסיס עבה</b> ← שיפוע מתון ← זרם קטן. בנוסף, חלק גדול מהמטען <b>נעלם
+            ברקומבינציה</b> בבסיס (<Tex>{'b'}</Tex> יורד) — בדיוק «שתי דיודות נפרדות» שאינן מגבירות.
           </div>
         </div>
         <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-600">
-          שימו לב: גם בבסיס דק <Tex>{'b'}</Tex> נשאר קרוב מאוד ל-1 — מה שמשתנה דרמטית הוא ה<b>שיפוע</b> (הזרם),
+          שימו לב: גם בבסיס דק <Tex>{'b'}</Tex> נשאר קרוב מאוד ל-1; מה שמשתנה דרמטית הוא ה<b>שיפוע</b> (ולכן הזרם),
           שגדל כ-<Tex>{'1/W_B'}</Tex>.
         </p>
       </Panel>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import BjtBandDiagram from '../components/BjtBandDiagram'
+import SourceSketch from '../components/SourceSketch'
 
 /** Lecture 3א — the two-junction band diagram, equilibrium vs forward-active. */
 export default function BandsTab() {
@@ -30,6 +31,8 @@ export default function BandsTab() {
               {b.t}
             </button>
           ))}
+          <span className="mx-1 hidden h-5 w-px bg-slate-200 sm:inline-block" />
+          <SourceSketch src="docs/bjt-band-diagram-source.png" title="דיאגרמת-הפסים — שרטוט המקור" download="BJT band diagram (source).png" />
         </div>
         <div className="mt-3">
           <BjtBandDiagram mode={mode} />
@@ -40,15 +43,15 @@ export default function BandsTab() {
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-xl border-s-4 border-emerald-300 bg-emerald-50/50 p-3 text-sm leading-relaxed text-slate-700">
             <b className="text-emerald-700">1 · הזרקה</b><br />
-            ה-BE הקדמי <b>מנמיך את מחסום ה-BE</b> (הפסים בפולט עולים ב-<Tex>{'qV_{BE}'}</Tex>) → אלקטרונים מוזרקים אל הבסיס.
+            הצומת B-E ב<b>ממתח קדמי</b> <b>מנמיך את המחסום</b> (הפסים בפולט עולים ב-<Tex>{'qV_{BE}'}</Tex>) ← הפולט מזריק אלקטרונים אל הבסיס.
           </div>
           <div className="rounded-xl border-s-4 border-sky-300 bg-sky-50/50 p-3 text-sm leading-relaxed text-slate-700">
             <b className="text-sky-700">2 · דיפוזיה</b><br />
-            הבסיס <b>דק</b> → האלקטרונים חוצים אותו כמעט בלי לאבד מטען (כמעט שטוח, ירידה קלה).
+            הבסיס <b>דק</b> ← האלקטרונים חוצים אותו ב<b>דיפוזיה</b> כמעט בלי אובדן (פרופיל כמעט-לינארי, ירידה קלה).
           </div>
           <div className="rounded-xl border-s-4 border-violet-300 bg-violet-50/50 p-3 text-sm leading-relaxed text-slate-700">
             <b className="text-violet-700">3 · קליטה</b><br />
-            ה-CB האחורי <b>מגביה את המחסום</b> ויוצר מורד תלול (הפסים בקולט יורדים) → כל מה שהגיע <b>נקלט</b> כ-<Tex>{'I_C'}</Tex>.
+            הצומת C-B ב<b>ממתח אחורי</b> <b>מגביה את המחסום</b> — מורד תלול (הפסים בקולט יורדים) ← כל אלקטרון שהגיע <b>נקלט</b> כזרם-הקולט <Tex>{'I_C'}</Tex>.
           </div>
         </div>
         <p className="mt-3 leading-relaxed text-slate-600">

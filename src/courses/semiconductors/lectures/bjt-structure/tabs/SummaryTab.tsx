@@ -1,26 +1,80 @@
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
+import BjtOperationFlow from '../components/BjtOperationFlow'
 
-/** Lecture 3א — summary + pointers to 3ב / 3ג. */
+const FORMULAS = [
+  { tex: 'I_E=I_C+I_B', note: 'שימור זרם (KCL)' },
+  { tex: 'b=\\dfrac{1}{\\cosh(W_B/L_B)}', note: 'מקדם מעבר — בסיס דק ⇐ b→1' },
+  { tex: '\\alpha=b\\,\\gamma\\approx1', note: 'הגבר בבסיס משותף' },
+  { tex: '\\beta=\\dfrac{\\alpha}{1-\\alpha}\\gg1', note: 'הגבר בפולט משותף' },
+]
+
+const MODES = [
+  { be: 'אחורי', cb: 'אחורי', mode: 'קטעון', use: 'מפסק פתוח' },
+  { be: 'קדמי', cb: 'אחורי', mode: 'פעיל-קדמי', use: 'מגבר ליניארי' },
+  { be: 'קדמי', cb: 'קדמי', mode: 'רוויה', use: 'מפסק סגור' },
+  { be: 'אחורי', cb: 'קדמי', mode: 'פעיל-הפוך', use: 'הגבר נמוך מאוד' },
+]
+
+/** Lecture 3א — summary: the core idea (sharpened), a one-glance recap, a formula
+ *  cheat-sheet, the four-mode table, and pointers to 3ב / 3ג. */
 export default function SummaryTab() {
   return (
     <div className="flex flex-col gap-5">
       <Panel title="הרעיון המרכזי">
         <p className="leading-relaxed text-slate-700">
-          טרנזיסטור דו-קוטבי הוא <b>שני צמתי-PN מצומדים</b> דרך <b>בסיס דק</b>. ב<b>פעיל-קדמי</b> (BE קדמי, CB אחורי)
-          הפולט <b>מזריק</b> מיעוט, הבסיס הדק מאפשר לו <b>לחצות</b> כמעט במלואו, וה<b>קולט</b> <b>קולט</b> אותו — כך שזרם-בסיס זעיר
-          שולט בזרם-קולט גדול (<Tex>{'\\beta\\gg1'}</Tex>).
+          הטרנזיסטור הדו-קוטבי הוא <b>מגבר-זרם</b>: זרם-בסיס זעיר <Tex>{'I_B'}</Tex> שולט בזרם-קולט גדול פי-<Tex>{'\\beta'}</Tex>.
+          הסוד הוא <b>בסיס דק</b> בין שני צמתים — הפולט <b>מזריק</b> נושאי-מיעוט, הם <b>חוצים</b> את הבסיס הדק כמעט במלואם
+          (אובדן הרקומבינציה זניח), והקולט <b>קולט</b> אותם. לכן <Tex>{'I_C\\approx I_E'}</Tex>, וההפרש — זרם-הבסיס —
+          קטן מאוד, כך ש-<Tex>{'\\beta=I_C/I_B\\gg1'}</Tex>.
         </p>
       </Panel>
 
-      <Panel title="הנקודות לזכור">
-        <ul className="list-inside list-disc space-y-1.5 leading-relaxed text-slate-700">
-          <li><b>מבנה:</b> פולט מסומם בכבדות · בסיס דק ומסומם קלות · קולט רחב — <Tex>{'N_E\\gg N_B>N_C'}</Tex>.</li>
-          <li><b>ארבעה מצבים:</b> קטעון (מפסק פתוח), פעיל-קדמי (מגבר), רוויה (מפסק סגור), פעיל-הפוך.</li>
-          <li><b>פעיל-קדמי:</b> <Tex>{'V_{BE}>0,\\;V_{BC}<0'}</Tex> — הזרקה → דיפוזיה בבסיס → קליטה.</li>
-          <li><b>הזרם הוא השיפוע:</b> <Tex>{'I_C\\propto \\Delta n(0)/W_B'}</Tex>; בסיס דק → שיפוע תלול → זרם גדול.</li>
-          <li><b>הגבר:</b> <Tex>{'\\alpha=b\\gamma\\approx1'}</Tex>, <Tex>{'\\beta=\\alpha/(1-\\alpha)\\gg1'}</Tex>, <Tex>{'I_E=I_C+I_B'}</Tex>.</li>
-        </ul>
+      <Panel title="הטרנזיסטור במבט אחד">
+        <BjtOperationFlow />
+      </Panel>
+
+      <Panel title="דף-עזר — היחסים המרכזיים">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {FORMULAS.map((f, i) => (
+            <div key={i} className="rounded-xl border border-slate-200 bg-white p-3 text-center">
+              <p className="text-lg" dir="ltr"><Tex>{f.tex}</Tex></p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{f.note}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-600">
+          תנאי <b>פעיל-קדמי</b> (מצב ההגבר): <Tex>{'V_{BE}>0'}</Tex> (B-E קדמי) ו-<Tex>{'V_{BC}<0'}</Tex> (C-B אחורי).
+          הזרם הוא זרם-דיפוזיה, ולכן פרופורציוני לשיפוע: <Tex>{'I_C\\propto \\Delta n(0)/W_B'}</Tex>.
+        </p>
+      </Panel>
+
+      <Panel title="ארבעת מצבי-הפעולה">
+        <div className="overflow-hidden rounded-xl border border-slate-200">
+          <table className="w-full border-collapse text-center text-sm">
+            <thead>
+              <tr className="bg-slate-100 text-slate-600">
+                <th className="px-3 py-2 font-semibold">צומת B-E</th>
+                <th className="px-3 py-2 font-semibold">צומת C-B</th>
+                <th className="px-3 py-2 font-semibold">מצב</th>
+                <th className="px-3 py-2 font-semibold">שימוש</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MODES.map((r, i) => {
+                const active = r.mode === 'פעיל-קדמי'
+                return (
+                  <tr key={i} className={`border-t border-slate-100 ${active ? 'bg-violet-50' : 'bg-white'}`}>
+                    <td className="px-3 py-2 text-blue-700">{r.be}</td>
+                    <td className="px-3 py-2 text-blue-700">{r.cb}</td>
+                    <td className={`px-3 py-2 font-bold ${active ? 'text-violet-800' : 'text-slate-700'}`}>{r.mode}</td>
+                    <td className="px-3 py-2 text-slate-600">{r.use}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
       </Panel>
 
       <Panel title="מה בהמשך">

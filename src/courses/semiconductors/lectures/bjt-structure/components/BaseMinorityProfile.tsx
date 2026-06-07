@@ -56,6 +56,18 @@ export default function BaseMinorityProfile({ wbMicron, lMicron }: Props) {
   }
   const emCurve = 'M ' + emPts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L ')
 
+  // faint collector minority (holes): the reverse C-B junction sweeps it to ~0 at the
+  // junction, recovering to the tiny equilibrium p_n0 deeper in the collector
+  const Nc = 24
+  const colPts: [number, number][] = []
+  for (let i = 0; i <= Nc; i++) {
+    const f = i / Nc
+    const x = xBC + (PR - xBC) * f
+    const dp = 0.17 * (1 - Math.exp(-f * 3))
+    colPts.push([x, yBot - dp * amp])
+  }
+  const colCurve = 'M ' + colPts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L ')
+
   return (
     <div className="ltr w-full" dir="ltr">
       <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
@@ -71,14 +83,25 @@ export default function BaseMinorityProfile({ wbMicron, lMicron }: Props) {
         <rect x={MX} y={TOP} width={xEB - MX} height={yBot - TOP} fill={SKY} fillOpacity={0.05} />
         <rect x={xEB} y={TOP} width={baseW} height={yBot - TOP} fill={ROSE} fillOpacity={0.06} />
         <rect x={xBC} y={TOP} width={PR - xBC} height={yBot - TOP} fill={SKY} fillOpacity={0.05} />
-        <line x1={xEB} y1={TOP} x2={xEB} y2={yBot} stroke="#cbd5e1" strokeWidth={1} strokeDasharray="3 2" />
-        <line x1={xBC} y1={TOP} x2={xBC} y2={yBot} stroke="#cbd5e1" strokeWidth={1} strokeDasharray="3 2" />
+        <line x1={xEB} y1={TOP} x2={xEB} y2={yBot} stroke="#34d399" strokeWidth={1.25} strokeDasharray="3 2" />
+        <line x1={xBC} y1={TOP} x2={xBC} y2={yBot} stroke="#60a5fa" strokeWidth={1.25} strokeDasharray="3 2" />
+
+        {/* mode context — this profile holds only in FORWARD-ACTIVE (B-E forward, C-B reverse) */}
+        <rect x={PR - 100} y={TOP + 1} width={96} height={16} rx={6} fill="#ecfdf5" stroke="#a7f3d0" />
+        <text x={PR - 52} y={TOP + 12} textAnchor="middle" className="fill-emerald-700" style={{ fontSize: 10, fontWeight: 800 }}>פעיל-קדמי</text>
+        <text x={PR - 4} y={TOP + 30} textAnchor="end" style={{ fontSize: 8.5, fontWeight: 700 }}>
+          <tspan className="fill-emerald-600">B-E קדמי</tspan><tspan className="fill-slate-400"> · </tspan><tspan className="fill-blue-500">C-B אחורי</tspan>
+        </text>
 
         {/* axes */}
         <line x1={MX} y1={yBot} x2={PR} y2={yBot} stroke="#cbd5e1" strokeWidth={1.25} />
 
         {/* emitter holes (faint) */}
         <path d={emCurve} fill="none" stroke={ROSE} strokeWidth={1.75} strokeDasharray="4 3" opacity={0.55} />
+
+        {/* collector minority holes (faint) — swept to ~0 at the reverse junction */}
+        <path d={colCurve} fill="none" stroke={ROSE} strokeWidth={1.75} strokeDasharray="4 3" opacity={0.5} />
+        <text x={(xBC + PR) / 2} y={yBot - 0.42 * amp} textAnchor="middle" className="fill-rose-400" style={{ fontSize: 9.5, fontWeight: 700 }}>מיעוט ≈ 0 — נשטף בצומת האחורי</text>
 
         {/* base electrons (prominent) */}
         <path d={baseArea} fill="url(#bmp-fill)" />
