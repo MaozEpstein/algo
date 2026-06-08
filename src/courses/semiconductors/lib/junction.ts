@@ -517,6 +517,52 @@ export const contactBarrier = (type: CarrierType, phiM: number, chi: number, eg:
  */
 export const baseTransportFactor = (WB: number, L: number): number => 1 / Math.cosh(WB / L)
 
+// ---- BJT currents & gain — lecture 3ב --------------------------------------
+/**
+ * Emitter injection efficiency γ = I_nE/(I_nE+I_pE) — the fraction of the emitter
+ * current carried by the USEFUL injected minority carriers (electrons, for npn) vs the
+ * wasteful back-injected majority carriers (holes into the emitter). For uniform
+ * doping with a short emitter:
+ *   γ = 1 / (1 + (N_B·D_E·W_B)/(N_E·D_B·W_E)).
+ * Heavy emitter doping (N_E≫N_B) → γ→1. D_E/D_B are the minority diffusion coeffs in
+ * the emitter/base, W_E/W_B the neutral widths.
+ */
+export const injectionEfficiency = (NE: number, NB: number, DE: number, DB: number, WE: number, WB: number): number =>
+  1 / (1 + (NB * DE * WB) / (NE * DB * WE))
+
+/** Common-base current gain α = γ·b (≈1). */
+export const commonBaseAlpha = (gamma: number, b: number): number => gamma * b
+
+/** Common-emitter current gain β = α/(1−α) ≫ 1. */
+export const commonEmitterBeta = (alpha: number): number => alpha / (1 - alpha)
+
+export interface BjtCurrents { iE: number; iC: number; iB: number }
+/**
+ * Ebers-Moll model (npn): two coupled diodes with current sources. Given the
+ * forward/reverse gains α_F, α_R and the emitter saturation current I_ES (the
+ * collector one follows from reciprocity α_F·I_ES = α_R·I_CS):
+ *   I_F = I_ES(e^{V_BE/V_T}−1),  I_R = I_CS(e^{V_BC/V_T}−1)
+ *   I_E = −I_F + α_R·I_R,  I_C = α_F·I_F − I_R,  I_B = −(I_E+I_C)  (KCL).
+ */
+export function ebersMoll(VBE: number, VBC: number, IES: number, aF: number, aR: number, T = 300): BjtCurrents {
+  const VT = thermalVoltage(T)
+  const ICS = (aF * IES) / aR
+  const iF = IES * (Math.exp(VBE / VT) - 1)
+  const iR = ICS * (Math.exp(VBC / VT) - 1)
+  const iE = -iF + aR * iR
+  const iC = aF * iF - iR
+  return { iE, iC, iB: -(iE + iC) }
+}
+
+/**
+ * Simplified common-emitter output characteristic I_C(V_CE) for a given base current:
+ * a soft knee at V_CE≈V_k (the saturation region) rising to the flat active value β·I_B.
+ *   I_C = β·I_B·(1 − e^{−V_CE/V_k}).
+ * (The Early-effect upward slope in the active region is deferred to 3ג.)
+ */
+export const collectorOutput = (VCE: number, IB: number, beta: number, Vk = 0.06): number =>
+  beta * IB * (1 - Math.exp(-Math.max(VCE, 0) / Vk))
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4
