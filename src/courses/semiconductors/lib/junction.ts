@@ -563,6 +563,68 @@ export function ebersMoll(VBE: number, VBC: number, IES: number, aF: number, aR:
 export const collectorOutput = (VCE: number, IB: number, beta: number, Vk = 0.06): number =>
   beta * IB * (1 - Math.exp(-Math.max(VCE, 0) / Vk))
 
+// ---- BJT non-ideal effects & models — lecture 3ג ---------------------------
+/**
+ * Output characteristic WITH the Early effect: the active-region current is no longer
+ * flat but rises with V_CE, I_C = β·I_B·(1−e^{−V_CE/V_k})·(1+V_CE/V_A). Extrapolating
+ * the active-region lines backwards, they all meet the V_CE axis at −V_A (the Early
+ * voltage): base-width modulation makes W_B shrink as V_CE grows, raising I_C.
+ */
+export const collectorOutputEarly = (VCE: number, IB: number, beta: number, VA: number, Vk = 0.06): number =>
+  collectorOutput(VCE, IB, beta, Vk) * (1 + Math.max(VCE, 0) / VA)
+
+/** Small-signal output resistance r_o = V_A/I_C (the inverse of the Early slope). */
+export const earlyResistance = (VA: number, IC: number): number => VA / IC
+
+/**
+ * Common-emitter breakdown BV_CEO = BV_CBO/β^{1/n} — lower than the common-base BV_CBO
+ * because the transistor's own gain multiplies the avalanche-generated carriers. n is
+ * the avalanche exponent (≈3–6).
+ */
+export const bvCeo = (bvCbo: number, beta: number, n = 4): number => bvCbo / Math.pow(beta, 1 / n)
+
+/** Avalanche multiplication factor M = 1/(1−(V/BV)^n) — diverges at the breakdown voltage. */
+export const avalancheMultiplication = (V: number, BV: number, n = 4): number =>
+  1 / (1 - Math.pow(Math.min(Math.abs(V) / BV, 0.999), n))
+
+/**
+ * Current gain β as a function of collector current (log-bell shape): flat at β_max in
+ * the mid-range, falling at LOW I_C (B-E depletion recombination, the n=2 component) and
+ * at HIGH I_C (high-level injection). β = β_max/(1 + I_lo/I_C + I_C/I_hi).
+ */
+export const betaVsIc = (IC: number, betaMax: number, Ilo: number, Ihi: number): number =>
+  betaMax / (1 + Ilo / IC + IC / Ihi)
+
+/** Gummel-plot collector current I_C = I_S·e^{V_BE/V_T} (ideal, slope one decade per ~60 mV). */
+export const gummelIc = (VBE: number, IS: number, T = 300): number => IS * Math.exp(VBE / thermalVoltage(T))
+/**
+ * Gummel-plot base current: the ideal part I_C/β_max plus a low-V_BE recombination part
+ * (ideality n=2). The vertical gap log(I_C)−log(I_B) is log(β_F).
+ */
+export const gummelIb = (VBE: number, IS: number, betaMax: number, IB2: number, T = 300): number => {
+  const VT = thermalVoltage(T)
+  return (IS * Math.exp(VBE / VT)) / betaMax + IB2 * Math.exp(VBE / (2 * VT))
+}
+
+/** Small-signal transconductance g_m = I_C/V_T. */
+export const transconductance = (IC: number, T = 300): number => IC / thermalVoltage(T)
+/** Small-signal input resistance r_π = β/g_m = β·V_T/I_C. */
+export const rPi = (beta: number, gm: number): number => beta / gm
+
+/** AC common-emitter current gain magnitude |β(f)| = β₀/√(1+(f/f_β)²), with f_β = f_T/β₀. */
+export const currentGainAC = (beta0: number, f: number, fT: number): number => {
+  const fBeta = fT / beta0
+  return beta0 / Math.sqrt(1 + (f / fBeta) ** 2)
+}
+/** Cutoff (unity-gain) frequency f_T = g_m/(2π·C). */
+export const cutoffFrequency = (gm: number, C: number): number => gm / (2 * Math.PI * C)
+
+/** Two resistors in parallel: R₁∥R₂ = R₁R₂/(R₁+R₂). */
+export const parallelR = (r1: number, r2: number): number => (r1 * r2) / (r1 + r2)
+/** Common-emitter small-signal voltage gain A_v = −g_m·(r_o∥R_C). */
+export const voltageGainCE = (gm: number, ro: number, RC: number): number =>
+  -gm * parallelR(ro, RC)
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

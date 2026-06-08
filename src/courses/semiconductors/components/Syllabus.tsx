@@ -49,8 +49,10 @@ const LESSONS: SyllabusLesson[] = [
       {
         label: 'חלק ג׳ · אפקטים לא-אידיאליים ומודלים',
         desc: 'אפקט Early (אפנון רוחב הבסיס), פריצה, הזרקה חזקה ו-$\\beta$ לא-אידיאלי (עקומת Gummel), מודל אות-קטן (hybrid-π), תדר-חיתוך $f_T$ ומיתוג.',
+        done: true,
       },
     ],
+    done: true,
   },
 ]
 

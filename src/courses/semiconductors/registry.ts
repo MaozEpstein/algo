@@ -7,6 +7,7 @@ import { schottkyDiodeLecture } from '@/courses/semiconductors/lectures/schottky
 import { ohmicContactLecture } from '@/courses/semiconductors/lectures/ohmic-contact'
 import { bjtStructureLecture } from '@/courses/semiconductors/lectures/bjt-structure'
 import { bjtCurrentsGainLecture } from '@/courses/semiconductors/lectures/bjt-currents-gain'
+import { bjtNonidealLecture } from '@/courses/semiconductors/lectures/bjt-nonideal'
 
 /** The single wiring point for the semiconductors course. Adding a lecture =
  *  import it and add it here. */
@@ -19,6 +20,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [ohmicContactLecture.id]: ohmicContactLecture,
   [bjtStructureLecture.id]: bjtStructureLecture,
   [bjtCurrentsGainLecture.id]: bjtCurrentsGainLecture,
+  [bjtNonidealLecture.id]: bjtNonidealLecture,
 }
 
 export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(
