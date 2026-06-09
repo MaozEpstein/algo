@@ -646,6 +646,69 @@ export const voltageGainCB = (gm: number, ro: number, RC: number): number =>
 /** Emitter (small-signal) resistance r_e = 1/g_m = V_T/I_C — the CB input resistance. */
 export const emitterResistance = (gm: number): number => 1 / gm
 
+// ---- SCR / thyristor — lesson 4 --------------------------------------------
+/** Loop "sum-gain" of the two-transistor model. The latch (regenerative ON) sets in
+ *  when α1+α2 ≥ 1 (equivalently β1·β2 ≥ 1, since β=α/(1−α)). */
+export const scrAlphaSum = (a1: number, a2: number): number => a1 + a2
+
+/**
+ * Two-transistor regenerative anode current:
+ *   I_A = (α2·I_G + I_leak) / (1 − (α1+α2)).
+ * As α1+α2 → 1⁻ the denominator → 0 and I_A diverges — the device LATCHES on. Anything
+ * that raises the α's (gate current, rising current, avalanche near breakover) triggers it.
+ * Returns Infinity once α1+α2 ≥ 1 (latched).
+ */
+export function scrAnodeCurrent(a1: number, a2: number, IG: number, Ileak: number): number {
+  const s = a1 + a2
+  if (s >= 1) return Infinity
+  return (a2 * IG + Ileak) / (1 - s)
+}
+
+/** Breakover voltage V_BF as a function of gate current: falls from V_BO0 (no gate) toward 0
+ *  as the gate drives the device — more base current means it triggers at a lower voltage. */
+export function breakoverVoltage(IG: number, VBO0 = 200, IGref = 2e-4): number {
+  return VBO0 / (1 + Math.max(IG, 0) / IGref)
+}
+
+export interface IVPoint { V: number; I: number }
+/**
+ * Parametric forward I-V of an SCR, traced in order so it FOLDS (multivalued in V — a plain
+ * x-monotonic chart can't draw it). `gate`∈[0,1] is the normalised gate drive: it lowers the
+ * breakover voltage V_BF (at gate≈1 the snapback vanishes and the device conducts like a diode).
+ * Three branches: (1) forward blocking 0→V_BF (tiny leakage→holding I_H); (2) NDR snapback —
+ * V collapses V_BF→V_on while I rises (negative differential resistance); (3) on-state — low
+ * voltage, current climbing to I_max. Units: V in volts, I in amps (display scale).
+ */
+export function scrCurve(gate: number, o?: { VBO0?: number; Ih?: number; Von?: number; Imax?: number; Ron?: number }): IVPoint[] {
+  const VBO0 = o?.VBO0 ?? 8
+  const Ih = o?.Ih ?? 0.25
+  const Von = o?.Von ?? 1.1
+  const Imax = o?.Imax ?? 5
+  const Ron = o?.Ron ?? 0.15
+  const g = Math.min(Math.max(gate, 0), 1)
+  const VBF = Math.max(Von + 0.3, VBO0 * (1 - 0.9 * g)) // breakover falls with gate, never below the on-state
+  const Iknee = Ih * 1.4
+  const pts: IVPoint[] = []
+  const N = 36
+  // (1) forward blocking: V 0→V_BF, current stays tiny until it reaches I_H near breakover
+  for (let i = 0; i <= N; i++) {
+    const t = i / N
+    pts.push({ V: VBF * t, I: Ih * Math.pow(t, 3) })
+  }
+  // (2) NDR snapback: V collapses V_BF→V_on while I climbs I_H→I_knee
+  for (let i = 1; i <= N; i++) {
+    const t = i / N
+    pts.push({ V: VBF + (Von - VBF) * t, I: Ih + (Iknee - Ih) * t })
+  }
+  // (3) on-state: small voltage drop, current rises to I_max
+  for (let i = 1; i <= N; i++) {
+    const t = i / N
+    const I = Iknee + (Imax - Iknee) * t
+    pts.push({ V: Von + I * Ron, I })
+  }
+  return pts
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

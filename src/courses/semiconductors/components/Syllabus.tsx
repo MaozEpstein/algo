@@ -54,6 +54,12 @@ const LESSONS: SyllabusLesson[] = [
     ],
     done: true,
   },
+  {
+    n: 'שיעור 4',
+    title: 'תיריסטור (SCR)',
+    done: true,
+    desc: 'מתג PNPN ארבע-שכבתי: מבנה וסימול, מודל שני הטרנזיסטורים והמשוב החיובי, תנאי ההצתה $\\alpha_1+\\alpha_2\\ge1$ ($\\Leftrightarrow\\beta_1\\beta_2\\ge1$), ואופיין ה-I-V עם אזור NDR, מתח-פריצה $V_{BF}$ וזרם-החזקה $I_H$.',
+  },
 ]
 
 export default function Syllabus() {
