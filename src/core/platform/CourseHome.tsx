@@ -3,6 +3,23 @@ import { useCourse } from './CourseProvider'
 import { lecturePath, overviewPath } from './links'
 import { OPEN_FORMULA_SHEET } from './types'
 
+/** A subtle per-lesson colour palette. Each lesson (the integer part of its `number`,
+ *  so all parts of one lesson share a hue) maps to one entry; the list cycles for
+ *  courses with many lessons. Tints are intentionally faint — just enough to tell
+ *  lessons apart at a glance. Class strings are literal so Tailwind keeps them. */
+const PALETTE = [
+  { card: 'border-sky-200 bg-gradient-to-br from-sky-50/60 to-white hover:border-sky-300', circle: 'bg-sky-100', label: 'text-sky-500', cta: 'text-sky-600' },
+  { card: 'border-emerald-200 bg-gradient-to-br from-emerald-50/60 to-white hover:border-emerald-300', circle: 'bg-emerald-100', label: 'text-emerald-500', cta: 'text-emerald-600' },
+  { card: 'border-amber-200 bg-gradient-to-br from-amber-50/60 to-white hover:border-amber-300', circle: 'bg-amber-100', label: 'text-amber-500', cta: 'text-amber-600' },
+  { card: 'border-rose-200 bg-gradient-to-br from-rose-50/60 to-white hover:border-rose-300', circle: 'bg-rose-100', label: 'text-rose-500', cta: 'text-rose-600' },
+  { card: 'border-teal-200 bg-gradient-to-br from-teal-50/60 to-white hover:border-teal-300', circle: 'bg-teal-100', label: 'text-teal-500', cta: 'text-teal-600' },
+  { card: 'border-indigo-200 bg-gradient-to-br from-indigo-50/60 to-white hover:border-indigo-300', circle: 'bg-indigo-100', label: 'text-indigo-500', cta: 'text-indigo-600' },
+  { card: 'border-fuchsia-200 bg-gradient-to-br from-fuchsia-50/60 to-white hover:border-fuchsia-300', circle: 'bg-fuchsia-100', label: 'text-fuchsia-500', cta: 'text-fuchsia-600' },
+  { card: 'border-cyan-200 bg-gradient-to-br from-cyan-50/60 to-white hover:border-cyan-300', circle: 'bg-cyan-100', label: 'text-cyan-500', cta: 'text-cyan-600' },
+] as const
+
+const paletteFor = (n: number) => PALETTE[(Math.max(1, Math.floor(n)) - 1) % PALETTE.length]
+
 /** A course's landing page: the lecture grid (+ optional overview hub card). */
 export default function CourseHome() {
   const { courseId, course } = useCourse()
@@ -72,26 +89,29 @@ export default function CourseHome() {
           </Link>
         )}
 
-        {LECTURE_LIST.map((lec) => (
-          <Link
-            key={lec.id}
-            to={lecturePath(courseId, lec.id, lec.explainer ? undefined : { mode: 'guided' })}
-            className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-card transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-lg"
-          >
-            <div className="absolute -left-8 -top-8 h-24 w-24 rounded-full bg-sky-100 opacity-60 transition group-hover:scale-125" />
-            <div className="relative">
-              <span className="font-mono text-sm font-semibold text-sky-500">
-                שיעור {lec.numberLabelHe ?? lec.number}
-              </span>
-              <h2 className="mt-1 text-2xl font-bold text-slate-900">{lec.titleHe}</h2>
-              <p className="mt-0.5 font-mono text-sm text-slate-400">{lec.subtitleEn}</p>
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-sky-600">
-                התחילו ללמוד
-                <span className="transition group-hover:-translate-x-1">←</span>
-              </span>
-            </div>
-          </Link>
-        ))}
+        {LECTURE_LIST.map((lec) => {
+          const c = paletteFor(lec.number)
+          return (
+            <Link
+              key={lec.id}
+              to={lecturePath(courseId, lec.id, lec.explainer ? undefined : { mode: 'guided' })}
+              className={`group relative overflow-hidden rounded-3xl border p-6 shadow-card transition hover:-translate-y-1 hover:shadow-lg ${c.card}`}
+            >
+              <div className={`absolute -left-8 -top-8 h-24 w-24 rounded-full opacity-60 transition group-hover:scale-125 ${c.circle}`} />
+              <div className="relative">
+                <span className={`font-mono text-sm font-semibold ${c.label}`}>
+                  שיעור {lec.numberLabelHe ?? lec.number}
+                </span>
+                <h2 className="mt-1 text-2xl font-bold text-slate-900">{lec.titleHe}</h2>
+                <p className="mt-0.5 font-mono text-sm text-slate-400">{lec.subtitleEn}</p>
+                <span className={`mt-4 inline-flex items-center gap-1 text-sm font-semibold ${c.cta}`}>
+                  התחילו ללמוד
+                  <span className="transition group-hover:-translate-x-1">←</span>
+                </span>
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )
