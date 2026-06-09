@@ -11,6 +11,7 @@ import { linearSortLecture } from '@/courses/algorithms/lectures/linear-sort'
 import { elementaryDataStructuresLecture } from '@/courses/algorithms/lectures/elementary-data-structures'
 import { binarySearchTreeLecture } from '@/courses/algorithms/lectures/binary-search-tree'
 import { redBlackTreeLecture } from '@/courses/algorithms/lectures/red-black-tree'
+import { orderStatisticTreeLecture } from '@/courses/algorithms/lectures/order-statistic-tree'
 
 /** The single wiring point. Adding a lecture = import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
@@ -25,6 +26,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [elementaryDataStructuresLecture.id]: elementaryDataStructuresLecture,
   [binarySearchTreeLecture.id]: binarySearchTreeLecture,
   [redBlackTreeLecture.id]: redBlackTreeLecture,
+  [orderStatisticTreeLecture.id]: orderStatisticTreeLecture,
 }
 
 // The guided StepTimeline derivation is course-wide (keys off algorithm

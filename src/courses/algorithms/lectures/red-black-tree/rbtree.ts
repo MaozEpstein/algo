@@ -18,6 +18,9 @@ export interface RbNode {
   left: RbNode
   right: RbNode
   p: RbNode
+  /** Size of the subtree rooted here (lesson 12 augmentation). NIL → 0.
+   *  Lesson 11 never reads it, so it is harmless there. */
+  size: number
 }
 
 export interface RbTree {
@@ -53,6 +56,7 @@ export function makeTree(): RbTree {
     left: null as unknown as RbNode,
     right: null as unknown as RbNode,
     p: null as unknown as RbNode,
+    size: 0,
   }
   NIL.left = NIL
   NIL.right = NIL
@@ -61,7 +65,12 @@ export function makeTree(): RbTree {
 }
 
 export function newNode(T: RbTree, key: number, color: Color = 'red'): RbNode {
-  return { id: `r${_seq++}`, key, color, left: T.NIL, right: T.NIL, p: T.NIL }
+  return { id: `r${_seq++}`, key, color, left: T.NIL, right: T.NIL, p: T.NIL, size: 1 }
+}
+
+/** size[x] = size[left] + size[right] + 1 (NIL → 0). */
+const fixSize = (T: RbTree, x: RbNode): void => {
+  if (!isNil(T, x)) x.size = x.left.size + x.right.size + 1
 }
 
 export const isNil = (T: RbTree, x: RbNode): boolean => x === T.NIL
@@ -78,6 +87,8 @@ export function leftRotate(T: RbTree, x: RbNode, trace: Tracer = noop): void {
   else x.p.right = y
   y.left = x // put x on y's left
   x.p = y
+  fixSize(T, x) // size maintenance (lesson 12): x is now lower, recompute first
+  fixSize(T, y)
   trace({ block: 'leftRotate', code: 10, he: `הסיבוב הושלם — הסדר התוך-סדרי נשמר.`, roles: { x, y } })
 }
 
@@ -92,6 +103,8 @@ export function rightRotate(T: RbTree, x: RbNode, trace: Tracer = noop): void {
   else x.p.left = y
   y.right = x
   x.p = y
+  fixSize(T, x) // size maintenance (lesson 12)
+  fixSize(T, y)
   trace({ block: 'rightRotate', code: 10, he: `הסיבוב הושלם — הסדר התוך-סדרי נשמר.`, roles: { x, y } })
 }
 
@@ -102,6 +115,7 @@ export function rbInsert(T: RbTree, key: number, trace: Tracer = noop): RbNode {
   let x = T.root
   trace({ block: 'rbInsert', code: 3, he: `מכניסים מפתח חדש z=${key}. נחפש את מקומו כמו ב-BST.`, roles: { z, x } })
   while (!isNil(T, x)) {
+    x.size += 1 // size maintenance (lesson 12): every ancestor of z grows by 1
     y = x
     if (z.key < x.key) {
       trace({ block: 'rbInsert', code: 5, he: `z=${key} < ${x.key} ← פונים שמאלה.`, roles: { z, x, y } })
@@ -225,6 +239,7 @@ export function rbDelete(T: RbTree, z: RbNode, trace: Tracer = noop): void {
     y.color = z.color
     trace({ block: 'rbDelete', code: 10, he: `y תופס את מקום z וצובע בצבעו. כעת נבדוק את הצבע שהוסר.`, roles: { y, x } })
   }
+  recomputeSizes(T) // size maintenance (lesson 12): a node was removed; refresh subtree sizes
   if (yOrig === 'black') {
     trace({ block: 'rbDelete', code: 11, he: `הצבע שהוסר היה שחור → ייתכן הפרה של תכונה 4/5. מריצים Delete-Fixup.`, roles: { x }, doubleBlack: x })
     rbDeleteFixup(T, x, trace)
@@ -333,6 +348,31 @@ export function inorderKeys(T: RbTree): number[] {
   }
   rec(T.root)
   return out
+}
+
+/** Recompute every subtree size bottom-up (lesson 12). */
+export function recomputeSizes(T: RbTree): void {
+  const rec = (x: RbNode) => {
+    if (isNil(T, x)) return
+    rec(x.left)
+    rec(x.right)
+    x.size = x.left.size + x.right.size + 1
+  }
+  rec(T.root)
+}
+
+/** Verify the augmentation invariant size[x] = size[left] + size[right] + 1. */
+export function validateSize(T: RbTree): { ok: boolean; reason?: string } {
+  let bad: string | undefined
+  const rec = (x: RbNode) => {
+    if (isNil(T, x)) return
+    const want = x.left.size + x.right.size + 1
+    if (x.size !== want) bad = bad ?? `size[${x.key}] = ${x.size}, expected ${want}`
+    rec(x.left)
+    rec(x.right)
+  }
+  rec(T.root)
+  return bad ? { ok: false, reason: bad } : { ok: true }
 }
 
 export function treeHeight(T: RbTree): number {

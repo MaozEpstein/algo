@@ -108,6 +108,14 @@ export default function RbTreeView({ frame, instant }: { frame: Frame; instant?:
                 }}
               >
                 {n.key}
+                {n.size != null && (
+                  <span
+                    className="absolute -bottom-1.5 -left-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-bold text-slate-900 shadow"
+                    title="size — גודל תת-העץ"
+                  >
+                    {n.size}
+                  </span>
+                )}
               </motion.div>
             )
           })}

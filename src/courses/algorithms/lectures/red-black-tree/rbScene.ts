@@ -17,6 +17,8 @@ export interface RbSceneNode {
   color: Color
   tone: NodeTone
   doubleBlack?: boolean
+  /** Subtree size badge (lesson 12 — order-statistic tree). */
+  size?: number
 }
 export interface RbSceneEdge {
   from: { x: number; y: number }
@@ -93,6 +95,8 @@ export interface BuildRbSceneOpts {
   pointers?: { label: string; node?: RbNode; tone: RbScenePointer['tone']; place?: 'above' | 'below' }[]
   /** Render the black NIL sentinel leaves. */
   showNil?: boolean
+  /** Per-node subtree-size badge (lesson 12). */
+  size?: (n: RbNode) => number
 }
 
 export function buildRbScene(opts: BuildRbSceneOpts): RbScene {
@@ -121,6 +125,7 @@ export function buildRbScene(opts: BuildRbSceneOpts): RbScene {
       color: n.color,
       tone: opts.tone?.(n) ?? 'idle',
       doubleBlack: opts.doubleBlackId === n.id,
+      size: opts.size?.(n),
     })
     for (const child of [n.left, n.right] as const) {
       if (!isNil(T, child)) {

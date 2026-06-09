@@ -24,7 +24,7 @@ const ROLE_PTR: Record<string, { label: string; tone: 'z' | 'x' | 'w' | 'uncle' 
   uncle: { label: 'דוד', tone: 'uncle' },
 }
 
-export function makeTracer(b: FrameBuilder, T: RbTree, opts: { zTone?: NodeTone } = {}) {
+export function makeTracer(b: FrameBuilder, T: RbTree, opts: { zTone?: NodeTone; showSize?: boolean } = {}) {
   return (s: RbStep) => {
     const toneById = new Map<string, NodeTone>()
     const pointers: { label: string; node?: import('../rbtree').RbNode; tone: 'z' | 'x' | 'w' | 'uncle' }[] = []
@@ -44,6 +44,7 @@ export function makeTracer(b: FrameBuilder, T: RbTree, opts: { zTone?: NodeTone 
         doubleBlackId: s.doubleBlack?.id,
         pointers,
         showNil: true,
+        size: opts.showSize ? (n) => n.size : undefined,
       }),
     )
     b.emit({
@@ -56,7 +57,7 @@ export function makeTracer(b: FrameBuilder, T: RbTree, opts: { zTone?: NodeTone 
 }
 
 /** Emit a plain frame of the current tree (no highlight) — for intros/outros. */
-export function emitTree(b: FrameBuilder, T: RbTree, codeBlock: string, narration: string): void {
-  b.setScene(buildRbScene({ tree: T, showNil: true }))
+export function emitTree(b: FrameBuilder, T: RbTree, codeBlock: string, narration: string, showSize = false): void {
+  b.setScene(buildRbScene({ tree: T, showNil: true, size: showSize ? (n) => n.size : undefined }))
   b.emit({ codeBlock, codeLine: null, narration })
 }

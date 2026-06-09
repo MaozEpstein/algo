@@ -78,6 +78,12 @@ export function deriveAlgorithmSteps(frames: Frame[]): Step[] {
       steps.push({ label: `תיקון ${c}`, index: i })
     } else if ((f.codeBlock === 'leftRotate' || f.codeBlock === 'rightRotate') && f.codeLine === 2) {
       steps.push({ label: f.codeBlock === 'leftRotate' ? 'Left-Rotate' : 'Right-Rotate', index: i, ltr: true })
+    } else if (f.codeBlock === 'osSelect' && f.codeLine === 2) {
+      bstStep += 1
+      steps.push({ label: `צעד ${bstStep}`, index: i })
+    } else if (f.codeBlock === 'osRank' && (f.codeLine === 5 || f.codeLine === 6)) {
+      bstStep += 1
+      steps.push({ label: `טיפוס ${bstStep}`, index: i })
     } else if (hasCallStack(f)) {
       // Recursion lecture: a chip per call entered (↓) and per return (↑ = value).
       const stack = (f.scene as { stack: { callTex: string; returnTex?: string }[] }).stack

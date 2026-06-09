@@ -23,6 +23,7 @@ const LESSONS: SyllabusLesson[] = [
   { n: 'שיעור 9', title: 'מבני נתונים בסיסיים וטבלאות גיבוב', done: true, desc: 'מחסנית, תור, רשימה מקושרת, וטבלאות גיבוב (Hash Tables).' },
   { n: 'שיעור 10', title: 'עצי חיפוש בינאריים', done: true, desc: 'תכונת ה-BST, סריקה תוך-סדרית, חיפוש/הכנסה/מחיקה/עוקב ו-BSTSort — כולן ב-$O(h)$.' },
   { n: 'שיעור 11', title: 'עצים אדומים-שחורים', done: true, desc: 'איזון עצמי בעזרת צבע וסיבובים: RB-Insert ו-RB-Delete מבטיחים גובה $O(\\log n)$ במקרה הגרוע.' },
+  { n: 'שיעור 12', title: 'הרחבת מבני נתונים — עצי ערכי-מיקום', done: true, desc: 'הרחבת עץ אדום-שחור בשדה $size$: OS-Select, OS-Rank ותחזוקת השדה — כולן ב-$O(\\log n)$.' },
 ]
 
 export default function Syllabus() {
