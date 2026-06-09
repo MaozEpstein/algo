@@ -14,6 +14,11 @@ const NOTATIONS: { sym: string; nameHe: string; tex: string; color: string }[] =
   { sym: 'Θ', nameHe: 'חסם הדוק', tex: 'c_1 g(n) \\le f(n) \\le c_2 g(n)', color: 'border-emerald-300 bg-emerald-50' },
 ]
 
+const STRICT: { sym: string; nameHe: string; tex: string; color: string }[] = [
+  { sym: 'o', nameHe: 'חסם עליון הדוק-לא', tex: '\\lim_{n\\to\\infty}\\dfrac{f(n)}{g(n)} = 0', color: 'border-rose-300 bg-rose-50' },
+  { sym: 'ω', nameHe: 'חסם תחתון הדוק-לא', tex: '\\lim_{n\\to\\infty}\\dfrac{f(n)}{g(n)} = \\infty', color: 'border-violet-300 bg-violet-50' },
+]
+
 const CHEAT: { tex: string; he: string }[] = [
   { tex: 'O(1)', he: 'גישה לאיבר במערך' },
   { tex: 'O(\\log n)', he: 'חיפוש בינארי' },
@@ -147,6 +152,38 @@ export default function ComplexityTab() {
           <Tex>n^2</Tex> ל-<Tex>2n^2</Tex>.
         </p>
         <Chart series={sandwich} yScale="linear" xLabel="n" markers={[{ x: 8, label: 'n₀' }]} />
+      </Panel>
+
+      <Panel title="סימונים 'הדוקים-לא' — o ו-ω (להשוואת אלגוריתמים)">
+        <p className="mb-3 leading-relaxed text-slate-600">
+          <Tex>O</Tex> ו-<Tex>\Omega</Tex> הם חסמים שעשויים להיות <b>הדוקים</b> (למשל <Tex>{'n^2 = O(n^2)'}</Tex>).
+          לעומתם <Tex>o</Tex> ו-<Tex>\omega</Tex> הם <b>הדוקים-לא</b> (strict): פער ממשי בקצב הגדילה — אחת
+          הפונקציות גדלה <b>ממש</b> מהר/לאט יותר מהשנייה.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {STRICT.map((nt) => (
+            <div key={nt.sym} className={`rounded-2xl border p-4 ${nt.color}`}>
+              <div className="flex items-baseline gap-2">
+                <span className="font-mono text-xl font-bold text-slate-800">{nt.sym}</span>
+                <span className="text-sm font-semibold text-slate-600">{nt.nameHe}</span>
+              </div>
+              <div className="mt-2">
+                <Tex block>{nt.tex}</Tex>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 leading-relaxed text-slate-600">
+          <Tex>f = o(g)</Tex> ("f קטן-קטן של g"): f <b>זניח</b> מול g — לכל קבוע <Tex>c &gt; 0</Tex> קיים{' '}
+          <Tex>n_0</Tex> כך ש-<Tex>{'f(n) < c\\cdot g(n)'}</Tex>. לדוגמה: <Tex>{'10^{100}\\,n = o(n^3)'}</Tex>.
+          הקשר ההפוך: <Tex>f = o(g)</Tex> שקול ל-<Tex>g = \omega(f)</Tex>.
+        </p>
+        <div className="mt-3 rounded-xl border-s-4 border-emerald-300 bg-emerald-50 px-4 py-3 leading-relaxed text-emerald-900">
+          <b>למה זה שימושי — השוואת אלגוריתמים:</b> אם אלגוריתם <Tex>A</Tex> רץ ב-<Tex>\Theta(f)</Tex>
+          ואלגוריתם <Tex>B</Tex> ב-<Tex>\Theta(g)</Tex>, אז <Tex>A</Tex> <b>עדיף</b> על <Tex>B</Tex> אםם{' '}
+          <Tex>f = o(g)</Tex> (כלומר <Tex>g = \omega(f)</Tex>), שכן <Tex>{'f(n)/g(n) \\to 0'}</Tex>.
+          שווי-ביצועים אסימפטוטית אםם <Tex>f = \Theta(g)</Tex>.
+        </div>
       </Panel>
 
       <Panel title="סיבוכיות נפוצות — וזכרון">
