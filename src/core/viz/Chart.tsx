@@ -60,10 +60,13 @@ export default function Chart({
     return M.t + ph - (Math.min(y, yHi) / yHi) * ph
   }
 
-  const yTicks = log
-    ? Array.from({ length: Math.floor(Math.log10(yHi)) + 1 }, (_, i) => 10 ** i)
-    : [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(f * yHi))
-  const xTicks = [xMin, Math.round((xMin + xMax) / 2), xMax]
+  const uniq = (xs: number[]) => xs.filter((v, i) => xs.indexOf(v) === i)
+  const yTicks = uniq(
+    log
+      ? Array.from({ length: Math.floor(Math.log10(yHi)) + 1 }, (_, i) => 10 ** i)
+      : [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(f * yHi)),
+  )
+  const xTicks = uniq([xMin, Math.round((xMin + xMax) / 2), xMax])
 
   const pathOf = (pts: { x: number; y: number }[]) =>
     pts.map((p, i) => `${i ? 'L' : 'M'} ${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(' ')
@@ -73,8 +76,8 @@ export default function Chart({
       <div className="ltr w-full overflow-hidden" dir="ltr">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: H }}>
           {/* y gridlines + labels */}
-          {yTicks.map((t) => (
-            <g key={`y${t}`}>
+          {yTicks.map((t, i) => (
+            <g key={`y${i}`}>
               <line x1={M.l} y1={sy(t)} x2={W - M.r} y2={sy(t)} stroke="#eef2f7" strokeWidth={1} />
               <text x={M.l - 6} y={sy(t) + 3} textAnchor="end" className="fill-slate-400" style={{ fontSize: 10 }}>
                 {t >= 1000 ? `${t / 1000}k` : t}
@@ -85,8 +88,8 @@ export default function Chart({
           <line x1={M.l} y1={M.t} x2={M.l} y2={M.t + ph} stroke="#cbd5e1" strokeWidth={1.5} />
           <line x1={M.l} y1={M.t + ph} x2={W - M.r} y2={M.t + ph} stroke="#cbd5e1" strokeWidth={1.5} />
           {/* x ticks */}
-          {xTicks.map((t) => (
-            <text key={`x${t}`} x={sx(t)} y={M.t + ph + 16} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 10 }}>
+          {xTicks.map((t, i) => (
+            <text key={`x${i}`} x={sx(t)} y={M.t + ph + 16} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 10 }}>
               {t}
             </text>
           ))}

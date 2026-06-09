@@ -3,19 +3,21 @@ import IntroTab from './tabs/IntroTab'
 import ComponentsTab from './tabs/ComponentsTab'
 import FactorsTab from './tabs/FactorsTab'
 import GainTab from './tabs/GainTab'
+import ConfigsTab from './tabs/ConfigsTab'
 import OutputTab from './tabs/OutputTab'
 import EbersMollTab from './tabs/EbersMollTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'intro' | 'components' | 'factors' | 'gain' | 'output' | 'ebers' | 'practice' | 'summary'
+type TabId = 'intro' | 'components' | 'factors' | 'gain' | 'configs' | 'output' | 'ebers' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'intro', labelHe: 'מהאיכותי לכמותי', icon: '📘' },
   { id: 'components', labelHe: 'רכיבי-הזרם', icon: '🧩' },
   { id: 'factors', labelHe: 'γ ו-b', icon: '🎚️' },
   { id: 'gain', labelHe: 'הגבר α ו-β', icon: '🔊' },
-  { id: 'output', labelHe: 'אופייני המוצא', icon: '📈' },
+  { id: 'configs', labelHe: 'תצורות CB / CE', icon: '🔀' },
+  { id: 'output', labelHe: 'אופייני זרם-מתח', icon: '📈' },
   { id: 'ebers', labelHe: 'מודל Ebers-Moll', icon: '🔁' },
   { id: 'practice', labelHe: 'תרגול', icon: '✏️' },
   { id: 'summary', labelHe: 'סיכום', icon: '📋' },
@@ -26,6 +28,7 @@ const PANELS: Record<TabId, React.FC> = {
   components: ComponentsTab,
   factors: FactorsTab,
   gain: GainTab,
+  configs: ConfigsTab,
   output: OutputTab,
   ebers: EbersMollTab,
   practice: PracticeTab,

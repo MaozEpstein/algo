@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { injectionEfficiency, commonBaseAlpha, commonEmitterBeta, ebersMoll, collectorOutput } from '../../lib/junction'
+import { injectionEfficiency, commonBaseAlpha, commonEmitterBeta, ebersMoll, collectorOutput, cbOutput } from '../../lib/junction'
 
 /**
  * Lecture 3ב — BJT currents & gain helpers: injection efficiency γ, gains α=γ·b and
@@ -58,5 +58,21 @@ describe('BJT — output characteristic', () => {
     const a = collectorOutput(0.05, 0.05, 100)
     const b = collectorOutput(0.2, 0.05, 100)
     expect(b).toBeGreaterThan(a)
+  })
+})
+
+describe('BJT — common-base output characteristic', () => {
+  it('is flat at α·I_E across the active region (V_CB ≥ 0)', () => {
+    const flat = 0.98 * 2 // α·I_E for I_E = 2 mA
+    expect(cbOutput(0.5, 2, 0.98)).toBeCloseTo(flat, 3)
+    expect(cbOutput(4, 2, 0.98)).toBeCloseTo(flat, 3)
+  })
+  it('collapses toward 0 once the collector is driven forward (V_CB ≪ 0)', () => {
+    expect(cbOutput(-1, 2, 0.98)).toBeCloseTo(0, 6)
+    expect(cbOutput(-1, 2, 0.98)).toBeLessThan(cbOutput(0, 2, 0.98))
+  })
+  it('scales with I_E and stays below it (no current gain, α<1)', () => {
+    expect(cbOutput(2, 4, 0.98)).toBeCloseTo(0.98 * 4, 3)
+    expect(cbOutput(2, 4, 0.98)).toBeLessThan(4)
   })
 })

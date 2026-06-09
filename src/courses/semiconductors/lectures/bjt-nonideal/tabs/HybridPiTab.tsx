@@ -2,6 +2,7 @@ import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import HybridPiModel from '../components/HybridPiModel'
 import GainExplorerCE from '../components/GainExplorerCE'
+import SmallSignalCB from '../components/SmallSignalCB'
 
 /** One small-signal parameter: its formula (KaTeX) and where it comes from. */
 function ParamCard({ sym, he, cls }: { sym: string; he: string; cls: string }) {
@@ -46,6 +47,50 @@ export default function HybridPiTab() {
         <div className="mt-3">
           <GainExplorerCE />
         </div>
+      </Panel>
+
+      <Panel title="אותו מודל בתצורת בסיס-משותף (CB)">
+        <p className="mb-1 leading-relaxed text-slate-700">
+          אותו טרנזיסטור, אך האות נכנס ל<b>פולט</b> והבסיס משותף. בתצורה זו הכניסה היא ההתנגדות הנמוכה
+          <Tex>{'\\,r_e=1/g_m'}</Tex>, הגבר-הזרם הוא רק <Tex>{'\\approx\\alpha\\approx1'}</Tex>, והגבר-המתח
+          <Tex>{'\\,A_v=+g_m(r_o\\parallel R_C)'}</Tex> — אותו גודל כמו CE אבל <b>ללא היפוך</b>:
+        </p>
+        <div className="mt-3">
+          <SmallSignalCB />
+        </div>
+      </Panel>
+
+      <Panel title="השוואת אות-קטן: CE מול CB">
+        <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <table className="w-full border-collapse text-center text-sm">
+            <thead>
+              <tr className="bg-slate-50 text-slate-500">
+                <th className="py-2.5 px-3 font-semibold">פרמטר</th>
+                <th className="py-2.5 px-3 font-semibold text-rose-700">פולט משותף (CE)</th>
+                <th className="py-2.5 px-3 font-semibold text-sky-700">בסיס משותף (CB)</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-700">
+              {([
+                ['התנגדות כניסה', <Tex>{'r_\\pi=\\beta/g_m'}</Tex>, <Tex>{'r_e=1/g_m'}</Tex>],
+                ['הגבר זרם', <Tex>{'\\beta\\gg1'}</Tex>, <Tex>{'\\alpha\\approx1'}</Tex>],
+                ['הגבר מתח', <Tex>{'A_v=-g_m(r_o\\parallel R_C)'}</Tex>, <Tex>{'A_v=+g_m(r_o\\parallel R_C)'}</Tex>],
+                ['היפוך פאזה', <>כן (שלילי)</>, <>לא (חיובי)</>],
+                ['התנגדות מוצא', <Tex>{'r_o'}</Tex>, <Tex>{'r_o'}</Tex>],
+              ] as [string, React.ReactNode, React.ReactNode][]).map((row) => (
+                <tr key={row[0]} className="border-t border-slate-100">
+                  <td className="py-2.5 px-3 font-medium text-slate-600">{row[0]}</td>
+                  <td className="py-2.5 px-3">{row[1]}</td>
+                  <td className="py-2.5 px-3">{row[2]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          המסקנה: <Tex>{'g_m'}</Tex> (ולכן גודל הגבר-המתח) משותף לשתי התצורות; מה שמבדיל הוא <b>הסימן</b>, <b>הגבר-הזרם</b>
+          ו<b>התנגדות-הכניסה</b>. (CE: הגבר-זרם ומתח גבוהים, מהפך; CB: ללא הגבר-זרם, לא-מהפך, כניסה נמוכה.)
+        </p>
       </Panel>
     </div>
   )

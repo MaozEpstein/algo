@@ -7,11 +7,13 @@ import {
   collectorOutputEarly,
   currentGainAC,
   earlyResistance,
+  emitterResistance,
   gummelIb,
   gummelIc,
   parallelR,
   rPi,
   transconductance,
+  voltageGainCB,
   voltageGainCE,
 } from '../../lib/junction'
 
@@ -75,5 +77,16 @@ describe('BJT — small-signal & f_T', () => {
     expect(voltageGainCE(gm, ro, 5000)).toBeLessThan(0)
     // huge R_C → gain approaches −g_m·r_o = −V_A/V_T
     expect(Math.abs(voltageGainCE(gm, ro, 1e9))).toBeCloseTo(gm * ro, 0)
+  })
+  it('CB voltage gain equals the CE gain in magnitude but is positive (non-inverting)', () => {
+    const gm = transconductance(1e-3)
+    const ro = earlyResistance(60, 1e-3)
+    expect(voltageGainCB(gm, ro, 5000)).toBeGreaterThan(0)
+    expect(voltageGainCB(gm, ro, 5000)).toBeCloseTo(-voltageGainCE(gm, ro, 5000), 6)
+  })
+  it('emitter resistance r_e = 1/g_m is low (tens of ohms at 1 mA)', () => {
+    const gm = transconductance(1e-3)
+    expect(emitterResistance(gm)).toBeCloseTo(1 / gm, 6)
+    expect(emitterResistance(gm)).toBeLessThan(40) // ≈ V_T/I_C ≈ 25.9 Ω
   })
 })

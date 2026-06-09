@@ -563,6 +563,16 @@ export function ebersMoll(VBE: number, VBC: number, IES: number, aF: number, aR:
 export const collectorOutput = (VCE: number, IB: number, beta: number, Vk = 0.06): number =>
   beta * IB * (1 - Math.exp(-Math.max(VCE, 0) / Vk))
 
+/**
+ * Common-base output characteristic I_C(V_CB) for a given EMITTER current I_E:
+ * essentially flat at the active value α·I_E (near-infinite output resistance),
+ * dropping to zero only once the collector junction is driven forward
+ * (V_CB ≲ −V_off → saturation). I_C = α·I_E·(1 − e^{−(V_CB+V_off)/V_k}), clamped ≥0.
+ * Contrast with the common-emitter family, whose knee sits at V_CE≈0.
+ */
+export const cbOutput = (VCB: number, IE: number, alpha: number, Vk = 0.06, Voff = 0.4): number =>
+  Math.max(0, alpha * IE * (1 - Math.exp(-(VCB + Voff) / Vk)))
+
 // ---- BJT non-ideal effects & models — lecture 3ג ---------------------------
 /**
  * Output characteristic WITH the Early effect: the active-region current is no longer
@@ -621,9 +631,20 @@ export const cutoffFrequency = (gm: number, C: number): number => gm / (2 * Math
 
 /** Two resistors in parallel: R₁∥R₂ = R₁R₂/(R₁+R₂). */
 export const parallelR = (r1: number, r2: number): number => (r1 * r2) / (r1 + r2)
-/** Common-emitter small-signal voltage gain A_v = −g_m·(r_o∥R_C). */
+/** Common-emitter small-signal voltage gain A_v = −g_m·(r_o∥R_C) (inverting). */
 export const voltageGainCE = (gm: number, ro: number, RC: number): number =>
   -gm * parallelR(ro, RC)
+
+/**
+ * Common-base small-signal voltage gain A_v = +g_m·(r_o∥R_C) — same magnitude as
+ * the CE gain but NON-inverting (the input drives the emitter). The current gain is
+ * only ≈α≈1, and the input resistance is the low emitter resistance r_e=1/g_m.
+ */
+export const voltageGainCB = (gm: number, ro: number, RC: number): number =>
+  gm * parallelR(ro, RC)
+
+/** Emitter (small-signal) resistance r_e = 1/g_m = V_T/I_C — the CB input resistance. */
+export const emitterResistance = (gm: number): number => 1 / gm
 
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
