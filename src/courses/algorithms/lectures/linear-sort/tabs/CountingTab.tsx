@@ -14,7 +14,7 @@ const PRESETS: DemoPreset[] = [
 export default function CountingTab() {
   return (
     <div className="flex flex-col gap-5">
-      <Panel title="מיון מנייה — הרעיון">
+      <Panel title="מיון מנייה (Counting Sort) — הרעיון">
         <p className="leading-relaxed text-slate-600">
           ההנחה: המפתחות הם שלמים בטווח קטן <Tex>{'1..k'}</Tex>. במקום להשוות, <b>סופרים</b> כמה פעמים
           מופיע כל ערך.
@@ -28,7 +28,7 @@ export default function CountingTab() {
         </div>
       </Panel>
 
-      <SortDemo titleHe="מיון מנייה" block={countingSortBlock} run={runCountingSort} presets={PRESETS} varsPlacement="side" />
+      <SortDemo titleHe="מיון מנייה — Counting Sort" block={countingSortBlock} run={runCountingSort} presets={PRESETS} varsPlacement="side" />
     </div>
   )
 }

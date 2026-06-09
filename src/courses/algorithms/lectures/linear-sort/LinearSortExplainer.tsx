@@ -9,9 +9,9 @@ type TabId = 'lowerbound' | 'counting' | 'radix' | 'bucket' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'lowerbound', labelHe: 'חסם תחתון', icon: '🌳' },
-  { id: 'counting', labelHe: 'מיון מנייה', icon: '🔢' },
-  { id: 'radix', labelHe: 'מיון בסיס', icon: '🔟' },
-  { id: 'bucket', labelHe: 'מיון דלי', icon: '🪣' },
+  { id: 'counting', labelHe: 'מיון מנייה — Counting Sort', icon: '🔢' },
+  { id: 'radix', labelHe: 'מיון בסיס — Radix Sort', icon: '🔟' },
+  { id: 'bucket', labelHe: 'מיון דלי — Bucket Sort', icon: '🪣' },
   { id: 'summary', labelHe: 'סיכום והשוואה', icon: '📊' },
 ]
 

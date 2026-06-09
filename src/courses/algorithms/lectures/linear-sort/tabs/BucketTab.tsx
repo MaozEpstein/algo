@@ -19,7 +19,7 @@ const PRESETS: DemoPreset[] = [
 export default function BucketTab() {
   return (
     <div className="flex flex-col gap-5">
-      <Panel title="מיון דלי — הרעיון">
+      <Panel title="מיון דלי (Bucket Sort) — הרעיון">
         <p className="leading-relaxed text-slate-600">
           ההנחה: <Tex>n</Tex> מספרים ממשיים פרושים <b>אחיד</b> ב-<Tex>[0,1)</Tex>. פותחים <Tex>n</Tex>{' '}
           דליים, ומכניסים כל איבר <Tex>x</Tex> לדלי <Tex>{'\\lfloor n \\cdot x \\rfloor'}</Tex>.
@@ -33,7 +33,7 @@ export default function BucketTab() {
         </div>
       </Panel>
 
-      <SortDemo titleHe="מיון דלי" block={bucketSortBlock} run={runBucketSort} presets={PRESETS} varsPlacement="side" />
+      <SortDemo titleHe="מיון דלי — Bucket Sort" block={bucketSortBlock} run={runBucketSort} presets={PRESETS} varsPlacement="side" />
     </div>
   )
 }

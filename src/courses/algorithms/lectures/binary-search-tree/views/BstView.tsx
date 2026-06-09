@@ -69,6 +69,20 @@ export default function BstView({ frame, instant }: { frame: Frame; instant?: bo
   const dur = instant ? 0 : 0.34
   const { width, height } = scene
 
+  // Empty tree (e.g. BSTSort's first frame, or after deleting the last node):
+  // show an explicit placeholder so the dark canvas doesn't look broken.
+  if (scene.nodes.length === 0) {
+    return (
+      <div className="flex h-full min-h-[180px] w-full flex-col items-center justify-center gap-2 text-slate-400">
+        <svg className="h-10 w-10 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="5" r="2.5" />
+          <path d="M12 7.5v3M9 14.5l2-2.5M15 14.5l-2-2.5" strokeDasharray="2 2" />
+        </svg>
+        <span className="text-sm font-medium">העץ ריק (root = NIL)</span>
+      </div>
+    )
+  }
+
   return (
     <div className="ltr w-full overflow-x-auto" dir="ltr">
       <div className="relative mx-auto" style={{ width, height }}>

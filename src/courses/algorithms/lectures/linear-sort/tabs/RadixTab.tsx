@@ -14,7 +14,7 @@ const PRESETS: DemoPreset[] = [
 export default function RadixTab() {
   return (
     <div className="flex flex-col gap-5">
-      <Panel title="מיון בסיס — הרעיון">
+      <Panel title="מיון בסיס (Radix Sort) — הרעיון">
         <p className="leading-relaxed text-slate-600">
           ממיינים מספר רב-ספרתי <b>ספרה אחר ספרה</b>, החל מה<b>פחות-משמעותית</b> (LSD).
         </p>
@@ -30,7 +30,7 @@ export default function RadixTab() {
         </div>
       </Panel>
 
-      <SortDemo titleHe="מיון בסיס" block={radixSortBlock} run={runRadixSort} presets={PRESETS} />
+      <SortDemo titleHe="מיון בסיס — Radix Sort" block={radixSortBlock} run={runRadixSort} presets={PRESETS} />
     </div>
   )
 }
