@@ -68,6 +68,16 @@ export function deriveAlgorithmSteps(frames: Frame[]): Step[] {
       f.codeLine === 1
     ) {
       steps.push({ label: 'התחלה', index: i })
+    } else if (f.codeBlock === 'rbInsert' && f.codeLine === 11) {
+      steps.push({ label: 'עלה אדום', index: i })
+    } else if (f.codeBlock === 'rbInsertFixup' && (f.codeLine === 5 || f.codeLine === 8 || f.codeLine === 10)) {
+      const c = f.codeLine === 5 ? 1 : f.codeLine === 8 ? 2 : 3
+      steps.push({ label: `תיקון ${c}`, index: i })
+    } else if (f.codeBlock === 'rbDeleteFixup' && (f.codeLine === 5 || f.codeLine === 7 || f.codeLine === 10 || f.codeLine === 12)) {
+      const c = f.codeLine === 5 ? 1 : f.codeLine === 7 ? 2 : f.codeLine === 10 ? 3 : 4
+      steps.push({ label: `תיקון ${c}`, index: i })
+    } else if ((f.codeBlock === 'leftRotate' || f.codeBlock === 'rightRotate') && f.codeLine === 2) {
+      steps.push({ label: f.codeBlock === 'leftRotate' ? 'Left-Rotate' : 'Right-Rotate', index: i, ltr: true })
     } else if (hasCallStack(f)) {
       // Recursion lecture: a chip per call entered (↓) and per return (↑ = value).
       const stack = (f.scene as { stack: { callTex: string; returnTex?: string }[] }).stack
