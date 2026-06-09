@@ -34,6 +34,61 @@ export const lcsLengthBlock: PseudocodeBlock = {
   ],
 }
 
+export const knapsack01Block: PseudocodeBlock = {
+  id: 'knapsack01',
+  titleEn: 'Knapsack-01(items, W)',
+  titleHe: 'תרמיל 0-1 — ערך מרבי',
+  kind: 'main',
+  lines: [
+    'Knapsack-01(items, W)',
+    '    for w = 0 to W: K[0,w] = 0',
+    '    for i = 1 to k',
+    '        for w = 0 to W',
+    '            if wᵢ > w',
+    '                K[i,w] = K[i-1,w]                      // לא נכנס',
+    '            else',
+    '                K[i,w] = max(K[i-1,w], vᵢ + K[i-1,w-wᵢ])  // לדלג / לקחת',
+    '    return K[k,W]',
+  ],
+  pythonLines: [
+    'def knapsack_01(items, W):',
+    '    for w in range(W+1): K[0][w] = 0',
+    '    for i in range(1, k+1):',
+    '        wi, vi = items[i-1]',
+    '        for w in range(W+1):',
+    '            if wi > w:',
+    '                K[i][w] = K[i-1][w]',
+    '            else:',
+    '                K[i][w] = max(K[i-1][w], vi + K[i-1][w-wi])',
+    '    return K[k][W]',
+  ],
+}
+
+export const knapBackBlock: PseudocodeBlock = {
+  id: 'knapBack',
+  titleEn: 'Knapsack-Items(K, items, W)',
+  titleHe: 'אילו פריטים נבחרו',
+  kind: 'main',
+  lines: [
+    'Knapsack-Items(K, items, W)',
+    '    i = k;  w = W',
+    '    while i > 0',
+    '        if K[i,w] = K[i-1,w]            // פריט i לא נלקח',
+    '            i = i - 1',
+    '        else                             // פריט i נלקח',
+    '            take item i;  w = w - wᵢ;  i = i - 1',
+  ],
+  pythonLines: [
+    'def knapsack_items(K, items, W):',
+    '    i, w = k, W',
+    '    while i > 0:',
+    '        if K[i][w] == K[i-1][w]:        # item i not taken',
+    '            i -= 1',
+    '        else:                            # item i taken',
+    '            take(i); w -= items[i-1].w; i -= 1',
+  ],
+}
+
 export const printLcsBlock: PseudocodeBlock = {
   id: 'printLcs',
   titleEn: 'Print-LCS(c, X, i, j)',

@@ -2,6 +2,7 @@ import Tex from '@/core/components/Tex'
 import ComplexityPill from '@/core/components/ComplexityPill'
 import Panel from '../linear-sort/components/Panel'
 import LcsDemo from './components/LcsDemo'
+import KnapsackDemo from './components/KnapsackDemo'
 
 const MISTAKES: { wrong: string; right: string }[] = [
   { wrong: 'תת-סדרה = תת-מחרוזת (רצף סמוך).', right: 'תת-סדרה שומרת על הסדר אך לא חייבת להיות רציפה: אפשר לדלג על אותיות. "ACE" היא תת-סדרה של "ABCDE".' },
@@ -56,6 +57,49 @@ export default function LcsExplainer() {
             <Tex>{'\\Theta(mn)'}</Tex>, והשחזור מוסיף <Tex>{'O(m+n)'}</Tex> בלבד.
           </p>
         </div>
+      </Panel>
+
+      <Panel title="דוגמה שנייה — בעיית התרמיל (0-1 Knapsack)">
+        <p className="leading-relaxed text-slate-600">
+          נתונים פריטים, לכל אחד <b>משקל</b> ו<b>ערך</b>, ותרמיל בקיבולת <Tex>W</Tex>. רוצים למקסם את
+          הערך הכולל מבלי לחרוג מהקיבולת. בגרסת <b>0-1</b> כל פריט נלקח <b>בשלמותו או בכלל לא</b> — וזו
+          בעיה קלאסית לתכנון דינמי.
+        </p>
+        <p className="mt-2 leading-relaxed text-slate-600">
+          מגדירים <Tex>{'K[i,w]'}</Tex> = הערך המרבי מ-<Tex>i</Tex> הפריטים הראשונים עם קיבולת <Tex>w</Tex>:
+        </p>
+        <div className="my-3 rounded-xl bg-slate-50 p-4">
+          <Tex block>{'K[i,w] = \\begin{cases} K[i-1,w] & w_i > w \\\\ \\max\\big(K[i-1,w],\\; v_i + K[i-1,\\,w-w_i]\\big) & w_i \\le w \\end{cases}'}</Tex>
+        </div>
+        <p className="leading-relaxed text-slate-600">
+          כל תא בוחר בין <b>לדלג</b> על הפריט (הערך מלמעלה) לבין <b>לקחת</b> אותו (ערכו + הפתרון הטוב ביותר
+          לקיבולת שנותרה). השחזור אחורה חושף אילו פריטים נבחרו.
+        </p>
+        <div className="mt-4">
+          <KnapsackDemo />
+        </div>
+      </Panel>
+
+      <Panel title="0-1 מול שברי: תכנון דינמי מול חמדנות">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4">
+            <h4 className="mb-1 font-bold text-slate-800">0-1 Knapsack — תכנון דינמי</h4>
+            <p className="text-sm leading-relaxed text-slate-600">
+              הפריטים <b>בלתי-מתחלקים</b> (לוקחים פריט שלם או כלום). חמדנות נכשלת כאן. פותרים בטבלת DP
+              ב-<Tex>{'O(kW)'}</Tex>.
+            </p>
+          </div>
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+            <h4 className="mb-1 font-bold text-slate-800">Fractional Knapsack — חמדנות</h4>
+            <p className="text-sm leading-relaxed text-slate-600">
+              מותר לקחת <b>חלקי פריט</b>. ממיינים לפי יחס <Tex>{'v_i/w_i'}</Tex> ולוקחים מהגבוה לנמוך עד
+              מילוי הקיבולת — אלגוריתם <b>חמדן</b> אופטימלי ב-<Tex>{'O(k\\log k)'}</Tex>.
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          המסקנה: אותה בעיה כמעט — אך החלוקתיות קובעת את הכלי. בלתי-מתחלק ⇐ תכנון דינמי; מתחלק ⇐ חמדנות.
+        </p>
       </Panel>
 
       <Panel title="טעויות נפוצות">
