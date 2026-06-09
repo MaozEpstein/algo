@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest'
 import { runInorderWalk } from './algorithms/inorderWalk'
+import { runTraversals } from './algorithms/traversals'
 import { runTreeSearch } from './algorithms/treeSearch'
 import { runTreeInsert } from './algorithms/treeInsert'
 import { runTreeMinMax } from './algorithms/treeMinMax'
 import { runTreeSuccessor } from './algorithms/treeSuccessor'
+import { runTreePredecessor } from './algorithms/treePredecessor'
 import { runTreeDelete } from './algorithms/treeDelete'
 import { runBstSort } from './algorithms/bstSort'
 import { validateKeys } from './algorithms/_shared'
+import { buildBst, type BstNode } from './bst'
 import { isBstScene, type BstScene } from './scene'
 import { binarySearchTreeLecture } from './index'
 import { deriveAlgorithmSteps } from '../../steps'
@@ -117,6 +120,62 @@ describe('Tree-Successor', () => {
   })
 })
 
+describe('Tree-Predecessor', () => {
+  sharedInvariants('invariants', runTreePredecessor({ array: KEYS, extra: { key: 6 } }))
+  const sorted = [...KEYS].sort((a, b) => a - b)
+  it('predecessor(key) is the previous key in sorted order', () => {
+    for (const key of [6, 13, 9, 17, 20]) {
+      const s = finalScene(runTreePredecessor({ array: KEYS, extra: { key } }))
+      const expected = sorted[sorted.indexOf(key) - 1]
+      expect(s.nodes.find((n) => n.tone === 'successor')?.key, `pred(${key})`).toBe(expected)
+    }
+  })
+  it('the minimum (2) has no predecessor', () => {
+    const s = finalScene(runTreePredecessor({ array: KEYS, extra: { key: 2 } }))
+    expect(s.nodes.some((n) => n.tone === 'successor')).toBe(false)
+  })
+})
+
+describe('BFS / DFS traversal', () => {
+  const frames = runTraversals({ array: KEYS })
+  sharedInvariants('invariants', frames)
+
+  // reference traversals over the same tree
+  const root = buildBst(KEYS)
+  const levelOrder = (): number[] => {
+    const out: number[] = []
+    const q: BstNode[] = root ? [root] : []
+    while (q.length) {
+      const x = q.shift()!
+      out.push(x.key)
+      if (x.left) q.push(x.left)
+      if (x.right) q.push(x.right)
+    }
+    return out
+  }
+  const preorder = (x: BstNode | null, out: number[] = []): number[] => {
+    if (!x) return out
+    out.push(x.key)
+    preorder(x.left, out)
+    preorder(x.right, out)
+    return out
+  }
+
+  it('BFS final narration lists the keys in level order', () => {
+    const bfsDone = frames.filter((f) => f.codeBlock === 'bfs' && f.narration.includes('הסתיימה')).pop()!
+    expect(bfsDone.narration).toContain(levelOrder().join(', '))
+  })
+  it('DFS final narration lists the keys in preorder', () => {
+    const dfsDone = frames[frames.length - 1]
+    expect(dfsDone.codeBlock).toBe('dfs')
+    expect(dfsDone.narration).toContain(preorder(root).join(', '))
+  })
+  it('has both a BFS and a DFS phase', () => {
+    expect(frames.some((f) => f.codeBlock === 'bfs')).toBe(true)
+    expect(frames.some((f) => f.codeBlock === 'dfs')).toBe(true)
+  })
+})
+
 describe('Tree-Delete', () => {
   const cases = [
     { key: 4, label: 'leaf' },
@@ -159,7 +218,7 @@ describe('BSTSort', () => {
 
 describe('guided-mode shortcuts (deep links + StepTimeline)', () => {
   // The "ראו בעיניים" deep links in content/summary.tsx use ?algo=<tour>.
-  const TOURS = ['inorderWalk', 'treeSearch', 'treeInsert', 'treeMinMax', 'treeSuccessor', 'treeDelete', 'bstSort']
+  const TOURS = ['inorderWalk', 'traversals', 'treeSearch', 'treeInsert', 'treeMinMax', 'treeSuccessor', 'treePredecessor', 'treeDelete', 'bstSort']
 
   it('every deep-link target resolves to a registered algorithm (so ?algo= works)', () => {
     for (const tour of TOURS) {

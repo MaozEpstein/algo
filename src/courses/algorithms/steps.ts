@@ -64,10 +64,13 @@ export function deriveAlgorithmSteps(frames: Frame[]): Step[] {
     ) {
       steps.push({ label: f.codeBlock === 'treeMinimum' ? 'מינימום' : 'מקסימום', index: i })
     } else if (
-      (f.codeBlock === 'treeSuccessor' || f.codeBlock === 'treeDelete') &&
+      (f.codeBlock === 'treeSuccessor' || f.codeBlock === 'treePredecessor' || f.codeBlock === 'treeDelete') &&
       f.codeLine === 1
     ) {
       steps.push({ label: 'התחלה', index: i })
+    } else if ((f.codeBlock === 'bfs' && f.codeLine === 5) || (f.codeBlock === 'dfs' && f.codeLine === 3)) {
+      bstStep += 1
+      steps.push({ label: `ביקור ${bstStep}`, index: i })
     } else if (f.codeBlock === 'rbInsert' && f.codeLine === 11) {
       steps.push({ label: 'עלה אדום', index: i })
     } else if (f.codeBlock === 'rbInsertFixup' && (f.codeLine === 5 || f.codeLine === 8 || f.codeLine === 10)) {

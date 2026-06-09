@@ -8,29 +8,35 @@ import ComplexityProofButton from '@/core/components/ComplexityProofButton'
 import ComplexityPill from '@/core/components/ComplexityPill'
 import CollapsibleSection from '@/core/components/CollapsibleSection'
 import { inorderWalkSpec } from '../algorithms/inorderWalk'
+import { traversalsSpec } from '../algorithms/traversals'
 import { treeSearchSpec } from '../algorithms/treeSearch'
 import { treeInsertSpec } from '../algorithms/treeInsert'
 import { treeMinMaxSpec } from '../algorithms/treeMinMax'
 import { treeSuccessorSpec } from '../algorithms/treeSuccessor'
+import { treePredecessorSpec } from '../algorithms/treePredecessor'
 import { treeDeleteSpec } from '../algorithms/treeDelete'
 import { bstSortSpec } from '../algorithms/bstSort'
 
 const ALGOS: AlgorithmSpec[] = [
   inorderWalkSpec,
+  traversalsSpec,
   treeSearchSpec,
   treeInsertSpec,
   treeMinMaxSpec,
   treeSuccessorSpec,
+  treePredecessorSpec,
   treeDeleteSpec,
   bstSortSpec,
 ]
 
 const TABLE: { spec: AlgorithmSpec; descHe: string; noteHe: string }[] = [
   { spec: inorderWalkSpec, descHe: 'סריקה שמאל←צומת←ימין', noteHe: 'כל צומת פעם אחת' },
+  { spec: traversalsSpec, descHe: 'סריקה לרוחב / לעומק', noteHe: 'תור (BFS) מול מחסנית (DFS)' },
   { spec: treeSearchSpec, descHe: 'חיפוש מפתח', noteHe: 'מסלול יחיד כלפי מטה' },
   { spec: treeInsertSpec, descHe: 'הכנסת מפתח', noteHe: 'חיפוש מקום + חיבור' },
   { spec: treeMinMaxSpec, descHe: 'מינימום / מקסימום', noteHe: 'הכי שמאלי / הכי ימני' },
   { spec: treeSuccessorSpec, descHe: 'איבר עוקב', noteHe: 'או יורד או מטפס — לא שניהם' },
+  { spec: treePredecessorSpec, descHe: 'איבר קודם', noteHe: 'סימטרי לעוקב (ימין↔שמאל)' },
   { spec: treeDeleteSpec, descHe: 'מחיקת מפתח', noteHe: '3 מקרים' },
   { spec: bstSortSpec, descHe: 'מיון בעזרת עץ', noteHe: 'ממוצע O(n log n), גרוע O(n²)' },
 ]
@@ -82,7 +88,7 @@ function DeepLink({ tour, children }: { tour: string; children: React.ReactNode 
   )
 }
 
-const SECTION_IDS = ['overview', 'defs', 'prop', 'walks', 'table', 'sort', 'insights', 'see', 'mistakes'] as const
+const SECTION_IDS = ['overview', 'defs', 'prop', 'walks', 'table', 'sort', 'pq', 'insights', 'see', 'mistakes'] as const
 type SectionId = (typeof SECTION_IDS)[number]
 
 export default function BstSummary() {
@@ -290,6 +296,22 @@ export default function BstSummary() {
           </p>
         </CollapsibleSection>
 
+        <CollapsibleSection title="תור עדיפויות מעל BST" open={open.pq} onToggle={() => toggle('pq')}>
+          <p className="leading-relaxed text-slate-600">
+            עץ חיפוש בינארי יכול לשמש כ<b>תור עדיפויות</b> (priority queue), התומך בשלוש הפעולות:
+          </p>
+          <ul className="mt-2 list-inside list-disc space-y-1.5 leading-relaxed text-slate-600">
+            <li><b>Insert</b> — הכנסה רגילה ל-BST, <Tex>{'O(h)'}</Tex>.</li>
+            <li><b>Minimum</b> — האיבר בעל העדיפות הגבוהה ביותר = הצומת השמאלי ביותר, <Tex>{'O(h)'}</Tex>.</li>
+            <li><b>Extract-Min</b> — מציאת המינימום ואז מחיקתו (לעוקב מסוג זה אין ילד שמאלי), <Tex>{'O(h)'}</Tex>.</li>
+          </ul>
+          <p className="mt-3 leading-relaxed text-slate-600">
+            בעץ <b>מאוזן</b> (עצים אדומים-שחורים, שיעור 11) כל הפעולות <Tex>{'O(\\log n)'}</Tex> במקרה הגרוע.
+            עם זאת, המימוש הנפוץ והיעיל יותר לתור-עדיפויות הוא <b>ערימה</b> (heap, שיעור 4) — קבועים קטנים
+            ומבנה צמוד במערך. ה-BST עדיף כשצריך <b>גם</b> חיפוש/עוקב/קודם, לא רק מינימום.
+          </p>
+        </CollapsibleSection>
+
         <CollapsibleSection title="תובנות מפתח" open={open.insights} onToggle={() => toggle('insights')}>
           <ul className="list-inside list-disc space-y-2 leading-relaxed text-slate-600">
             <li><b>הכול תלוי בגובה <Tex>h</Tex>:</b> כל פעולת חיפוש/הכנסה/מחיקה היא מסלול יחיד מהשורש — לכן <Tex>{'O(h)'}</Tex>.</li>
@@ -304,10 +326,12 @@ export default function BstSummary() {
             <CollapsibleSection title="ראו בעיניים" open={open.see} onToggle={() => toggle('see')}>
               <div className="flex flex-wrap gap-2">
                 <DeepLink tour="inorderWalk">סריקה תוך-סדרית</DeepLink>
+                <DeepLink tour="traversals">סריקות BFS/DFS</DeepLink>
                 <DeepLink tour="treeSearch">חיפוש</DeepLink>
                 <DeepLink tour="treeInsert">הכנסה</DeepLink>
                 <DeepLink tour="treeMinMax">מינימום/מקסימום</DeepLink>
                 <DeepLink tour="treeSuccessor">איבר עוקב</DeepLink>
+                <DeepLink tour="treePredecessor">איבר קודם</DeepLink>
                 <DeepLink tour="treeDelete">מחיקה</DeepLink>
                 <DeepLink tour="bstSort">מיון בעזרת עץ</DeepLink>
               </div>

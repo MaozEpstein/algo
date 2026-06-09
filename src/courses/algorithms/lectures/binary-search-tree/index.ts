@@ -1,9 +1,11 @@
 import type { LectureModule, ViewKind } from '@/core/engine/types'
 import { inorderWalkSpec } from './algorithms/inorderWalk'
+import { traversalsSpec } from './algorithms/traversals'
 import { treeSearchSpec } from './algorithms/treeSearch'
 import { treeInsertSpec } from './algorithms/treeInsert'
 import { treeMinMaxSpec } from './algorithms/treeMinMax'
 import { treeSuccessorSpec } from './algorithms/treeSuccessor'
+import { treePredecessorSpec } from './algorithms/treePredecessor'
 import { treeDeleteSpec } from './algorithms/treeDelete'
 import { bstSortSpec } from './algorithms/bstSort'
 import BstView from './views/BstView'
@@ -17,10 +19,12 @@ import BstSummary from './content/summary'
 const CUSTOM: ViewKind[] = ['custom']
 const ALGORITHMS = [
   inorderWalkSpec,
+  traversalsSpec,
   treeSearchSpec,
   treeInsertSpec,
   treeMinMaxSpec,
   treeSuccessorSpec,
+  treePredecessorSpec,
   treeDeleteSpec,
   bstSortSpec,
 ].map((spec) => ({ ...spec, views: CUSTOM, customViz: BstView }))

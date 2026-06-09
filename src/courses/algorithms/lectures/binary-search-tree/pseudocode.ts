@@ -209,3 +209,76 @@ export const bstSortBlock: PseudocodeBlock = {
     '    inorder_walk(root)',
   ],
 }
+
+export const bfsBlock: PseudocodeBlock = {
+  id: 'bfs',
+  titleEn: 'BFS(root)',
+  titleHe: 'סריקה לרוחב',
+  kind: 'main',
+  lines: [
+    'BFS(root)',
+    '    Q = empty queue;  enqueue(root)',
+    '    while Q not empty',
+    '        x = dequeue(Q)',
+    '        visit x',
+    '        if left[x] ≠ NIL: enqueue(left[x])',
+    '        if right[x] ≠ NIL: enqueue(right[x])',
+  ],
+  pythonLines: [
+    'def bfs(root):',
+    '    Q = deque([root])',
+    '    while Q:',
+    '        x = Q.popleft()',
+    '        visit(x)',
+    '        if x.left:  Q.append(x.left)',
+    '        if x.right: Q.append(x.right)',
+  ],
+}
+
+export const dfsBlock: PseudocodeBlock = {
+  id: 'dfs',
+  titleEn: 'DFS(x)  // preorder',
+  titleHe: 'סריקה לעומק',
+  kind: 'main',
+  lines: [
+    'DFS(x)',
+    '    if x = NIL: return',
+    '    visit x',
+    '    DFS(left[x])',
+    '    DFS(right[x])',
+  ],
+  pythonLines: [
+    'def dfs(x):',
+    '    if x is None: return',
+    '    visit(x)',
+    '    dfs(x.left)',
+    '    dfs(x.right)',
+  ],
+}
+
+export const treePredecessorBlock: PseudocodeBlock = {
+  id: 'treePredecessor',
+  titleEn: 'TreePredecessor(x)',
+  titleHe: 'איבר קודם',
+  kind: 'main',
+  lines: [
+    'TreePredecessor(x)',
+    '    if left[x] ≠ NIL                 // case 1',
+    '        return TreeMaximum(left[x])',
+    '    y = p[x]                          // case 2: climb up',
+    '    while y ≠ NIL and x == left[y]',
+    '        x = y',
+    '        y = p[y]',
+    '    return y',
+  ],
+  pythonLines: [
+    'def tree_predecessor(x):',
+    '    if x.left is not None:            # case 1',
+    '        return tree_maximum(x.left)',
+    '    y = x.p                           # case 2: climb up',
+    '    while y is not None and x is y.left:',
+    '        x = y',
+    '        y = y.p',
+    '    return y',
+  ],
+}
