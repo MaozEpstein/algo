@@ -9,6 +9,7 @@ import { recursionLecture } from '@/courses/algorithms/lectures/recursion'
 import { foundationsLecture } from '@/courses/algorithms/lectures/foundations'
 import { linearSortLecture } from '@/courses/algorithms/lectures/linear-sort'
 import { elementaryDataStructuresLecture } from '@/courses/algorithms/lectures/elementary-data-structures'
+import { binarySearchTreeLecture } from '@/courses/algorithms/lectures/binary-search-tree'
 
 /** The single wiring point. Adding a lecture = import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
@@ -21,6 +22,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [selectionLecture.id]: selectionLecture,
   [linearSortLecture.id]: linearSortLecture,
   [elementaryDataStructuresLecture.id]: elementaryDataStructuresLecture,
+  [binarySearchTreeLecture.id]: binarySearchTreeLecture,
 }
 
 // The guided StepTimeline derivation is course-wide (keys off algorithm

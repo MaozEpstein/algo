@@ -21,6 +21,7 @@ export function deriveAlgorithmSteps(frames: Frame[]): Step[] {
   const steps: Step[] = []
   let extract = 0
   let move = 0
+  let bstStep = 0 // BST: count descents / prints / insertions
   frames.forEach((f, i) => {
     if (f.codeBlock === 'buildMaxHeap' && f.codeLine === 3) {
       const node = currentIndexOf(f)
@@ -44,6 +45,29 @@ export function deriveAlgorithmSteps(frames: Frame[]): Step[] {
     } else if (f.codeBlock === 'hanoi' && f.codeLine === 4) {
       move += 1
       steps.push({ label: `מהלך ${move}`, index: i })
+    } else if (f.codeBlock === 'inorderWalk' && f.codeLine === 4) {
+      // BST inorder walk (standalone and inside BSTSort): one chip per printed key
+      bstStep += 1
+      steps.push({ label: `הדפסה ${bstStep}`, index: i })
+    } else if (f.codeBlock === 'bstSort' && f.codeLine === 4 && f.phase === 'build') {
+      bstStep += 1
+      steps.push({ label: `הכנסה ${bstStep}`, index: i })
+    } else if (f.codeBlock === 'treeSearch' && f.codeLine === 2) {
+      bstStep += 1
+      steps.push({ label: `צעד ${bstStep}`, index: i })
+    } else if (f.codeBlock === 'treeInsert' && f.codeLine === 5) {
+      bstStep += 1
+      steps.push({ label: `צעד ${bstStep}`, index: i })
+    } else if (
+      (f.codeBlock === 'treeMinimum' || f.codeBlock === 'treeMaximum') &&
+      f.codeLine === 1
+    ) {
+      steps.push({ label: f.codeBlock === 'treeMinimum' ? 'מינימום' : 'מקסימום', index: i })
+    } else if (
+      (f.codeBlock === 'treeSuccessor' || f.codeBlock === 'treeDelete') &&
+      f.codeLine === 1
+    ) {
+      steps.push({ label: 'התחלה', index: i })
     } else if (hasCallStack(f)) {
       // Recursion lecture: a chip per call entered (↓) and per return (↑ = value).
       const stack = (f.scene as { stack: { callTex: string; returnTex?: string }[] }).stack
