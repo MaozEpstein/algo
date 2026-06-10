@@ -788,6 +788,69 @@ export function jfetGm(VGS: number, VP: number, IDSS: number): number {
   return ((2 * IDSS) / Math.abs(VP)) * (1 - u)
 }
 
+// ---- MOS capacitor — lesson 6 ----------------------------------------------
+/** SiO₂ relative permittivity. */
+export const EPS_OX_R = 3.9
+
+/** Fermi potential of a p-type substrate: φ_F = (kT/q)·ln(N_A/n_i) (V). */
+export function fermiPotential(Na: number, ni: number, T = 300): number {
+  return thermalVoltage(T) * Math.log(Na / ni)
+}
+
+/** Metal–semiconductor work-function difference (p-type MOS):
+ *  φ_MS = φ_M − (χ + E_g/2 + φ_F). Units eV/V. */
+export function mosPhiMS(phiM: number, chi: number, eg: number, phiF: number): number {
+  return phiM - (chi + eg / 2 + phiF)
+}
+
+/** Oxide capacitance per unit area: C_ox = ε_ox·ε_0 / t_ox (F/cm²); t_ox in cm. */
+export function oxideCap(toxCm: number): number {
+  return (EPS_OX_R * EPS0) / toxCm
+}
+
+/** Semiconductor depletion width at surface potential ψ_s: W = √(2 ε_s ψ_s /(q N_A)) (cm). */
+export function mosDepletionWidth(psiS: number, Na: number, epsR: number): number {
+  if (psiS <= 0) return 0
+  return Math.sqrt((2 * epsR * EPS0 * psiS) / (Q * Na))
+}
+
+/** Depletion charge per area: |Q_dep| = √(2 q ε_s N_A ψ_s) (C/cm²). */
+export function mosDepletionCharge(psiS: number, Na: number, epsR: number): number {
+  if (psiS <= 0) return 0
+  return Math.sqrt(2 * Q * epsR * EPS0 * Na * psiS)
+}
+
+/** Maximum depletion width, reached at strong inversion (ψ_s = 2φ_F) (cm). */
+export function mosMaxDepletion(phiF: number, Na: number, epsR: number): number {
+  return mosDepletionWidth(2 * phiF, Na, epsR)
+}
+
+/** Threshold voltage: V_T = V_FB + 2φ_F + Q_dep,max / C_ox (V). */
+export function mosThreshold(VFB: number, phiF: number, QdepMax: number, Cox: number): number {
+  return VFB + 2 * phiF + QdepMax / Cox
+}
+
+/**
+ * Surface potential ψ_s(V_G) for an ideal p-type MOS (V_FB = φ_MS). In depletion
+ *   V_G − V_FB = ψ_s + √(2 q ε_s N_A ψ_s)/C_ox,  a quadratic in √ψ_s:
+ *   √ψ_s = (−γ + √(γ² + 4(V_G−V_FB)))/2,   γ = √(2 q ε_s N_A)/C_ox.
+ * Clamped to ψ_s = 0 in accumulation (V_G ≤ V_FB) and pinned at ψ_s = 2φ_F once inverted.
+ */
+export function mosSurfacePotential(VG: number, VFB: number, Na: number, epsR: number, Cox: number, phiF: number): number {
+  const dv = VG - VFB
+  if (dv <= 0) return 0
+  const gamma = Math.sqrt(2 * Q * epsR * EPS0 * Na) / Cox
+  const root = (-gamma + Math.sqrt(gamma * gamma + 4 * dv)) / 2
+  return Math.min(root * root, 2 * phiF)
+}
+
+/** Operating regime of a p-type MOS capacitor from the bias voltages. */
+export function mosRegime(VG: number, VFB: number, VT: number): 'accumulation' | 'depletion' | 'inversion' {
+  if (VG <= VFB) return 'accumulation'
+  if (VG >= VT) return 'inversion'
+  return 'depletion'
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

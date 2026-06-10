@@ -10,6 +10,7 @@ import { bjtCurrentsGainLecture } from '@/courses/semiconductors/lectures/bjt-cu
 import { bjtNonidealLecture } from '@/courses/semiconductors/lectures/bjt-nonideal'
 import { scrLecture } from '@/courses/semiconductors/lectures/scr'
 import { jfetLecture } from '@/courses/semiconductors/lectures/jfet'
+import { mosCapacitorLecture } from '@/courses/semiconductors/lectures/mos-capacitor'
 
 /** The single wiring point for the semiconductors course. Adding a lecture =
  *  import it and add it here. */
@@ -25,6 +26,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [bjtNonidealLecture.id]: bjtNonidealLecture,
   [scrLecture.id]: scrLecture,
   [jfetLecture.id]: jfetLecture,
+  [mosCapacitorLecture.id]: mosCapacitorLecture,
 }
 
 export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(
