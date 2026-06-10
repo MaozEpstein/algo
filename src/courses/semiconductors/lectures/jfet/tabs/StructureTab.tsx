@@ -3,7 +3,7 @@ import Panel from '../../../components/Panel'
 import JfetStructure from '../components/JfetStructure'
 import JfetSymbol from '../components/JfetSymbol'
 
-/** Lesson 5א — what a JFET is, its n-channel structure, terminals and symbol. */
+/** JFET — what it is, its n-channel structure, terminals and symbol. */
 export default function StructureTab() {
   return (
     <div className="flex flex-col gap-5">

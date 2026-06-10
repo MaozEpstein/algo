@@ -4,28 +4,30 @@ import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 
-const FORMULAS: { name: string; tex: string; note?: string }[] = [
-  { name: 'מתח-צביטה', tex: '|V_P|=\\dfrac{q\\,N_D\\,a^2}{2\\varepsilon_s}', note: 'גדל עם $N_D$ ועם $a$' },
-  { name: 'מתח רוויה בניקוז', tex: 'V_{Dsat}=|V_P|-|V_{GS}|' },
-  { name: 'תנאי קטעון', tex: '|V_{GS}|\\ge|V_P|' },
+const FORMULAS: { name: string; tex: string }[] = [
+  { name: 'מתח-צביטה', tex: '|V_P|=\\dfrac{q\\,N_D\\,a^2}{2\\varepsilon_s}' },
+  { name: 'מתח רוויה', tex: 'V_{Dsat}=|V_P|-|V_{GS}|' },
+  { name: 'אופיין-העברה (חוק ריבועי)', tex: 'I_D=I_{DSS}\\left(1-\\dfrac{V_{GS}}{V_P}\\right)^2' },
+  { name: 'מוליכות-מעבר', tex: 'g_m=\\dfrac{2I_{DSS}}{|V_P|}\\left(1-\\dfrac{V_{GS}}{V_P}\\right)' },
+  { name: 'הגבר מקור-משותף', tex: 'A_v=-g_m(r_o\\parallel R_D)' },
 ]
 
 const STATES: [string, React.ReactNode, React.ReactNode][] = [
-  ['קטעון (Cutoff)', <><Tex>{'|V_{GS}|\\ge|V_P|'}</Tex></>, <>השער מדלדל את כל התעלה — אין זרם</>],
-  ['אזור אוהמי (לינארי)', <><Tex>{'V_{DS}<V_{Dsat}'}</Tex></>, <>תעלה פתוחה — נגד נשלט-מתח, <Tex>{'I_D\\propto V_{DS}'}</Tex></>],
-  ['רוויה', <><Tex>{'V_{DS}\\ge V_{Dsat}'}</Tex></>, <>צביטה בקצה הניקוז — <Tex>{'I_D'}</Tex> כמעט קבוע</>],
+  ['קטעון', <><Tex>{'|V_{GS}|\\ge|V_P|'}</Tex></>, <>התעלה סגורה — <Tex>{'I_D=0'}</Tex></>],
+  ['אוהמי (VCR)', <><Tex>{'V_{DS}<V_{Dsat}'}</Tex></>, <>נגד נשלט-מתח, <Tex>{'I_D\\propto V_{DS}'}</Tex></>],
+  ['רוויה', <><Tex>{'V_{DS}\\ge V_{Dsat}'}</Tex></>, <>מקור-זרם, <Tex>{'I_D=I_{DSS}(1-V_{GS}/V_P)^2'}</Tex></>],
 ]
 
 const MISTAKES: { wrong: string; right: string }[] = [
   { wrong: 'השער מושך זרם כדי לשלוט בתעלה (כמו בסיס ב-BJT).', right: 'לא — צומת השער מוטה אחורה, ולכן הכניסה כמעט ללא זרם (התנגדות-כניסה עצומה). השליטה היא ב$מתח$.' },
-  { wrong: 'בתעלת $n$ מפעילים $V_{GS}$ חיובי.', right: 'מפעילים $V_{GS}\\le0$ (הטיה אחורה). $V_{GS}$ חיובי היה מטה את צומת השער קדמית ומזרים זרם-שער.' },
-  { wrong: 'ברוויה התעלה נסגרת לגמרי והזרם מתאפס.', right: 'התעלה נצבטת רק בקצה הניקוז; הזרם ממשיך לזרום דרך אזור-הצביטה ומגיע לערך כמעט קבוע — לא אפס.' },
-  { wrong: '$V_{Dsat}$ קבוע.', right: '$V_{Dsat}=|V_P|-|V_{GS}|$ — יורד ככל ש-$|V_{GS}|$ גדל, ולכן הרוויה מגיעה מוקדם יותר.' },
+  { wrong: 'אופיין-ההעברה לינארי.', right: 'הוא $ריבועי$: $I_D=I_{DSS}(1-V_{GS}/V_P)^2$. רק $g_m$ (השיפוע) משתנה לינארית עם $V_{GS}$.' },
+  { wrong: 'ברוויה התעלה נסגרת לגמרי והזרם מתאפס.', right: 'התעלה נצבטת רק בקצה הניקוז; הזרם ממשיך לזרום ומגיע לערך כמעט קבוע — לא אפס.' },
+  { wrong: '$I_{DSS}$ הוא זרם בקטעון.', right: '$I_{DSS}$ הוא הזרם ה$מרבי$, ברוויה ב-$V_{GS}=0$.' },
 ]
 
 function DeepLink({ tab, children }: { tab: string; children: React.ReactNode }) {
   return (
-    <Link to={lecturePath('semiconductors', 'jfet-structure', { tab })} className="inline-flex items-center gap-1 rounded-lg bg-sky-50 px-3 py-1.5 text-sm font-medium text-sky-700 transition hover:bg-sky-100">
+    <Link to={lecturePath('semiconductors', 'jfet', { tab })} className="inline-flex items-center gap-1 rounded-lg bg-sky-50 px-3 py-1.5 text-sm font-medium text-sky-700 transition hover:bg-sky-100">
       ↩ {children}
     </Link>
   )
@@ -36,20 +38,20 @@ export default function SummaryTab() {
     <div className="flex flex-col gap-5">
       <Panel title="תקציר">
         <ul className="list-inside list-disc space-y-2 leading-relaxed text-slate-700">
-          <li><b>מבנה:</b> תעלת <Tex>{'n'}</Tex> בין מקור לניקוז, שני שערי <Tex>{'p^+'}</Tex> מחוברים. שליטת-<b>מתח</b>, כניסה כמעט ללא זרם.</li>
-          <li><b>שליטת השער:</b> <Tex>{'V_{GS}<0'}</Tex> מרחיב את אזור-המחסור ומצר את התעלה; ב-<Tex>{'|V_P|'}</Tex> התעלה נסגרת (קטעון).</li>
+          <li><b>מבנה:</b> תעלת <Tex>{'n'}</Tex> בין מקור לניקוז, שני שערי <Tex>{'p^+'}</Tex>. שליטת-<b>מתח</b>, כניסה כמעט ללא זרם.</li>
+          <li><b>שליטת השער:</b> <Tex>{'V_{GS}<0'}</Tex> מרחיב את אזור-המחסור ומצר את התעלה; ב-<Tex>{'|V_P|'}</Tex> נסגרת (קטעון).</li>
           <li><b>צביטה ע״י <Tex>{'V_{DS}'}</Tex>:</b> התעלה מתחדדת לכיוון הניקוז ונצבטת שם ב-<Tex>{'V_{Dsat}'}</Tex> — מעבר מאוהמי לרוויה.</li>
-          <li><b>שלושה מצבים:</b> קטעון · אוהמי (נגד נשלט) · רוויה (<Tex>{'I_D'}</Tex> קבוע).</li>
+          <li><b>אופיינים:</b> מוצא <Tex>{'I_D(V_{DS})'}</Tex> (אוהמי→רוויה); העברה <Tex>{'I_D=I_{DSS}(1-V_{GS}/V_P)^2'}</Tex>.</li>
+          <li><b>אות-קטן:</b> <Tex>{'g_m'}</Tex> = שיפוע אופיין-ההעברה; הגבר מקור-משותף <Tex>{'A_v=-g_m(r_o\\parallel R_D)'}</Tex>.</li>
         </ul>
       </Panel>
 
       <Panel title="נוסחאות מפתח">
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {FORMULAS.map((f) => (
             <div key={f.name} className="flex flex-col items-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
               <span className="text-xs font-semibold text-slate-500">{f.name}</span>
               <Tex block>{f.tex}</Tex>
-              {f.note && <span className="text-xs text-slate-400"><RichText>{f.note}</RichText></span>}
             </div>
           ))}
         </div>
@@ -78,19 +80,11 @@ export default function SummaryTab() {
         </div>
       </Panel>
 
-      <Panel title="תובנות מפתח">
-        <ul className="list-inside list-disc space-y-2 leading-relaxed text-slate-600">
-          <li><b>שליטת-מתח, לא זרם:</b> צומת השער המוטה אחורה כמעט אינו מושך זרם — התנגדות-כניסה עצומה (יתרון מרכזי על BJT).</li>
-          <li><b>הרוויה היא צביטה, לא ניתוק:</b> הזרם ממשיך לזרום דרך אזור-הצביטה; מה ש"נעצר" הוא הגידול בזרם.</li>
-          <li><b>שני "ברזים" על אותה תעלה:</b> <Tex>{'V_{GS}'}</Tex> מצר אחיד, <Tex>{'V_{DS}'}</Tex> מצר מודרג לכיוון הניקוז — יחד הם קובעים את המצב.</li>
-        </ul>
-      </Panel>
-
       <Panel title="ראו בעיניים">
         <div className="flex flex-wrap gap-2">
-          <DeepLink tab="structure">מבנה וסימול</DeepLink>
-          <DeepLink tab="gatecontrol">שליטת השער (אינטראקטיב)</DeepLink>
-          <DeepLink tab="pinchoff">צביטה ואזורי-פעולה</DeepLink>
+          <DeepLink tab="operation">שליטת השער וצביטה (אינטראקטיב)</DeepLink>
+          <DeepLink tab="output">אופייני-מוצא</DeepLink>
+          <DeepLink tab="transfer">אופיין-העברה ואות-קטן</DeepLink>
         </div>
       </Panel>
 

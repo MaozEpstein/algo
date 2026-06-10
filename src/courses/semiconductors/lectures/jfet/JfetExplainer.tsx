@@ -1,35 +1,44 @@
 import { useSearchParams } from 'react-router-dom'
+import IntroTab from './tabs/IntroTab'
 import StructureTab from './tabs/StructureTab'
-import GateControlTab from './tabs/GateControlTab'
-import PinchoffTab from './tabs/PinchoffTab'
+import OperationTab from './tabs/OperationTab'
+import OutputTab from './tabs/OutputTab'
+import TransferTab from './tabs/TransferTab'
+import MesfetTab from './tabs/MesfetTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'structure' | 'gatecontrol' | 'pinchoff' | 'practice' | 'summary'
+type TabId = 'intro' | 'structure' | 'operation' | 'output' | 'transfer' | 'mesfet' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
+  { id: 'intro', labelHe: 'מבוא · אפקט-השדה', icon: '🌐' },
   { id: 'structure', labelHe: 'מבנה וסימול', icon: '📘' },
-  { id: 'gatecontrol', labelHe: 'שליטת השער', icon: '🎚️' },
-  { id: 'pinchoff', labelHe: 'צביטה ואזורי-פעולה', icon: '🔻' },
+  { id: 'operation', labelHe: 'שליטת השער וצביטה', icon: '🎚️' },
+  { id: 'output', labelHe: 'אופייני-מוצא', icon: '📈' },
+  { id: 'transfer', labelHe: 'אופיין-העברה ואות-קטן', icon: '📐' },
+  { id: 'mesfet', labelHe: 'MESFET', icon: '⚡' },
   { id: 'practice', labelHe: 'תרגול', icon: '✏️' },
   { id: 'summary', labelHe: 'סיכום', icon: '📋' },
 ]
 
 const PANELS: Record<TabId, React.FC> = {
+  intro: IntroTab,
   structure: StructureTab,
-  gatecontrol: GateControlTab,
-  pinchoff: PinchoffTab,
+  operation: OperationTab,
+  output: OutputTab,
+  transfer: TransferTab,
+  mesfet: MesfetTab,
   practice: PracticeTab,
   summary: SummaryTab,
 }
 
 const isTab = (v: string | null): v is TabId => TABS.some((t) => t.id === v)
 
-/** Lesson 5א page: the JFET's structure & operation (deep-linked via ?tab=). */
-export default function JfetStructureExplainer() {
+/** Lesson 5 page: the JFET — structure, operation, characteristics & small-signal (deep-linked via ?tab=). */
+export default function JfetExplainer() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
-  const active: TabId = isTab(raw) ? raw : 'structure'
+  const active: TabId = isTab(raw) ? raw : 'intro'
   const Panel = PANELS[active]
 
   return (

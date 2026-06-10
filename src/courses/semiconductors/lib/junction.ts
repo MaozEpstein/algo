@@ -750,6 +750,44 @@ export function jfetRegion(VGS: number, VDS: number, VP: number): 'cutoff' | 'oh
   return Math.abs(VDS) < jfetVdsat(VGS, VP) ? 'ohmic' : 'saturation'
 }
 
+/**
+ * Transfer / saturation drain current (Shockley square law, book):
+ *   I_D = I_DSS·(1 − |V_GS|/|V_P|)²,   0 in cutoff (|V_GS|≥|V_P|).
+ * I_DSS is the saturation current at V_GS=0.
+ */
+export function jfetTransfer(VGS: number, VP: number, IDSS: number): number {
+  const u = Math.abs(VGS) / Math.abs(VP)
+  if (u >= 1) return 0
+  return IDSS * (1 - u) ** 2
+}
+
+/**
+ * Full drain current I_D(V_GS, V_DS) of an n-channel JFET (book), piecewise and continuous
+ * at the knee V_DS=V_Dsat=|V_P|−|V_GS|:
+ *   cutoff (|V_GS|≥|V_P|):              0
+ *   ohmic  (v < 1−u):  I_DSS·[2(1−u)v − v²]        with u=|V_GS|/|V_P|, v=V_DS/|V_P|
+ *   saturation (v ≥ 1−u):              I_DSS·(1−u)²
+ * At v=1−u the ohmic branch equals (1−u)², so it joins the saturation plateau smoothly.
+ */
+export function jfetDrainCurrent(VGS: number, VDS: number, VP: number, IDSS: number): number {
+  const u = Math.abs(VGS) / Math.abs(VP)
+  if (u >= 1) return 0
+  const v = Math.max(0, VDS) / Math.abs(VP)
+  if (v < 1 - u) return IDSS * (2 * (1 - u) * v - v * v)
+  return IDSS * (1 - u) ** 2
+}
+
+/**
+ * Small-signal transconductance in saturation (book):
+ *   g_m = ∂I_D/∂V_GS = (2·I_DSS/|V_P|)·(1 − |V_GS|/|V_P|) = 2√(I_DSS·I_D)/|V_P|.
+ * Maximal (g_m0 = 2I_DSS/|V_P|) at V_GS=0, zero at pinch-off.
+ */
+export function jfetGm(VGS: number, VP: number, IDSS: number): number {
+  const u = Math.abs(VGS) / Math.abs(VP)
+  if (u >= 1) return 0
+  return ((2 * IDSS) / Math.abs(VP)) * (1 - u)
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4
