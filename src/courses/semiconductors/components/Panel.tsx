@@ -11,7 +11,7 @@ export default function Panel({
   children,
   defaultOpen = true,
 }: {
-  title?: string
+  title?: ReactNode
   children: ReactNode
   defaultOpen?: boolean
 }) {

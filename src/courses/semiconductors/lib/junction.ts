@@ -709,6 +709,47 @@ export function scrCurve(gate: number, o?: { VBO0?: number; Ih?: number; Von?: n
   return pts
 }
 
+// ---- JFET — lesson 5א ------------------------------------------------------
+/**
+ * Pinch-off voltage magnitude |V_P| of a one-sided n-channel JFET: the gate-channel
+ * reverse bias that fully depletes a channel of half-width `a` (cm), doping `Nd` (cm⁻³):
+ *   |V_P| = q·N_d·a² / (2·ε_s).
+ * (The internal "pinch-off voltage" — built-in potential not included; the *applied*
+ *  gate voltage for cutoff is V_P − V_bi.)
+ */
+export function jfetPinchoff(Nd: number, aCm: number, epsR: number): number {
+  return (Q * Nd * aCm * aCm) / (2 * epsR * EPS0)
+}
+
+/**
+ * Half-opening of the conducting channel where the local channel-to-gate reverse bias is
+ * `Vrev` (V, ≥0, including the built-in potential), for a channel of half-width `a` and
+ * pinch-off voltage `VP`: the depletion width grows as √Vrev, so
+ *   h = a·(1 − √(Vrev/VP)),  clamped to [0, a].
+ * h = a at zero bias; h = 0 at Vrev = VP (pinch-off).
+ */
+export function jfetChannelOpening(a: number, Vrev: number, VP: number): number {
+  if (VP <= 0) return a
+  const frac = Math.sqrt(Math.max(Vrev, 0) / VP)
+  return Math.min(a, Math.max(0, a * (1 - frac)))
+}
+
+/** Drain saturation voltage: V_Dsat = |V_P| − |V_GS| (0 when the gate alone already pinches off). */
+export function jfetVdsat(VGS: number, VP: number): number {
+  return Math.max(0, Math.abs(VP) - Math.abs(VGS))
+}
+
+/**
+ * Operating region of an n-channel JFET from the (magnitudes of the) bias voltages:
+ *  - cutoff:      |V_GS| ≥ |V_P|  (gate alone pinches the whole channel off)
+ *  - ohmic:       V_DS < V_Dsat   (channel open along its whole length — acts like a resistor)
+ *  - saturation:  V_DS ≥ V_Dsat   (channel pinched at the drain end — current ~constant)
+ */
+export function jfetRegion(VGS: number, VDS: number, VP: number): 'cutoff' | 'ohmic' | 'saturation' {
+  if (Math.abs(VGS) >= Math.abs(VP)) return 'cutoff'
+  return Math.abs(VDS) < jfetVdsat(VGS, VP) ? 'ohmic' : 'saturation'
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4
