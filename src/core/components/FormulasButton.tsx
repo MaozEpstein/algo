@@ -3,13 +3,15 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { FormulaItem } from '@/core/engine/types'
 import Tex from './Tex'
 import RichText from './RichText'
+import SaveButton from '@/core/platform/SaveButton'
 
 /**
  * A header button that opens a modal gathering all of a lecture's key formulas
  * (name → KaTeX formula → optional note). Companion to GlossaryButton; shown for
  * any lecture that defines `formulas`. Esc / backdrop closes it.
  */
-export default function FormulasButton({ formulas }: { formulas: FormulaItem[] }) {
+export default function FormulasButton({ formulas, courseId, lectureId }: { formulas: FormulaItem[]; courseId?: string; lectureId?: string }) {
+  const canSave = !!courseId && !!lectureId
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -83,7 +85,8 @@ export default function FormulasButton({ formulas }: { formulas: FormulaItem[] }
                   >
                     <p className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-700">
                       <span className="h-2 w-2 shrink-0 rounded-full bg-sky-400" />
-                      {f.name}
+                      <span className="flex-1">{f.name}</span>
+                      {canSave && <SaveButton courseId={courseId!} lectureId={lectureId!} kind="formula" refId={f.name} label={f.name} tex={f.tex} note={f.note} />}
                     </p>
                     <div className="overflow-x-auto rounded-xl bg-gradient-to-br from-sky-50 to-slate-50 px-4 py-3 text-center ring-1 ring-sky-100">
                       <Tex block>{f.tex}</Tex>

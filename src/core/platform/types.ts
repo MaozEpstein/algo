@@ -31,6 +31,11 @@ export interface CourseModule {
   /** Optional course roadmap (syllabus) — a self-contained button+modal shown on
    *  the course home next to the formula-sheet button. */
   syllabus?: ComponentType
+  /** Optional live-calculator modal (separate from the formula sheet) — a self-contained
+   *  modal mounted once per course (by CourseProvider), opened via the OPEN_CALCULATOR event. */
+  calculator?: ComponentType
+  /** Optional constants-table modal — opened via the OPEN_CONSTANTS event. */
+  constants?: ComponentType
 }
 
 /**
@@ -43,3 +48,12 @@ export const OPEN_FORMULA_SHEET = 'app:open-formula-sheet'
 
 /** Window event: open the course-wide quick-search modal (Ctrl+Shift+F or the header button). */
 export const OPEN_COURSE_SEARCH = 'app:open-course-search'
+
+/** Window event: open the global Settings modal (the ⚙️ button on the picker / course-home). */
+export const OPEN_SETTINGS = 'app:open-settings'
+
+/** Window event: open the course's live-calculator modal (the 🧮 button on the course-home). */
+export const OPEN_CALCULATOR = 'app:open-calculator'
+
+/** Window event: open the course's constants-table modal (the 📌 button on the course-home). */
+export const OPEN_CONSTANTS = 'app:open-constants'

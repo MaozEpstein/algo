@@ -7,6 +7,7 @@ import { useCourse } from './CourseProvider'
 import { lecturePath } from './links'
 import { OPEN_COURSE_SEARCH } from './types'
 import { buildIndex, search, type HitKind, type SearchHit } from './courseSearch'
+import SaveButton from './SaveButton'
 
 // clickable Greek palette (for users without a Greek keyboard) — the letters used across the course
 const GREEK = ['φ', 'ψ', 'ρ', 'χ', 'ε', 'β', 'μ', 'λ', 'σ', 'Δ']
@@ -168,11 +169,21 @@ export default function CourseSearchModal() {
               ) : (
                 <div className="flex flex-col gap-1">
                   {rows.map((h, i) => (
-                    <button
+                    <div
                       key={`${h.lectureId}-${h.kind}-${i}`}
-                      onClick={() => choose(h)}
-                      className="group flex items-start justify-between gap-3 rounded-xl border border-transparent px-3 py-2 text-start transition hover:border-slate-200 hover:bg-slate-50"
+                      className="group flex items-start gap-2 rounded-xl border border-transparent px-3 py-2 transition hover:border-slate-200 hover:bg-slate-50"
                     >
+                      <SaveButton
+                        courseId={courseId}
+                        lectureId={h.lectureId}
+                        kind={h.kind}
+                        refId={h.kind === 'symbol' ? (h.tex ?? h.label) : h.label}
+                        label={h.label}
+                        tex={h.tex}
+                        note={h.note}
+                        className="mt-0.5"
+                      />
+                      <button onClick={() => choose(h)} className="flex min-w-0 flex-1 items-start justify-between gap-3 text-start">
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="flex flex-wrap items-baseline gap-x-2">
                           {h.kind === 'symbol' ? (
@@ -192,7 +203,8 @@ export default function CourseSearchModal() {
                       <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-500 transition group-hover:bg-sky-100 group-hover:text-sky-700">
                         {h.lectureTitle}
                       </span>
-                    </button>
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}

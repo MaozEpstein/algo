@@ -1,4 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
+import { usePrintMode } from '@/core/platform/printMode'
+import ExplainerPrint from '@/core/platform/ExplainerPrint'
 import StacksQueuesTab from './tabs/StacksQueuesTab'
 import DirectAddressTab from './tabs/DirectAddressTab'
 import HashFunctionsTab from './tabs/HashFunctionsTab'
@@ -33,6 +35,7 @@ export default function ElementaryDsExplainer() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const active: TabId = isTab(raw) ? raw : 'ds'
+  if (usePrintMode()) return <ExplainerPrint tabs={TABS} panels={PANELS} />
   const Panel = PANELS[active]
 
   return (

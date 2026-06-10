@@ -35,6 +35,8 @@ export default function CourseProvider({ children }: { children: ReactNode }) {
   if (!courseId || !hasCourse(courseId)) return <Navigate to="/" replace />
   const course = use(loadCourse(courseId)) // suspends until the chunk resolves
   const FormulaSheet = course.formulaSheet
+  const Calculator = course.calculator
+  const Constants = course.constants
   return (
     <CourseContext.Provider value={{ courseId, course }}>
       {children}
@@ -43,6 +45,10 @@ export default function CourseProvider({ children }: { children: ReactNode }) {
       {FormulaSheet && <FormulaSheet />}
       {/* Course-wide quick search (Ctrl+Shift+F) over formulas/concepts/symbols. */}
       <CourseSearchModal />
+      {/* Live calculator modal (opened by the course-home "מחשבון" button). */}
+      {Calculator && <Calculator />}
+      {/* Constants table modal (opened by the course-home "קבועים" button). */}
+      {Constants && <Constants />}
     </CourseContext.Provider>
   )
 }

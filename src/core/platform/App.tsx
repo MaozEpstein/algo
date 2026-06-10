@@ -1,10 +1,14 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { MotionConfig } from 'framer-motion'
+import { usePrefs, TEXT_SCALE_PCT } from './prefs'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import LectureShell from '@/core/shell/LectureShell'
 import CoursePicker from './CoursePicker'
 import CourseProvider, { useCourse } from './CourseProvider'
 import CourseHome from './CourseHome'
+import SettingsModal from './SettingsModal'
+import SavedListPage from './SavedListPage'
+import PrintView from './PrintView'
 import { coursePath } from './links'
 
 // Match the deploy base (e.g. '/algo' on GitHub Pages) so routes resolve under
@@ -39,9 +43,18 @@ function LegacyOverview() {
 }
 
 export default function App() {
+  const prefs = usePrefs()
+  // apply display/accessibility prefs to the document root
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.fontSize = `${TEXT_SCALE_PCT[prefs.textScale]}%`
+    root.setAttribute('data-density', prefs.density)
+    root.classList.toggle('reduce-motion', prefs.reduceMotion)
+  }, [prefs])
+
   return (
-    // reducedMotion="user" honors the OS setting; users without it see no change.
-    <MotionConfig reducedMotion="user">
+    // reducedMotion honors the user's pref (falling back to the OS setting).
+    <MotionConfig reducedMotion={prefs.reduceMotion ? 'always' : 'user'}>
       <BrowserRouter basename={basename}>
         <Routes>
           <Route path="/" element={<CoursePicker />} />
@@ -54,6 +67,8 @@ export default function App() {
                 <CourseProvider>
                   <Routes>
                     <Route path="" element={<CourseHome />} />
+                    <Route path="saved" element={<SavedListPage />} />
+                    <Route path="print" element={<PrintView />} />
                     <Route path="overview" element={<CourseOverview />} />
                     <Route path="lecture/:lectureId" element={<LectureShell />} />
                     <Route path="lecture/:lectureId/:mode" element={<LectureShell />} />
@@ -71,6 +86,8 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        {/* Global Settings modal — reachable from the picker and every course page. */}
+        <SettingsModal />
       </BrowserRouter>
     </MotionConfig>
   )

@@ -2,6 +2,8 @@ import type { CourseModule } from '@/core/platform/types'
 import { LECTURES, LECTURE_LIST } from './registry'
 import FormulaSheet from './components/FormulaSheet'
 import Syllabus from './components/Syllabus'
+import Calculator from './components/Calculator'
+import Constants from './components/Constants'
 
 /**
  * Semiconductor Devices course. Source material: _source/חומרי קורסים/
@@ -20,6 +22,8 @@ const semiconductorsCourse: CourseModule = {
   LECTURE_LIST,
   formulaSheet: FormulaSheet,
   syllabus: Syllabus,
+  calculator: Calculator,
+  constants: Constants,
 }
 
 export default semiconductorsCourse

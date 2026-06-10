@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { usePrintMode } from '@/core/platform/printMode'
 import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
@@ -98,7 +99,8 @@ function PartCard({ part, index, open, onToggle }: { part: Part; index: number; 
 
 /** Collapsible parts with a "פתרון" header that opens/closes them all. */
 function Parts({ parts }: { parts: Part[] }) {
-  const [open, setOpen] = useState<boolean[]>(() => parts.map(() => false))
+  const printing = usePrintMode()
+  const [open, setOpen] = useState<boolean[]>(() => parts.map(() => printing))
   const allOpen = open.every(Boolean)
   const toggleAll = () => setOpen(parts.map(() => !allOpen))
   const toggleOne = (i: number) => setOpen((prev) => prev.map((v, k) => (k === i ? !v : v)))
@@ -133,7 +135,7 @@ function Problem({ titleHe, children, parts }: { titleHe: string; children: Reac
 }
 
 function QA({ q, children }: { q: string; children: ReactNode }) {
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(usePrintMode())
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">

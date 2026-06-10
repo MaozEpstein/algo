@@ -7,10 +7,10 @@
  */
 
 // ---- physical constants (cm units, to pair with doping in cm⁻³) ------------
-const Q = 1.602e-19 // C
-const EPS0 = 8.854e-14 // F/cm
-const KB = 1.381e-23 // J/K
-const KB_EV = 8.617e-5 // eV/K
+export const Q = 1.602e-19 // C
+export const EPS0 = 8.854e-14 // F/cm
+export const KB = 1.381e-23 // J/K
+export const KB_EV = 8.617e-5 // eV/K
 
 export interface Material {
   key: 'Si' | 'Ge' | 'GaAs'

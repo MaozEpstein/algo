@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { COURSES } from './courses'
 import { coursePath } from './links'
+import SettingsButton from './SettingsButton'
 
 /** The site's eye mark (matches the favicon) — the brand logo. */
 function EyeMark({ className }: { className?: string }) {
@@ -35,6 +36,9 @@ export default function CoursePicker() {
         <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-500">
           אוסף הקורסים — ויזואליים, אינטראקטיביים, צעד אחר צעד. בחרו קורס כדי להתחיל.
         </p>
+        <div className="mt-4 flex justify-center">
+          <SettingsButton />
+        </div>
       </header>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

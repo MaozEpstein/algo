@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useCourse } from './CourseProvider'
-import { lecturePath, overviewPath } from './links'
-import { OPEN_FORMULA_SHEET } from './types'
+import { lecturePath, overviewPath, savedListPath } from './links'
+import { OPEN_FORMULA_SHEET, OPEN_CALCULATOR, OPEN_CONSTANTS } from './types'
+import { useFeature } from './features'
+import { useProgress, summarize, cycleStatus, STATUS_META, type Status } from './progress'
+import { useSavedItems } from './savedItems'
+import SettingsButton from './SettingsButton'
 
 /** A subtle per-lesson colour palette. Each lesson (the integer part of its `number`,
  *  so all parts of one lesson share a hue) maps to one entry; the list cycles for
@@ -23,7 +27,12 @@ const paletteFor = (n: number) => PALETTE[(Math.max(1, Math.floor(n)) - 1) % PAL
 /** A course's landing page: the lecture grid (+ optional overview hub card). */
 export default function CourseHome() {
   const { courseId, course } = useCourse()
-  const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet, syllabus: Syllabus } = course
+  const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet, syllabus: Syllabus, calculator: hasCalculator, constants: hasConstants } = course
+  const progressOn = useFeature('progress')
+  const savedOn = useFeature('savedList')
+  const progress = useProgress(courseId)
+  const summary = summarize(progress.map, LECTURE_LIST.map((l) => l.id))
+  const savedCount = useSavedItems().listByCourse(courseId).length
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6">
@@ -42,23 +51,62 @@ export default function CourseHome() {
           לא עוד קירות טקסט — כאן רואים את החומר קורה ומבינים אותו, צעד אחר צעד.
           בחרו שיעור והתחילו.
         </p>
-        {(Syllabus || hasFormulaSheet) && (
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {Syllabus && <Syllabus />}
-            {hasFormulaSheet && (
-              // the modal itself lives in CourseProvider (so it's reachable from any
-              // page); this button just asks it to open — same as pressing Ctrl+Shift+S
-              <button
-                onClick={() => window.dispatchEvent(new Event(OPEN_FORMULA_SHEET))}
-                className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-100"
-              >
-                <span aria-hidden>📄</span>
-                דף נוסחאות
-                <kbd className="ms-1 rounded border border-violet-200 bg-white px-1.5 py-0.5 font-mono text-[11px] font-semibold text-violet-500" dir="ltr">
-                  Ctrl+Shift+S
-                </kbd>
-              </button>
-            )}
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {Syllabus && <Syllabus />}
+          {hasFormulaSheet && (
+            // the modal itself lives in CourseProvider (so it's reachable from any
+            // page); this button just asks it to open — same as pressing Ctrl+Shift+S
+            <button
+              onClick={() => window.dispatchEvent(new Event(OPEN_FORMULA_SHEET))}
+              className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-100"
+            >
+              <span aria-hidden>📄</span>
+              דף נוסחאות
+              <kbd className="ms-1 rounded border border-violet-200 bg-white px-1.5 py-0.5 font-mono text-[11px] font-semibold text-violet-500" dir="ltr">
+                Ctrl+Shift+S
+              </kbd>
+            </button>
+          )}
+          {hasCalculator && (
+            <button
+              onClick={() => window.dispatchEvent(new Event(OPEN_CALCULATOR))}
+              className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-sm font-semibold text-indigo-700 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-100"
+            >
+              <span aria-hidden>🧮</span>
+              מחשבון
+            </button>
+          )}
+          {hasConstants && (
+            <button
+              onClick={() => window.dispatchEvent(new Event(OPEN_CONSTANTS))}
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
+            >
+              <span aria-hidden>📌</span>
+              קבועים
+            </button>
+          )}
+          {savedOn && (
+            <Link
+              to={savedListPath(courseId)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-4 py-1.5 text-sm font-semibold text-amber-700 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
+            >
+              <span aria-hidden>⭐</span>
+              רשימת הלמידה שלי
+              {savedCount > 0 && <span className="rounded-full bg-amber-200 px-1.5 text-[11px] font-bold text-amber-800">{savedCount}</span>}
+            </Link>
+          )}
+          <SettingsButton />
+        </div>
+
+        {progressOn && summary.total > 0 && (
+          <div className="mx-auto mt-5 max-w-md">
+            <div className="mb-1 flex items-center justify-between text-sm font-semibold text-slate-500">
+              <span>ההתקדמות שלי</span>
+              <span>{summary.done}/{summary.total} נלמדו</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+              <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${summary.total ? (summary.done / summary.total) * 100 : 0}%` }} />
+            </div>
           </div>
         )}
       </header>
@@ -91,13 +139,29 @@ export default function CourseHome() {
 
         {LECTURE_LIST.map((lec) => {
           const c = paletteFor(lec.number)
+          const st: Status | undefined = progressOn ? progress.get(lec.id) : undefined
           return (
             <Link
               key={lec.id}
               to={lecturePath(courseId, lec.id, lec.explainer ? undefined : { mode: 'guided' })}
-              className={`group relative overflow-hidden rounded-3xl border p-6 shadow-card transition hover:-translate-y-1 hover:shadow-lg ${c.card}`}
+              className={`group relative overflow-hidden rounded-3xl border p-6 shadow-card transition hover:-translate-y-1 hover:shadow-lg ${c.card} ${st ? `ring-2 ${STATUS_META[st].ring}` : ''}`}
             >
               <div className={`absolute -left-8 -top-8 h-24 w-24 rounded-full opacity-60 transition group-hover:scale-125 ${c.circle}`} />
+              {progressOn && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    progress.set(lec.id, cycleStatus(st))
+                  }}
+                  title={st ? `סטטוס: ${STATUS_META[st].he} (לחצו לשינוי)` : 'סמנו סטטוס'}
+                  aria-label="סטטוס למידה"
+                  className={`absolute end-3 top-3 z-10 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-bold transition hover:scale-105 ${st ? STATUS_META[st].chip : 'bg-white/80 text-slate-400 ring-1 ring-slate-200'}`}
+                >
+                  <span aria-hidden>{st ? STATUS_META[st].icon : '○'}</span>
+                  {st && <span>{STATUS_META[st].he}</span>}
+                </button>
+              )}
               <div className="relative">
                 <span className={`font-mono text-sm font-semibold ${c.label}`}>
                   שיעור {lec.numberLabelHe ?? lec.number}

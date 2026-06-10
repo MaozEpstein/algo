@@ -1,4 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
+import { usePrintMode } from '@/core/platform/printMode'
+import ExplainerPrint from '@/core/platform/ExplainerPrint'
 import LowerBoundTab from './tabs/LowerBoundTab'
 import CountingTab from './tabs/CountingTab'
 import RadixTab from './tabs/RadixTab'
@@ -30,6 +32,7 @@ export default function LinearSortExplainer() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const active: TabId = isTab(raw) ? raw : 'lowerbound'
+  if (usePrintMode()) return <ExplainerPrint tabs={TABS} panels={PANELS} />
   const Panel = PANELS[active]
 
   return (

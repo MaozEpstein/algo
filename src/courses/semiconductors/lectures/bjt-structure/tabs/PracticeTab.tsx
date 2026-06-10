@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from 'react'
+import { usePrintMode } from '@/core/platform/printMode'
 import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 
 function QA({ q, children }: { q: string; children: ReactNode }) {
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(usePrintMode())
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">

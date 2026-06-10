@@ -1,4 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
+import { usePrintMode } from '@/core/platform/printMode'
+import ExplainerPrint from '@/core/platform/ExplainerPrint'
 import IntroTab from './tabs/IntroTab'
 import BalanceTab from './tabs/BalanceTab'
 import ProfileTab from './tabs/ProfileTab'
@@ -40,6 +42,7 @@ export default function IdealDiodeExplainer() {
   const [params, setParams] = useSearchParams()
   const raw = params.get('tab')
   const active: TabId = isTab(raw) ? raw : 'intro'
+  if (usePrintMode()) return <ExplainerPrint tabs={TABS} panels={PANELS} />
   const Panel = PANELS[active]
 
   return (

@@ -8,6 +8,9 @@ import type { LearningMode } from '@/core/engine/types'
 export const pickerPath = () => '/'
 export const coursePath = (courseId: string) => `/c/${courseId}`
 export const overviewPath = (courseId: string) => `/c/${courseId}/overview`
+export const savedListPath = (courseId: string) => `/c/${courseId}/saved`
+/** Print/PDF view: whole course, or one lesson via `?lecture=`. */
+export const printPath = (courseId: string, lectureId?: string) => `/c/${courseId}/print${lectureId ? `?lecture=${lectureId}` : ''}`
 
 export function lecturePath(
   courseId: string,

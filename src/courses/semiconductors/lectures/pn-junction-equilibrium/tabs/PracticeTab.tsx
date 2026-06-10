@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { usePrintMode } from '@/core/platform/printMode'
 import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
@@ -114,7 +115,8 @@ function StepCard({ step, index, open, onToggle }: { step: Step; index: number; 
  * opens just it; clicking the "פתרון" header opens — or closes — them all.
  */
 function SolutionSteps({ steps }: { steps: Step[] }) {
-  const [open, setOpen] = useState<boolean[]>(() => steps.map(() => false))
+  const printing = usePrintMode()
+  const [open, setOpen] = useState<boolean[]>(() => steps.map(() => printing))
   const allOpen = open.every(Boolean)
   const toggleAll = () => setOpen(steps.map(() => !allOpen))
   const toggleOne = (i: number) => setOpen((prev) => prev.map((v, k) => (k === i ? !v : v)))
@@ -300,7 +302,7 @@ function ReverseExample({ titleHe, mat, expNa, expNd }: { titleHe: string; mat: 
 
 /** A self-check question with a toggle to reveal/hide the answer. */
 function QA({ q, children }: { q: string; children: ReactNode }) {
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(usePrintMode())
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">

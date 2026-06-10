@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { GlossaryTerm, SymbolItem } from '@/core/engine/types'
 import Tex from './Tex'
 import RichText from './RichText'
+import SaveButton from '@/core/platform/SaveButton'
 
 /**
  * A header button that opens a modal with a lecture's foundations. Two tabs:
@@ -11,7 +12,8 @@ import RichText from './RichText'
  * one-line description + unit). Lectures without symbols show just the concepts.
  * Esc / backdrop closes it.
  */
-export default function GlossaryButton({ terms, symbols = [] }: { terms: GlossaryTerm[]; symbols?: SymbolItem[] }) {
+export default function GlossaryButton({ terms, symbols = [], courseId, lectureId }: { terms: GlossaryTerm[]; symbols?: SymbolItem[]; courseId?: string; lectureId?: string }) {
+  const canSave = !!courseId && !!lectureId
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<'concepts' | 'symbols'>('concepts')
   const hasSymbols = symbols.length > 0
@@ -123,9 +125,10 @@ export default function GlossaryButton({ terms, symbols = [] }: { terms: Glossar
                     >
                       <dt className="flex items-center gap-2 font-bold text-slate-800">
                         <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400 transition group-hover:scale-150" />
-                        <span>
+                        <span className="flex-1">
                           <RichText>{t.term}</RichText>
                         </span>
+                        {canSave && <SaveButton courseId={courseId!} lectureId={lectureId!} kind="concept" refId={t.term} label={t.term} tex={t.tex} note={t.def} />}
                       </dt>
                       <dd className="mt-1.5 ps-4 text-sm leading-relaxed text-slate-600">
                         <RichText>{t.def}</RichText>
@@ -152,11 +155,14 @@ export default function GlossaryButton({ terms, symbols = [] }: { terms: Glossar
                         <span className="font-mono text-lg text-slate-900" dir="ltr">
                           <Tex>{s.sym}</Tex>
                         </span>
-                        {s.unit && (
-                          <span className="shrink-0 text-[11px] text-slate-400" dir="ltr">
-                            [<Tex>{s.unit}</Tex>]
-                          </span>
-                        )}
+                        <span className="flex shrink-0 items-center gap-1.5">
+                          {s.unit && (
+                            <span className="text-[11px] text-slate-400" dir="ltr">
+                              [<Tex>{s.unit}</Tex>]
+                            </span>
+                          )}
+                          {canSave && <SaveButton courseId={courseId!} lectureId={lectureId!} kind="symbol" refId={s.sym} label={s.he} tex={s.sym} note={s.unit} />}
+                        </span>
                       </dt>
                       <dd className="mt-1.5 text-sm leading-snug text-slate-600">
                         <RichText>{s.he}</RichText>
