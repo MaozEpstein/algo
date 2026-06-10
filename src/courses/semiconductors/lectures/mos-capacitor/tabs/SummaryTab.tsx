@@ -4,24 +4,28 @@ import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 
-const FORMULAS: { name: string; tex: string }[] = [
+const FORMULAS: { name: string; tex: string; wide?: boolean }[] = [
   { name: 'פוטנציאל פרמי', tex: '\\phi_F=\\dfrac{kT}{q}\\ln\\dfrac{N_A}{n_i}' },
   { name: 'הפרש פונקציות-עבודה', tex: '\\phi_{MS}=\\phi_M-\\left(\\chi_S+\\tfrac{E_g}{2}+q\\phi_F\\right)' },
   { name: 'מתח flat-band (אידיאלי)', tex: 'V_{FB}=\\phi_{MS}' },
   { name: 'קיבול-אוקסיד', tex: 'C_{ox}=\\dfrac{\\varepsilon_{ox}\\varepsilon_0}{t_{ox}}' },
-  { name: 'רוחב דלדול', tex: 'W=\\sqrt{\\dfrac{2\\varepsilon_s\\,\\psi_s}{qN_A}}' },
-  { name: 'מטען דלדול', tex: 'Q_{dep}=\\sqrt{2q\\varepsilon_sN_A\\psi_s}' },
+  { name: 'רוחב מחסור', tex: 'W=\\sqrt{\\dfrac{2\\varepsilon_s\\,\\psi_s}{qN_A}}' },
+  { name: 'מטען מחסור', tex: 'Q_{dep}=\\sqrt{2q\\varepsilon_sN_A\\psi_s}' },
+  { name: 'צפיפות מטען', tex: '\\rho(x)=q\\,(p-n+N)' },
+  { name: 'ריכוזים בשפה', tex: 'n_s=n_{p0}e^{\\beta\\psi_s},\\; p_s=p_{p0}e^{-\\beta\\psi_s}' },
+  { name: 'משוואת השער', tex: 'V_G=V_{FB}-\\dfrac{Q_s}{C_{ox}}+\\psi_s' },
+  { name: 'מתח-סף', tex: 'V_T=V_{FB}+2\\phi_F+\\dfrac{|Q_{D,\\max}|}{C_{ox}}' },
 ]
 
-const ROWS: [string, React.ReactNode, React.ReactNode, React.ReactNode][] = [
-  ['הצטברות', <Tex>{'V_G<V_{FB}'}</Tex>, <>חורים (נושאי-רוב) בשפה</>, <>פסים מתכופפים מעלה</>],
-  ['דלדול', <Tex>{'V_{FB}<V_G<V_T'}</Tex>, <>יוני-מקבל שליליים</>, <>כיפוף מטה, <Tex>{'W,\\psi_s'}</Tex> גדלים</>],
-  ['היפוך', <Tex>{'V_G>V_T'}</Tex>, <>ערוץ אלקטרונים (מיעוט)</>, <><Tex>{'\\psi_s=2\\phi_F'}</Tex>, <Tex>{'W=W_{max}'}</Tex></>],
+const ROWS: [string, React.ReactNode, React.ReactNode, React.ReactNode, React.ReactNode][] = [
+  ['הצטברות', <Tex>{'V_G<V_{FB}'}</Tex>, <Tex>{'\\psi_s<0'}</Tex>, <>חורים (נושאי-רוב) בשפה</>, <>פסים מתכופפים מעלה</>],
+  ['מחסור', <Tex>{'V_{FB}<V_G<V_T'}</Tex>, <Tex>{'0<\\psi_s<2\\phi_F'}</Tex>, <>יוני-מקבל שליליים</>, <>כיפוף מטה, <Tex>{'W'}</Tex> גדל</>],
+  ['היפוך', <Tex>{'V_G>V_T'}</Tex>, <Tex>{'\\psi_s\\ge2\\phi_F'}</Tex>, <>ערוץ אלקטרונים (מיעוט)</>, <><Tex>{'W=W_{max}'}</Tex></>],
 ]
 
 const MISTAKES: { wrong: string; right: string }[] = [
   { wrong: 'השער של קבל-MOS מושך זרם DC.', right: 'לא — האוקסיד מבודד; השער פועל קיבולית (שדה) בלבד, כמעט ללא זרם.' },
-  { wrong: 'בהיפוך רוחב-הדלדול ממשיך לגדול עם $V_G$.', right: 'לא — הוא ננעל על $W_{max}$; תוספת המטען מאוזנת ע״י אלקטרוני-ההיפוך, ו-$\\psi_s$ נשאר $2\\phi_F$.' },
+  { wrong: 'בהיפוך רוחב-המחסור ממשיך לגדול עם $V_G$.', right: 'לא — הוא ננעל על $W_{max}$; תוספת המטען מאוזנת ע״י אלקטרוני-ההיפוך, ו-$\\psi_s$ נשאר $2\\phi_F$.' },
   { wrong: 'במצע p, היפוך יוצר עוד חורים בשפה.', right: 'להפך — היפוך יוצר שכבת $אלקטרונים$ (נושאי-מיעוט), ערוץ מסוג הפוך מהמצע.' },
 ]
 
@@ -39,18 +43,18 @@ export default function SummaryTab() {
       <Panel title="תקציר">
         <ul className="list-inside list-disc space-y-2 leading-relaxed text-slate-700">
           <li><b>מבנה:</b> מתכת–אוקסיד–מוליך (M-O-S); זהו ה"קבל" שבלב ה-MOSFET. השער שולט במטען בפני-השטח דרך <b>שדה</b>, כמעט ללא זרם.</li>
-          <li><b>קבל-MOS כקבל:</b> האוקסיד = מרווח עם שדה קבוע; בצד המוליך המטען מתפרש על רוחב-דלדול ולכן השדה דועך.</li>
+          <li><b>קבל-MOS כקבל:</b> האוקסיד = מרווח עם שדה קבוע; בצד המוליך המטען מתפרש על רוחב-מחסור ולכן השדה דועך.</li>
           <li><b>פסים ו-<Tex>{'V_{FB}'}</Tex>:</b> הפרש פונקציות-העבודה <Tex>{'\\phi_{MS}'}</Tex> מכופף את הפסים; <Tex>{'V_{FB}=\\phi_{MS}'}</Tex> מיישר אותם.</li>
-          <li><b>שלושה משטרים:</b> הצטברות (<Tex>{'V_G<V_{FB}'}</Tex>) · דלדול · היפוך (<Tex>{'V_G>V_T'}</Tex>). מתח-השער קובע איזה.</li>
+          <li><b>שלושה משטרים:</b> הצטברות (<Tex>{'V_G<V_{FB}'}</Tex>) · מחסור · היפוך (<Tex>{'V_G>V_T'}</Tex>). מתח-השער קובע איזה.</li>
         </ul>
       </Panel>
 
       <Panel title="נוסחאות מפתח">
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {FORMULAS.map((f) => (
-            <div key={f.name} className="flex flex-col items-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center">
+            <div key={f.name} className={`flex flex-col items-center gap-1 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-center ${f.wide ? 'sm:col-span-2 lg:col-span-3' : ''}`}>
               <span className="text-xs font-semibold text-slate-500">{f.name}</span>
-              <Tex block>{f.tex}</Tex>
+              <div className="w-full overflow-x-auto"><Tex block>{f.tex}</Tex></div>
             </div>
           ))}
         </div>
@@ -63,7 +67,8 @@ export default function SummaryTab() {
             <thead>
               <tr className="bg-slate-50 text-slate-500">
                 <th className="py-2.5 px-3 font-semibold">משטר</th>
-                <th className="py-2.5 px-3 font-semibold">תנאי</th>
+                <th className="py-2.5 px-3 font-semibold">תנאי מתח</th>
+                <th className="py-2.5 px-3 font-semibold">פוטנציאל-שטח <Tex>{'\\psi_s'}</Tex></th>
                 <th className="py-2.5 px-3 font-semibold">מטען בשפה</th>
                 <th className="py-2.5 px-3 font-semibold">כיפוף הפסים</th>
               </tr>
@@ -73,8 +78,9 @@ export default function SummaryTab() {
                 <tr key={r[0]} className="border-t border-slate-100">
                   <td className="py-2.5 px-3 font-medium text-slate-700">{r[0]}</td>
                   <td className="py-2.5 px-3">{r[1]}</td>
-                  <td className="py-2.5 px-3 text-slate-600">{r[2]}</td>
+                  <td className="py-2.5 px-3">{r[2]}</td>
                   <td className="py-2.5 px-3 text-slate-600">{r[3]}</td>
+                  <td className="py-2.5 px-3 text-slate-600">{r[4]}</td>
                 </tr>
               ))}
             </tbody>
@@ -85,15 +91,27 @@ export default function SummaryTab() {
       <Panel title="תובנות מפתח">
         <ul className="list-inside list-disc space-y-2 leading-relaxed text-slate-600">
           <li><b>זה קבל:</b> אין זרם-שער; השליטה היא במטען בפני-השטח דרך שדה — היסוד לכל ה-MOSFET.</li>
-          <li><b><Tex>{'\\phi_{MS}'}</Tex> קובע נקודת-מוצא:</b> הוא הכיפוף ה"מובנה"; <Tex>{'V_{FB}'}</Tex> מבטל אותו.</li>
+          <li><b>נקודת-המוצא:</b> ההפרש <Tex>{'\\phi_{MS}'}</Tex> הוא הכיפוף ה"מובנה"; <Tex>{'V_{FB}'}</Tex> מבטל אותו.</li>
           <li><b>היפוך = ערוץ:</b> שכבת-ההיפוך (נושאי-מיעוט) היא בדיוק התעלה המוליכה של ה-MOSFET.</li>
         </ul>
+      </Panel>
+
+      <Panel title={<>תיאוריה — מטען פני-השטח <Tex>{'Q_s'}</Tex></>}>
+        <div className="overflow-x-auto rounded-xl bg-slate-50 p-4 text-center">
+          <Tex block>{'|Q_s| = \\sqrt{\\,2\\varepsilon_s q V_T\\left[\\,N_A\\!\\left(e^{-\\beta\\psi_s}+\\beta\\psi_s-1\\right) + \\dfrac{n_i^2}{N_A}\\!\\left(e^{\\beta\\psi_s}-\\beta\\psi_s-1\\right)\\right]}'}</Tex>
+        </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3 text-center text-sm">
+          <div className="rounded-xl border-s-4 border-rose-300 bg-rose-50/50 p-2"><b className="text-rose-700">הצטברות</b><br /><Tex>{'\\propto e^{q|\\psi_s|/2kT}'}</Tex></div>
+          <div className="rounded-xl border-s-4 border-amber-300 bg-amber-50/50 p-2"><b className="text-amber-700">מחסור</b><br /><Tex>{'\\propto\\sqrt{\\psi_s}'}</Tex></div>
+          <div className="rounded-xl border-s-4 border-emerald-300 bg-emerald-50/50 p-2"><b className="text-emerald-700">היפוך</b><br /><Tex>{'\\propto e^{q\\psi_s/2kT}'}</Tex></div>
+        </div>
       </Panel>
 
       <Panel title="ראו בעיניים">
         <div className="flex flex-wrap gap-2">
           <DeepLink tab="compare">קבל-לוחות מול MOS</DeepLink>
           <DeepLink tab="regimes">שלושת המשטרים</DeepLink>
+          <DeepLink tab="theory">תיאוריה ו-Q_s</DeepLink>
           <DeepLink tab="sandbox">ארגז-החול האינטראקטיבי</DeepLink>
         </div>
       </Panel>

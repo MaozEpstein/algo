@@ -260,6 +260,8 @@ export interface FormulaItem {
   name: string
   tex: string
   note?: string
+  /** Render across the full grid width — for long formulas that would otherwise overflow. */
+  wide?: boolean
 }
 
 /** One entry in a lecture's "new variables" dictionary — a symbol (LaTeX) + a

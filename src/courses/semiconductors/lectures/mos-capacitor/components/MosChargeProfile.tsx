@@ -34,17 +34,20 @@ export default function MosChargeProfile({ regime, wRel = 1 }: { regime: Regime;
             <rect width="5" height="5" fill={SKY} fillOpacity={0.12} />
             <line x1="0" y1="0" x2="0" y2="5" stroke={SKY} strokeWidth="0.9" strokeOpacity={0.5} />
           </pattern>
+          <marker id="rho-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9 Z" fill="#475569" /></marker>
         </defs>
 
-        {/* axes */}
-        <line x1={40} y1={y0} x2={xR + 8} y2={y0} stroke="#cbd5e1" strokeWidth={1.25} />
-        <line x1={48} y1={20} x2={48} y2={H - 20} stroke="#cbd5e1" strokeWidth={1.25} />
-        <text x={40} y={30} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 12, fontWeight: 700 }}>ρ</text>
-        <text x={xR + 6} y={y0 + 16} textAnchor="end" className="fill-slate-400" style={{ fontSize: 11 }}>x →</text>
-        {/* surface + metal guide lines */}
-        <line x1={xSurf} y1={28} x2={xSurf} y2={H - 24} stroke="#cbd5e1" strokeWidth={1} strokeDasharray="3 3" />
-        <text x={xSurf} y={H - 10} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 9.5 }}>x=0</text>
-        <text x={xMetal} y={H - 10} textAnchor="middle" className="fill-slate-400" style={{ fontSize: 9.5 }}>−t_ox</text>
+        {/* x = 0 surface guide (solid, emphasised) */}
+        <line x1={xSurf} y1={24} x2={xSurf} y2={H - 18} stroke="#94a3b8" strokeWidth={1.5} />
+        {/* axes (bold) */}
+        <line x1={44} y1={y0} x2={xR + 12} y2={y0} stroke="#475569" strokeWidth={1.9} markerEnd="url(#rho-arr)" />
+        <line x1={48} y1={18} x2={48} y2={H - 16} stroke="#475569" strokeWidth={1.9} markerEnd="url(#rho-arr)" />
+        <text x={38} y={28} textAnchor="middle" className="fill-slate-600" style={{ fontSize: 13, fontWeight: 800 }}>ρ</text>
+        <text x={xR + 10} y={y0 - 6} textAnchor="end" className="fill-slate-500" style={{ fontSize: 12, fontWeight: 700 }}>x</text>
+        {/* origin tick + labels */}
+        <circle cx={xSurf} cy={y0} r={3} fill="#334155" />
+        <text x={xSurf} y={H - 6} textAnchor="middle" className="fill-slate-700" style={{ fontSize: 12, fontWeight: 800 }}>x = 0</text>
+        <text x={xMetal} y={H - 6} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 11, fontWeight: 700 }}>−t<tspan dy={2} style={{ fontSize: 8 }}>ox</tspan></text>
 
         {/* gate sheet charge */}
         {gatePlus ? (

@@ -4,8 +4,15 @@ export type Regime = 'flat' | 'accumulation' | 'depletion' | 'inversion'
 export const REGIME_HE: Record<Regime, string> = {
   flat: 'פסים שטוחים',
   accumulation: 'הצטברות',
-  depletion: 'דלדול',
+  depletion: 'מחסור',
   inversion: 'היפוך',
+}
+
+export const REGIME_EN: Record<Regime, string> = {
+  flat: 'Flat-band',
+  accumulation: 'Accumulation',
+  depletion: 'Depletion',
+  inversion: 'Inversion',
 }
 
 /** Accent palette per regime (Tailwind border/bg/text fragments). */

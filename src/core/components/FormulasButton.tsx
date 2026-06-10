@@ -77,9 +77,15 @@ export default function FormulasButton({ formulas }: { formulas: FormulaItem[] }
 
               <div className="grid gap-3 p-6 sm:grid-cols-2">
                 {formulas.map((f) => (
-                  <div key={f.name} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                    <p className="mb-2 text-sm font-bold text-slate-700">{f.name}</p>
-                    <div className="rounded-xl bg-slate-50 px-3 py-3 text-center">
+                  <div
+                    key={f.name}
+                    className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-300 hover:shadow-md ${f.wide ? 'sm:col-span-2' : ''}`}
+                  >
+                    <p className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-700">
+                      <span className="h-2 w-2 shrink-0 rounded-full bg-sky-400" />
+                      {f.name}
+                    </p>
+                    <div className="overflow-x-auto rounded-xl bg-gradient-to-br from-sky-50 to-slate-50 px-4 py-3 text-center ring-1 ring-sky-100">
                       <Tex block>{f.tex}</Tex>
                     </div>
                     {f.note && (

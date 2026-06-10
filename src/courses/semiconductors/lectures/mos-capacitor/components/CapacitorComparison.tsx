@@ -21,7 +21,7 @@ const yGuideTop = 46
 const yGuideBot = yE + 6
 
 function Guide({ x }: { x: number }) {
-  return <line x1={x} y1={yGuideTop} x2={x} y2={yGuideBot} stroke="#e2e8f0" strokeWidth={1} strokeDasharray="3 3" />
+  return <line x1={x} y1={yGuideTop} x2={x} y2={yGuideBot} stroke="#cbd5e1" strokeWidth={1.25} strokeDasharray="4 3" />
 }
 function Axis({ x0, x1, y }: { x0: number; x1: number; y: number }) {
   return <line x1={x0} y1={y} x2={x1} y2={y} stroke="#cbd5e1" strokeWidth={1.25} />
@@ -92,12 +92,12 @@ export default function CapacitorComparison() {
               <rect x={xM - 5} y={yRho - HBAR} width={10} height={HBAR} fill={ROSE} fillOpacity={0.3} stroke={ROSE} strokeWidth={1.25} />
               <text x={xM} y={yRho - HBAR - 5} textAnchor="middle" fill={ROSE} style={{ fontSize: 10.5, fontWeight: 800 }}>+Q</text>
               <rect x={xO} y={yRho} width={xD - xO} height={HBAR * 0.8} fill={SKY} fillOpacity={0.22} stroke={SKY} strokeWidth={1.25} />
-              <text x={(xO + xD) / 2} y={yRho + HBAR * 0.8 + 14} textAnchor="middle" fill={SKY} style={{ fontSize: 10.5, fontWeight: 800 }}>−Q (דלדול)</text>
+              <text x={(xO + xD) / 2} y={yRho + HBAR * 0.8 + 14} textAnchor="middle" fill={SKY} style={{ fontSize: 10.5, fontWeight: 800 }}>−Q (מחסור)</text>
               {/* E(x): constant in oxide, linear decay in depletion */}
               <Axis x0={50} x1={330} y={yE} />
               <path d={`M ${xM} ${yE} L ${xM} ${yE - HBAR} L ${xO} ${yE - HBAR} L ${xD} ${yE}`} fill={GREEN} fillOpacity={0.12} stroke={GREEN} strokeWidth={1.75} />
               <text x={(xM + xO) / 2} y={yE - HBAR - 5} textAnchor="middle" fill={GREEN} style={{ fontSize: 9.5, fontWeight: 700 }}>קבוע באוקסיד</text>
-              <text x={xD + 4} y={yE - 6} textAnchor="start" fill={GREEN} style={{ fontSize: 9.5, fontWeight: 700 }}>דועך בדלדול</text>
+              <text x={xD + 4} y={yE - 6} textAnchor="start" fill={GREEN} style={{ fontSize: 9.5, fontWeight: 700 }}>דועך במחסור</text>
             </>
           ) })()}
         </g>

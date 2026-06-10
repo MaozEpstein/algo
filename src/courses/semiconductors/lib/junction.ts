@@ -851,6 +851,20 @@ export function mosRegime(VG: number, VFB: number, VT: number): 'accumulation' |
   return 'depletion'
 }
 
+/**
+ * Exact semiconductor surface charge per area |Q_s| as a function of the surface potential ψ_s,
+ * for a p-type substrate (the master MOS result):
+ *   |Q_s| = √( 2 ε_s q V_T [ N_A(e^{-βψ}+βψ-1) + (n_i²/N_A)(e^{βψ}-βψ-1) ] ),  β=1/V_T, kT=q·V_T.
+ * Accumulation (ψ_s<0): dominated by e^{-βψ} → ∝ e^{q|ψ_s|/2kT}. Depletion (ψ_s>0): the βψ term →
+ * √(2qε_sN_Aψ_s)=Q_dep. Strong inversion (ψ_s>2φ_F): the n_i² e^{βψ} term → ∝ e^{qψ_s/2kT}. (C/cm²)
+ */
+export function mosSurfaceCharge(psiS: number, Na: number, ni: number, epsR: number, T = 300): number {
+  const VT = thermalVoltage(T)
+  const b = psiS / VT // β·ψ_s
+  const term = Na * (Math.exp(-b) + b - 1) + ((ni * ni) / Na) * (Math.exp(b) - b - 1)
+  return Math.sqrt(2 * epsR * EPS0 * Q * VT * Math.max(term, 0))
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

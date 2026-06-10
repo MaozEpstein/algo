@@ -10,6 +10,7 @@ import {
   mosThreshold,
   mosSurfacePotential,
   mosRegime,
+  mosSurfaceCharge,
 } from '../../lib/junction'
 
 const SI = MATERIALS.Si
@@ -73,5 +74,22 @@ describe('MOS — surface potential & regime', () => {
     expect(mosRegime(VFB - 1, VFB, VT)).toBe('accumulation')
     expect(mosRegime((VFB + VT) / 2, VFB, VT)).toBe('depletion')
     expect(mosRegime(VT + 1, VFB, VT)).toBe('inversion')
+  })
+})
+
+describe('MOS — surface charge Q_s(ψ_s)', () => {
+  const phiF = fermiPotential(Na, SI.ni)
+  it('is 0 at ψ_s=0 and reduces to Q_dep in depletion', () => {
+    expect(mosSurfaceCharge(0, Na, SI.ni, EPS)).toBeCloseTo(0, 12)
+    // deep in depletion the exact charge ≈ the depletion-approx charge
+    const exact = mosSurfaceCharge(0.4, Na, SI.ni, EPS)
+    const approx = mosDepletionCharge(0.4, Na, EPS)
+    expect(Math.abs(exact - approx) / approx).toBeLessThan(0.1)
+  })
+  it('rises as ψ_s goes negative (accumulation)', () => {
+    expect(mosSurfaceCharge(-0.2, Na, SI.ni, EPS)).toBeGreaterThan(mosSurfaceCharge(-0.05, Na, SI.ni, EPS))
+  })
+  it('rises steeply beyond strong inversion (ψ_s > 2φ_F)', () => {
+    expect(mosSurfaceCharge(2 * phiF + 0.15, Na, SI.ni, EPS)).toBeGreaterThan(mosSurfaceCharge(2 * phiF, Na, SI.ni, EPS))
   })
 })

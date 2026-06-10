@@ -131,7 +131,7 @@ export default function GlossaryButton({ terms, symbols = [] }: { terms: Glossar
                         <RichText>{t.def}</RichText>
                       </dd>
                       {t.tex && (
-                        <dd className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-center">
+                        <dd className="mt-2 overflow-x-auto rounded-lg bg-gradient-to-br from-violet-50 to-slate-50 px-3 py-2 text-center ring-1 ring-violet-100">
                           <Tex block>{t.tex}</Tex>
                         </dd>
                       )}

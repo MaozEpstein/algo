@@ -76,7 +76,7 @@ export default function MosLayerSchematic({ regime }: { regime: Regime }) {
           <>
             <rect x={xL} y={yOx1} width={xR - xL} height={36} fill={SLATE} fillOpacity={0.06} />
             <Charges y={yOx1 + 22} n={9} sym="−" color={SLATE} />
-            <text x={(xL + xR) / 2} y={yOx1 + 50} textAnchor="middle" className="fill-slate-600" style={{ fontSize: 10.5, fontWeight: 700 }}>יוני-מקבל שליליים (אזור דלדול)</text>
+            <text x={(xL + xR) / 2} y={yOx1 + 50} textAnchor="middle" className="fill-slate-600" style={{ fontSize: 10.5, fontWeight: 700 }}>יוני-מקבל שליליים (אזור מחסור)</text>
           </>
         )}
         {regime === 'inversion' && (
@@ -85,7 +85,7 @@ export default function MosLayerSchematic({ regime }: { regime: Regime }) {
             <text x={(xL + xR) / 2} y={yOx1 + 28} textAnchor="middle" className="fill-sky-700" style={{ fontSize: 10, fontWeight: 700 }}>אלקטרונים — ערוץ היפוך</text>
             <rect x={xL} y={yOx1 + 34} width={xR - xL} height={32} fill={SLATE} fillOpacity={0.06} />
             <Charges y={yOx1 + 54} n={9} sym="−" color={SLATE} />
-            <text x={(xL + xR) / 2} y={yOx1 + 74} textAnchor="middle" className="fill-slate-600" style={{ fontSize: 10, fontWeight: 700 }}>אזור דלדול</text>
+            <text x={(xL + xR) / 2} y={yOx1 + 74} textAnchor="middle" className="fill-slate-600" style={{ fontSize: 10, fontWeight: 700 }}>אזור מחסור</text>
           </>
         )}
 

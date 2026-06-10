@@ -87,8 +87,8 @@ export default function SmallSignalCB() {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Readout label="מוליכות $g_m$" value={`${(gm * 1000).toFixed(1)} mS`} accent="border-emerald-100 bg-emerald-50" />
         <Readout label="כניסה $r_e=1/g_m$" value={`${re.toFixed(0)} Ω`} accent="border-sky-100 bg-sky-50" />
-        <Readout label="עומס $r_o\\parallel R_C$" value={`${(rLoad / 1000).toFixed(2)} kΩ`} accent="border-violet-100 bg-violet-50" />
-        <Readout label="הגבר $A_v=+g_m(r_o\\parallel R_C)$" value={`+${av.toFixed(0)}×`} accent="border-rose-100 bg-rose-50" />
+        <Readout label={'עומס $r_o\\parallel R_C$'} value={`${(rLoad / 1000).toFixed(2)} kΩ`} accent="border-violet-100 bg-violet-50" />
+        <Readout label={'הגבר $A_v=+g_m(r_o\\parallel R_C)$'} value={`+${av.toFixed(0)}×`} accent="border-rose-100 bg-rose-50" />
       </div>
       <p className="rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-600">
         אותה <Tex>{'g_m'}</Tex> כמו ב-CE → <b>אותו גודל הגבר-מתח</b>, אבל <b>חיובי (ללא היפוך)</b> כי האות נכנס לפולט.
