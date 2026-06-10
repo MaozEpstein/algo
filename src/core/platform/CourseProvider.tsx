@@ -2,6 +2,7 @@ import { createContext, use, useContext, type ReactNode } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import type { CourseModule } from './types'
 import { COURSE_LOADERS, hasCourse } from './courses'
+import CourseSearchModal from './CourseSearchModal'
 
 interface CourseCtx {
   courseId: string
@@ -40,6 +41,8 @@ export default function CourseProvider({ children }: { children: ReactNode }) {
       {/* Mounted once per course (not per page) so the formula-sheet modal — and
           its global keyboard shortcut — work from any page in the course. */}
       {FormulaSheet && <FormulaSheet />}
+      {/* Course-wide quick search (Ctrl+Shift+F) over formulas/concepts/symbols. */}
+      <CourseSearchModal />
     </CourseContext.Provider>
   )
 }

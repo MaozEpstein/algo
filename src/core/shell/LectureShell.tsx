@@ -5,6 +5,7 @@ import { coursePath, lecturePath } from '@/core/platform/links'
 import ModeSelector from './ModeSelector'
 import GlossaryButton from '@/core/components/GlossaryButton'
 import FormulasButton from '@/core/components/FormulasButton'
+import SearchButton from '@/core/platform/SearchButton'
 import GuidedMode from '@/core/modes/GuidedMode'
 import SummaryMode from '@/core/modes/SummaryMode'
 
@@ -85,14 +86,13 @@ function LectureHeader({ lecture }: { lecture: LectureModule }) {
             <span aria-hidden>←</span>
           </Link>
         )}
-        {(lecture.glossary?.length || lecture.formulas?.length) && (
-          <span className="ms-auto flex flex-wrap gap-2">
-            {lecture.formulas && lecture.formulas.length > 0 && <FormulasButton formulas={lecture.formulas} />}
-            {lecture.glossary && lecture.glossary.length > 0 && (
-              <GlossaryButton terms={lecture.glossary} symbols={lecture.symbols} />
-            )}
-          </span>
-        )}
+        <span className="ms-auto flex flex-wrap gap-2">
+          <SearchButton />
+          {lecture.formulas && lecture.formulas.length > 0 && <FormulasButton formulas={lecture.formulas} />}
+          {lecture.glossary && lecture.glossary.length > 0 && (
+            <GlossaryButton terms={lecture.glossary} symbols={lecture.symbols} />
+          )}
+        </span>
       </div>
       <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
         שיעור {lecture.numberLabelHe ?? lecture.number} · {lecture.titleHe}

@@ -40,3 +40,6 @@ export interface CourseModule {
  * still letting both the button and the global keyboard shortcut open the same one.
  */
 export const OPEN_FORMULA_SHEET = 'app:open-formula-sheet'
+
+/** Window event: open the course-wide quick-search modal (Ctrl+Shift+F or the header button). */
+export const OPEN_COURSE_SEARCH = 'app:open-course-search'
