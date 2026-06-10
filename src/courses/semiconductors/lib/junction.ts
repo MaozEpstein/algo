@@ -865,6 +865,15 @@ export function mosSurfaceCharge(psiS: number, Na: number, ni: number, epsR: num
   return Math.sqrt(2 * epsR * EPS0 * Q * VT * Math.max(term, 0))
 }
 
+/**
+ * Flat-band voltage shift from an effective oxide/interface sheet charge density N_ss (cm⁻²):
+ *   ΔV_FB = −q·N_ss / C_ox   (a positive oxide charge shifts V_FB negative). V.
+ * The real flat-band voltage is V_FB = φ_MS + ΔV_FB = φ_MS − q·N_ss/C_ox.
+ */
+export function mosFlatBandShift(NssPerCm2: number, Cox: number): number {
+  return (-Q * NssPerCm2) / Cox
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

@@ -32,6 +32,9 @@ export const mosCapacitorLecture: LectureModule = {
     { term: 'צפיפות מטען מרחבית $\\rho(x)$', def: 'אגף-המקור במשוואת פואסון — הוא שקובע את כיפוף-הפסים.', tex: '\\rho(x)=q\\,(p-n+N)' },
     { term: 'מטען פני-השטח $Q_s$', def: 'המטען הכולל במל"מ ליחידת-שטח כפונקציה של $\\psi_s$: מעריכי בהצטברות/היפוך, $\\propto\\sqrt{\\psi_s}$ במחסור.' },
     { term: 'מתח-סף $V_T$', def: 'מתח-השער לתחילת היפוך חזק ($\\psi_s=2\\phi_F$).', tex: 'V_T=V_{FB}+2\\phi_F+\\dfrac{|Q_{D,\\max}|}{C_{ox}}' },
+    { term: 'מטעני-תחמוצת', def: 'מטענים לא-אידיאליים ב-SiO₂ ובממשק: $Q_{it}$ (ממשק), $Q_f$ (קבוע), $Q_{ox}$ (נפח), $Q_m$ (יונים ניידים Na⁺/K⁺).' },
+    { term: 'מטען אפקטיבי $Q_{ss}$', def: 'סכום מטעני-התחמוצת הממופה לממשק (שקלול לפי המרחק מהשער); מזיז את $V_{FB}$.' },
+    { term: 'מתח flat-band ריאלי', def: 'עם מטעני-תחמוצת זה כבר לא רק $\\phi_{MS}$ — אלא $V_{FB}=\\phi_{MS}-Q_{ss}/C_{ox}$.', tex: 'V_{FB}=\\phi_{MS}-\\dfrac{Q_{ss}}{C_{ox}}' },
   ],
   formulas: [
     { name: 'פוטנציאל פרמי', tex: '\\phi_F=\\dfrac{kT}{q}\\ln\\dfrac{N_A}{n_i}' },
@@ -42,6 +45,8 @@ export const mosCapacitorLecture: LectureModule = {
     { name: 'מטען פני-השטח', tex: '|Q_s|=\\sqrt{2\\varepsilon_s qV_T\\left[N_A(e^{-\\beta\\psi_s}+\\beta\\psi_s-1)+\\tfrac{n_i^2}{N_A}(e^{\\beta\\psi_s}-\\beta\\psi_s-1)\\right]}', wide: true },
     { name: 'משוואת השער', tex: 'V_G=V_{FB}-\\dfrac{Q_s}{C_{ox}}+\\psi_s' },
     { name: 'מתח-סף', tex: 'V_T=V_{FB}+2\\phi_F+\\dfrac{|Q_{D,\\max}|}{C_{ox}}' },
+    { name: 'flat-band ריאלי', tex: 'V_{FB}=\\phi_{MS}-\\dfrac{Q_{ss}}{C_{ox}}' },
+    { name: 'הזזת flat-band', tex: '\\Delta V_{FB}=-\\dfrac{Q_{ss}}{C_{ox}}=-\\dfrac{qN_{ss}}{C_{ox}}' },
   ],
   symbols: [
     { sym: 'V_G', he: 'מתח השער', unit: 'V' },
@@ -53,6 +58,8 @@ export const mosCapacitorLecture: LectureModule = {
     { sym: '\\beta', he: '$q/kT$ (הופכי המתח התרמי)', unit: 'V^{-1}' },
     { sym: 'N', he: 'סימום אפקטיבי $N_D-N_A$', unit: 'cm^{-3}' },
     { sym: 'Q_s', he: 'מטען פני-השטח במל"מ', unit: 'C/cm^2' },
+    { sym: 'Q_{ss}', he: 'מטען-תחמוצת אפקטיבי (ממופה לממשק)', unit: 'C/cm^2' },
+    { sym: 'N_{ss}', he: 'צפיפות מטען-תחמוצת אפקטיבי', unit: 'cm^{-2}' },
     { sym: 'n_s,p_s', he: 'ריכוזי נשאים בשפה', unit: 'cm^{-3}' },
     { sym: 'C_{ox}', he: 'קיבול-האוקסיד ליחידת-שטח', unit: 'F/cm^2' },
     { sym: 'W', he: 'רוחב אזור-המחסור', unit: 'cm' },

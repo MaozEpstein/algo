@@ -93,6 +93,7 @@ export default function SummaryTab() {
           <li><b>זה קבל:</b> אין זרם-שער; השליטה היא במטען בפני-השטח דרך שדה — היסוד לכל ה-MOSFET.</li>
           <li><b>נקודת-המוצא:</b> ההפרש <Tex>{'\\phi_{MS}'}</Tex> הוא הכיפוף ה"מובנה"; <Tex>{'V_{FB}'}</Tex> מבטל אותו.</li>
           <li><b>היפוך = ערוץ:</b> שכבת-ההיפוך (נושאי-מיעוט) היא בדיוק התעלה המוליכה של ה-MOSFET.</li>
+          <li><b>לא אידיאלי:</b> מטעני-תחמוצת אמיתיים מזיזים את <Tex>{'V_{FB}=\\phi_{MS}-Q_{ss}/C_{ox}'}</Tex> ואיתו את <Tex>{'V_T'}</Tex>.</li>
         </ul>
       </Panel>
 
@@ -112,6 +113,7 @@ export default function SummaryTab() {
           <DeepLink tab="compare">קבל-לוחות מול MOS</DeepLink>
           <DeepLink tab="regimes">שלושת המשטרים</DeepLink>
           <DeepLink tab="theory">תיאוריה ו-Q_s</DeepLink>
+          <DeepLink tab="oxide">מטעני-תחמוצת</DeepLink>
           <DeepLink tab="sandbox">ארגז-החול האינטראקטיבי</DeepLink>
         </div>
       </Panel>

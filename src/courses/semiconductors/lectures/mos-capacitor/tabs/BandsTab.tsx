@@ -58,8 +58,8 @@ export default function BandsTab() {
           outcome={{ label: 'פסים שטוחים', sub: <><Tex>{'V_{FB}=\\phi_{MS}'}</Tex> (במקרה אידיאלי)</> }}
         />
         <p className="mt-3 leading-relaxed text-slate-600">
-          <b>מתח ה-flat-band</b> הוא מתח-השער שמיישר את הפסים. מעליו/מתחתיו מתחילים המשטרים. (בחלק ב׳ נראה
-          שמטעני-אוקסיד מזיזים את <Tex>{'V_{FB}'}</Tex>.) הקשר הכללי: <Tex>{'-\\phi_{MS}=qV_{ox}+q\\psi_s'}</Tex>.
+          <b>מתח ה-flat-band</b> הוא מתח-השער שמיישר את הפסים. מעליו/מתחתיו מתחילים המשטרים. (בלשונית
+          "מטעני-תחמוצת" נראה שמטעני-אוקסיד מזיזים את <Tex>{'V_{FB}'}</Tex>.) הקשר הכללי: <Tex>{'-\\phi_{MS}=qV_{ox}+q\\psi_s'}</Tex>.
         </p>
       </Panel>
     </div>

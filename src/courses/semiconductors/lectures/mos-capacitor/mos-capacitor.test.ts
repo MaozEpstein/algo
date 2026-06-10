@@ -11,6 +11,7 @@ import {
   mosSurfacePotential,
   mosRegime,
   mosSurfaceCharge,
+  mosFlatBandShift,
 } from '../../lib/junction'
 
 const SI = MATERIALS.Si
@@ -91,5 +92,18 @@ describe('MOS — surface charge Q_s(ψ_s)', () => {
   })
   it('rises steeply beyond strong inversion (ψ_s > 2φ_F)', () => {
     expect(mosSurfaceCharge(2 * phiF + 0.15, Na, SI.ni, EPS)).toBeGreaterThan(mosSurfaceCharge(2 * phiF, Na, SI.ni, EPS))
+  })
+})
+
+describe('MOS — flat-band shift from oxide charge', () => {
+  const Cox = oxideCap(20e-7) // t_ox = 20 nm → ≈1.73e-7 F/cm²
+  it('positive oxide charge shifts V_FB negative; |ΔV_FB| ≈ qN_ss/C_ox', () => {
+    const dv = mosFlatBandShift(1e11, Cox)
+    expect(dv).toBeLessThan(0)
+    expect(dv).toBeCloseTo(-0.09, 2)
+  })
+  it('is linear and zero at N_ss=0', () => {
+    expect(mosFlatBandShift(0, Cox)).toBeCloseTo(0, 10)
+    expect(mosFlatBandShift(2e11, Cox)).toBeCloseTo(2 * mosFlatBandShift(1e11, Cox), 10)
   })
 })
