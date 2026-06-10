@@ -58,13 +58,11 @@ export default function CourseHome() {
             // page); this button just asks it to open — same as pressing Ctrl+Shift+S
             <button
               onClick={() => window.dispatchEvent(new Event(OPEN_FORMULA_SHEET))}
+              title="דף נוסחאות · Ctrl+Shift+S"
               className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-100"
             >
               <span aria-hidden>📄</span>
               דף נוסחאות
-              <kbd className="ms-1 rounded border border-violet-200 bg-white px-1.5 py-0.5 font-mono text-[11px] font-semibold text-violet-500" dir="ltr">
-                Ctrl+Shift+S
-              </kbd>
             </button>
           )}
           {hasCalculator && (
@@ -79,6 +77,7 @@ export default function CourseHome() {
           {hasConstants && (
             <button
               onClick={() => window.dispatchEvent(new Event(OPEN_CONSTANTS))}
+              title="קבועים · Ctrl+Shift+C"
               className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
             >
               <span aria-hidden>📌</span>

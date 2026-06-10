@@ -79,6 +79,20 @@ input[type='range'].scrubber::-moz-range-thumb {
   }
 }
 
+/* Display pref: UI font (overrides body + .font-sans; math & mono keep their own fonts). */
+html[data-font='assistant'] body,
+html[data-font='assistant'] .font-sans {
+  font-family: 'Assistant', 'Heebo', system-ui, sans-serif;
+}
+html[data-font='rubik'] body,
+html[data-font='rubik'] .font-sans {
+  font-family: 'Rubik', 'Heebo', system-ui, sans-serif;
+}
+html[data-font='serif'] body,
+html[data-font='serif'] .font-sans {
+  font-family: 'Frank Ruhl Libre', 'David Libre', Georgia, serif;
+}
+
 /* Accessibility pref: reduce motion — kill transitions/animations app-wide. */
 html.reduce-motion *,
 html.reduce-motion *::before,
@@ -88,14 +102,22 @@ html.reduce-motion *::after {
   animation-iteration-count: 1 !important;
 }
 
-/* Display pref: compact density — tighten the most common gaps & paddings. */
-html[data-density='compact'] .gap-5 { gap: 0.85rem; }
-html[data-density='compact'] .gap-4 { gap: 0.7rem; }
-html[data-density='compact'] .gap-3 { gap: 0.55rem; }
-html[data-density='compact'] .p-6 { padding: 1rem; }
-html[data-density='compact'] .p-5 { padding: 0.85rem; }
-html[data-density='compact'] .p-4 { padding: 0.7rem; }
-html[data-density='compact'] .py-12 { padding-top: 1.75rem; padding-bottom: 1.75rem; }
+/* Display pref: compact density — tighten the most common gaps & paddings app-wide. */
+html[data-density='compact'] .gap-8 { gap: 1rem; }
+html[data-density='compact'] .gap-6 { gap: 0.8rem; }
+html[data-density='compact'] .gap-5 { gap: 0.7rem; }
+html[data-density='compact'] .gap-4 { gap: 0.55rem; }
+html[data-density='compact'] .gap-3 { gap: 0.45rem; }
+html[data-density='compact'] .p-8 { padding: 1.1rem; }
+html[data-density='compact'] .p-6 { padding: 0.9rem; }
+html[data-density='compact'] .p-5 { padding: 0.8rem; }
+html[data-density='compact'] .p-4 { padding: 0.65rem; }
+html[data-density='compact'] .py-12 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+html[data-density='compact'] .py-10 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+html[data-density='compact'] .py-6 { padding-top: 0.7rem; padding-bottom: 0.7rem; }
+html[data-density='compact'] .space-y-2 > * + * { margin-top: 0.3rem; }
+html[data-density='compact'] .leading-relaxed { line-height: 1.5; }
+html[data-density='compact'] main { font-size: 0.96em; }
 
 /* PDF export: print only the summary content, on a clean white page. */
 @media print {
@@ -113,6 +135,19 @@ html[data-density='compact'] .py-12 { padding-top: 1.75rem; padding-bottom: 1.75
   /* interactive controls become a static snapshot — hide the sliders themselves */
   input[type='range'] {
     display: none !important;
+  }
+  /* don't split a card / diagram / table-row across pages */
+  .rounded-3xl,
+  .rounded-2xl,
+  .rounded-xl,
+  svg,
+  table,
+  thead,
+  tr,
+  details,
+  li,
+  figure {
+    break-inside: avoid;
   }
   @page {
     margin: 14mm;

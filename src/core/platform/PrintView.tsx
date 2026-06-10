@@ -59,7 +59,8 @@ export default function PrintView() {
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', ignoreElements: (n: Element) => n.classList?.contains('no-print') },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-          pagebreak: { mode: ['css', 'legacy'] },
+          // avoid-all: never split inside an element (cards/diagrams/rows) across pages
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
         })
         .from(contentRef.current)
         .save()

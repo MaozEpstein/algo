@@ -69,9 +69,7 @@ export default function SaveScope({ courseId, lectureId, tab, children }: { cour
         return (
           <button
             key={`${i}-${refId}`}
-            onClick={() =>
-              saved.toggle({ id, courseId, lectureId, kind: 'note', refId, label: b.text.length > 90 ? b.text.slice(0, 90) + '…' : b.text, note: b.text, tab, addedAt: Date.now() })
-            }
+            onClick={() => saved.toggle({ id, courseId, lectureId, kind: 'note', refId, label: b.text, note: b.text, tab, addedAt: Date.now() })}
             title={isSaved ? 'נשמר ללמידה — לחצו להסרה' : 'הוסף בולט זה ללמידה'}
             aria-label="הוסף ללמידה"
             style={{ top: b.top, insetInlineEnd: 0 }}

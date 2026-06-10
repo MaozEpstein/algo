@@ -49,6 +49,7 @@ export default function App() {
     const root = document.documentElement
     root.style.fontSize = `${TEXT_SCALE_PCT[prefs.textScale]}%`
     root.setAttribute('data-density', prefs.density)
+    root.setAttribute('data-font', prefs.font)
     root.classList.toggle('reduce-motion', prefs.reduceMotion)
   }, [prefs])
 

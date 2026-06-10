@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import { OPEN_SETTINGS } from './types'
 import { FEATURES, settingsStore, isFeatureEnabled, setFeature } from './features'
-import { usePrefs, setPref, TEXT_SCALE_HE, DENSITY_HE, type TextScale, type Density } from './prefs'
+import { usePrefs, setPref, TEXT_SCALE_HE, DENSITY_HE, FONT_HE, type TextScale, type Density, type FontPref } from './prefs'
 import { printPath } from './links'
 
 function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
@@ -73,6 +73,7 @@ export default function SettingsModal() {
             <div className="min-h-0 flex-1 overflow-auto p-5">
               <Heading>תצוגה ונגישות</Heading>
               <ul className="mb-4 flex flex-col gap-2.5">
+                <Row title="גופן" control={<Segmented<FontPref> value={prefs.font} onChange={(v) => setPref('font', v)} options={(['default', 'assistant', 'rubik', 'serif'] as FontPref[]).map((v) => ({ v, label: FONT_HE[v] }))} />} />
                 <Row title="גודל טקסט" control={<Segmented<TextScale> value={prefs.textScale} onChange={(v) => setPref('textScale', v)} options={(['sm', 'base', 'lg', 'xl'] as TextScale[]).map((v) => ({ v, label: TEXT_SCALE_HE[v] }))} />} />
                 <Row title="צפיפות" control={<Segmented<Density> value={prefs.density} onChange={(v) => setPref('density', v)} options={(['comfortable', 'compact'] as Density[]).map((v) => ({ v, label: DENSITY_HE[v] }))} />} />
                 <Row title="הפחתת אנימציה" desc="ביטול מעברים ואנימציות בכל המערכת." control={<Toggle on={prefs.reduceMotion} label="הפחתת אנימציה" onClick={() => setPref('reduceMotion', !prefs.reduceMotion)} />} />

@@ -24,14 +24,18 @@ export default function SavedListPage() {
       <button onClick={() => saved.remove(it.id)} title="הסר" aria-label="הסר" className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-slate-400 transition hover:bg-rose-50 hover:text-rose-500">✕</button>
       <Link to={lecturePath(courseId, it.lectureId, it.tab ? { tab: it.tab } : undefined)} className="group flex min-w-0 flex-1 items-start justify-between gap-3">
         <span className="flex min-w-0 flex-col gap-1">
-          <span className="flex flex-wrap items-baseline gap-x-2">
-            {it.kind === 'symbol' && it.tex ? (
-              <span className="font-mono text-base text-slate-900" dir="ltr"><Tex>{it.tex}</Tex></span>
-            ) : null}
-            <span className="text-sm font-semibold text-slate-800"><RichText>{it.label}</RichText></span>
-          </span>
-          {it.kind === 'formula' && it.tex && <span className="overflow-x-auto" dir="ltr"><Tex>{it.tex}</Tex></span>}
-          {it.kind === 'concept' && it.note && <span className="text-xs leading-relaxed text-slate-500"><RichText>{it.note}</RichText></span>}
+          {it.kind === 'note' ? (
+            <span className="text-sm leading-relaxed text-slate-700"><RichText>{it.note ?? it.label}</RichText></span>
+          ) : (
+            <>
+              <span className="flex flex-wrap items-baseline gap-x-2">
+                {it.kind === 'symbol' && it.tex ? <span className="font-mono text-base text-slate-900" dir="ltr"><Tex>{it.tex}</Tex></span> : null}
+                <span className="text-sm font-semibold text-slate-800"><RichText>{it.label}</RichText></span>
+              </span>
+              {it.kind === 'formula' && it.tex && <span className="overflow-x-auto" dir="ltr"><Tex>{it.tex}</Tex></span>}
+              {it.kind === 'concept' && it.note && <span className="text-xs leading-relaxed text-slate-500"><RichText>{it.note}</RichText></span>}
+            </>
+          )}
         </span>
         <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-500 transition group-hover:bg-sky-100 group-hover:text-sky-700">{titleOf(it.lectureId)}</span>
       </Link>
