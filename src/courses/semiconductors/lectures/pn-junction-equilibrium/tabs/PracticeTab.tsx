@@ -13,7 +13,6 @@ const ACCENT = {
   violet: 'bg-violet-50 text-violet-700 ring-violet-100',
   rose: 'bg-rose-50 text-rose-700 ring-rose-100',
 }
-const chipCls = 'rounded-full border border-slate-200 bg-white px-3 py-1 font-mono text-sm text-slate-700'
 const HEB = ['א', 'ב', 'ג', 'ד', 'ה', 'ו']
 
 type Part =

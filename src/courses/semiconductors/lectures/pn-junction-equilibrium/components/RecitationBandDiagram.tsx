@@ -13,7 +13,6 @@ const W = 600
 const H = 320
 const X0 = 70 // band start (left)
 const X1 = 520 // band end (right)
-const XJ = 300 // junction
 
 /** Smooth step path for a band that is flat at yL (p-side) then yR (n-side). */
 function band(yL: number, yR: number): string {
@@ -94,7 +93,6 @@ const DARK = '#334155'
 
 export default function RecitationBandDiagram({ mode }: { mode: Mode }) {
   const c = CFG[mode]
-  const fermiLabel = c.single ? 'F' : 'Fp'
 
   return (
     <div className="ltr w-full" dir="ltr">
