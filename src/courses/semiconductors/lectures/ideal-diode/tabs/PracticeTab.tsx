@@ -3,25 +3,6 @@ import { usePrintMode } from '@/core/platform/printMode'
 import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
-import IVCurve from '../components/IVCurve'
-import MinorityInjectionProfile from '../../pn-junction-bias/components/MinorityInjectionProfile'
-import {
-  MATERIALS,
-  diffusionCoeff,
-  diffusionLength,
-  diodeCurrents,
-  fmtCurrentDensity,
-  niAt,
-  thermalVoltage,
-} from '../../../lib/junction'
-
-/** A number as a KaTeX-ready "m×10ⁿ" string, for the substitution lines. */
-function sciTex(n: number, digits = 1): string {
-  if (n === 0) return '0'
-  const exp = Math.floor(Math.log10(Math.abs(n)))
-  const mant = n / 10 ** exp
-  return `${mant.toFixed(digits)}\\times10^{${exp}}`
-}
 
 const ACCENT = {
   sky: 'bg-sky-50 text-sky-700 ring-sky-100',
@@ -30,17 +11,26 @@ const ACCENT = {
   violet: 'bg-violet-50 text-violet-700 ring-violet-100',
   rose: 'bg-rose-50 text-rose-700 ring-rose-100',
 }
+const chipCls = 'rounded-full border border-slate-200 bg-white px-3 py-1 font-mono text-sm text-slate-700'
 const HEB = ['א', 'ב', 'ג', 'ד', 'ה', 'ו']
 
 type Part =
-  | { kind: 'numeric'; prompt: string; tex: string; sub: string; res: ReactNode; accent: string }
-  | { kind: 'concept'; prompt: string; answer: ReactNode }
+  | { kind: 'numeric'; prompt: string; tex: string; sub: string; res: ReactNode; accent: string; note?: ReactNode; sketch?: () => ReactNode }
+  | { kind: 'concept'; prompt: string; answer: ReactNode; sketch?: () => ReactNode }
   | { kind: 'sketch'; prompt: string; render: () => ReactNode }
 
-function QuestionBlock({ children }: { children: ReactNode }) {
+/** The "שאלה" prompt box (exam-style). `source` tags where the question came from. */
+function QuestionBlock({ source, children }: { source?: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1 text-xs font-bold text-white">שאלה</span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1 text-xs font-bold text-white">שאלה</span>
+        {source && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-200">
+            {source}
+          </span>
+        )}
+      </div>
       {children}
     </div>
   )
@@ -74,6 +64,9 @@ function PartCard({ part, index, open, onToggle }: { part: Part; index: number; 
                 <span className={labelCls}>תוצאה</span>
                 <span className={`rounded-lg px-3 py-1 font-mono text-sm font-bold ring-1 ${part.accent}`} dir="ltr">{part.res}</span>
               </div>
+              {part.note && (
+                <p className="rounded-lg bg-violet-50/70 px-3 py-2 text-sm leading-relaxed text-violet-900">💡 {part.note}</p>
+              )}
             </div>
           )}
           {part.kind === 'concept' && (
@@ -86,6 +79,12 @@ function PartCard({ part, index, open, onToggle }: { part: Part; index: number; 
             <div className="space-y-1.5">
               <span className="inline-block rounded bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">כך זה צריך להיראות ✏️</span>
               <div className="rounded-xl border border-slate-200 bg-white p-2">{part.render()}</div>
+            </div>
+          )}
+          {part.kind !== 'sketch' && part.sketch && (
+            <div className="mt-3 space-y-1.5">
+              <span className="inline-block rounded bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700">כך זה צריך להיראות ✏️</span>
+              <div className="rounded-xl border border-slate-200 bg-white p-2">{part.sketch()}</div>
             </div>
           )}
         </div>
@@ -121,10 +120,44 @@ function Parts({ parts }: { parts: Part[] }) {
   )
 }
 
-function Problem({ titleHe, children, parts }: { titleHe: string; children: ReactNode; parts: Part[] }) {
+type TFormula = { name: string; tex: string }
+
+/** Collapsible "📐 נוסחאות מהתרגול" — the toolbox of formulas this question uses,
+ *  each shown with its Hebrew name. Closed by default; auto-open when printing. */
+function FormulaList({ formulas }: { formulas: TFormula[] }) {
+  const [open, setOpen] = useState(usePrintMode())
+  return (
+    <div className="mt-4">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700 transition hover:bg-indigo-100"
+      >
+        <span aria-hidden>📐</span>
+        נוסחאות מהתרגול
+        <svg className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      {open && (
+        <div className="mt-3 overflow-hidden rounded-xl border border-indigo-100 bg-indigo-50/40">
+          {formulas.map((f, i) => (
+            <div key={i} className={`flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2.5 ${i ? 'border-t border-indigo-100' : ''}`}>
+              <span className="text-sm font-semibold text-slate-700">{f.name}</span>
+              <span className="ltr text-slate-800" dir="ltr"><Tex>{f.tex}</Tex></span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Problem({ titleHe, source, children, parts, formulas }: { titleHe: string; source?: string; children: ReactNode; parts: Part[]; formulas?: TFormula[] }) {
   return (
     <Panel title={titleHe}>
-      <QuestionBlock>{children}</QuestionBlock>
+      <QuestionBlock source={source}>{children}</QuestionBlock>
+      {formulas && <FormulaList formulas={formulas} />}
       <Parts parts={parts} />
     </Panel>
   )
@@ -146,107 +179,54 @@ function QA({ q, children }: { q: string; children: ReactNode }) {
 }
 
 /**
- * Lecture 2א — practice: compute J_S and the forward current, reason about
- * reverse saturation, and find the electron/hole split — all numbers live from
- * diodeCurrents() so they stay consistent with the sandbox. Plus quick self-checks.
+ * Lecture 2א — practice. The worked example is the real recitation problem
+ * (תרגול 1, שאלה 2 — which wasn't solved in the session): numbers reproduced
+ * faithfully from the course PDF. Plus quick knowledge self-checks.
  */
 export default function PracticeTab() {
-  const Si = MATERIALS.Si
-  const Na = 1e16
-  const Nd = 1e17
-  const T = 300
-  const VT = thermalVoltage(T)
-  const vtStr = VT.toFixed(4)
-  const ni = niAt(Si, T)
-  const Dn = diffusionCoeff(Si.mun, T)
-  const Ln = diffusionLength(Dn, Si.taun)
-  const c = diodeCurrents(Na, Nd, Si, 0.6, T)
-  const Js = c.Js
-  const Jf = c.J
-  const cRev = diodeCurrents(Na, Nd, Si, -0.5, T)
+  // נוסחאות מהתרגול — ארגז הכלים של שאלה 2
+  const q2Formulas: TFormula[] = [
+    { name: 'חוק המסות (מיעוט בש"מ)', tex: 'n_{p0} = n_i^2/N_a' },
+    { name: 'יחס איינשטיין', tex: 'D = (kT/q)\\,\\mu' },
+    { name: 'אורך דיפוזיה', tex: 'L_n = \\sqrt{D_n\\,\\tau_{n0}}' },
+    { name: 'זרם אלקטרונים (דיודה ארוכה)', tex: 'J_n(-x_p) = \\dfrac{eD_n n_{p0}}{L_n}\\left(e^{eV_a/kT}-1\\right)' },
+    { name: 'חילוץ האילוח', tex: 'N_a \\approx \\dfrac{eD_n n_i^2}{J_n L_n}\\,e^{eV_a/kT}' },
+  ]
 
-  // problem 1 — J_S and forward current
-  const p1: Part[] = [
-    {
-      kind: 'numeric',
-      prompt: 'חשבו את זרם הרוויה $J_S$.',
-      tex: 'J_S=qn_i^2\\!\\left(\\tfrac{D_p}{L_pN_D}+\\tfrac{D_n}{L_nN_A}\\right)',
-      sub: `n_i=${sciTex(ni)},\\; D_n\\approx${Dn.toFixed(0)},\\; L_n\\approx${sciTex(Ln)}\\,\\mathrm{cm}`,
-      res: fmtCurrentDensity(Js),
-      accent: ACCENT.rose,
-    },
-    {
-      kind: 'numeric',
-      prompt: 'חשבו את הזרם $J$ בממתח קדמי $V_A=+0.6\\,\\mathrm{V}$.',
-      tex: 'J=J_S\\left(e^{V_A/V_T}-1\\right)',
-      sub: `= ${sciTex(Js)}\\left(e^{0.6/${vtStr}}-1\\right)`,
-      res: fmtCurrentDensity(Jf),
-      accent: ACCENT.violet,
-    },
+  // תרגול 1 · שאלה 2 — סעיפים א–ב (מספרים נאמנים ל-PDF המקורי)
+  const q2: Part[] = [
     {
       kind: 'concept',
-      prompt: 'איזו תרומת הזרקה שולטת — חורים או אלקטרונים? נמקו.',
+      prompt: 'ציינו את ההנחות עבור קשר זרם-מתח אידיאלי.',
       answer: (
         <>
-          הזרקת ה<b>אלקטרונים</b> אל צד p, כי <Tex>{'N_A=10^{16}<N_D=10^{17}'}</Tex> — והתרומה{' '}
-          <Tex>{'\\propto 1/N'}</Tex>, כך שהצד <b>המסומם-פחות</b> נותן את הזרם הגדול.
+          <ul className="list-disc space-y-1 ps-5">
+            <li>קירוב בולצמן (מל"מ <b>לא מנוון</b>).</li>
+            <li>המל"מ <b>ניטרלי</b> מחוץ לשכבת המחסור.</li>
+            <li><b>אילוח אחיד</b> לאורך כל אחד מצדדי הצומת.</li>
+            <li><b>הזרקה חלשה</b> ויינון מלא (ריכוז נושאי הרוב כמעט אינו משתנה).</li>
+            <li>זרם האלקטרונים והחורים בנפרד <b>רציף וקבוע</b> בתוך שכבת המחסור.</li>
+            <li>הזרם הכולל בצומת <b>קבוע</b>.</li>
+          </ul>
         </>
       ),
     },
     {
-      kind: 'sketch',
-      prompt: 'שרטטו את אופיין ה-I–V (לינארי) של הצומת.',
-      render: () => <IVCurve Na={Na} Nd={Nd} mat={Si} Va={0.6} mode="linear" />,
-    },
-  ]
-
-  // problem 2 — reverse saturation
-  const p2: Part[] = [
-    {
       kind: 'numeric',
-      prompt: 'חשבו את הזרם בממתח אחורי $V_A=-0.5\\,\\mathrm{V}$.',
-      tex: 'J=J_S\\left(e^{V_A/V_T}-1\\right)',
-      sub: `= ${sciTex(Js)}\\left(e^{-0.5/${vtStr}}-1\\right)`,
-      res: fmtCurrentDensity(cRev.J),
-      accent: ACCENT.sky,
-    },
-    {
-      kind: 'concept',
-      prompt: 'מדוע הזרם האחורי "רווי" — כמעט אינו תלוי במתח?',
-      answer: (
+      prompt: 'מה צריך להיות האילוח בכל צד כדי לקבל $J_n=20\\,A/cm^2$ ו-$J_p=5\\,A/cm^2$?',
+      tex: 'N_a\\approx\\dfrac{eD_n n_i^{2}}{J_n L_n}\\,e^{eV_a/kT}\\;,\\quad L_n=\\sqrt{D_n\\tau}',
+      sub: '=\\dfrac{1.6\\times10^{-19}\\cdot25\\cdot(1.5\\times10^{10})^{2}}{20\\cdot\\sqrt{25\\cdot5\\times10^{-7}}}\\,e^{0.65/0.026}',
+      res: (
         <>
-          כבר ב-<Tex>{'|V_A|\\gtrsim 4V_T'}</Tex> מתקיים <Tex>{'e^{V_A/V_T}\\approx 0'}</Tex>, ולכן{' '}
-          <Tex>{'J\\to -J_S'}</Tex> — קבוע. הזרם נקבע מקצב <b>ההזרקה ההפוכה</b> (גנרציה תרמית) ולא מהמתח.
+          N<sub>a</sub>≈8×10¹⁴ · N<sub>d</sub>≈2×10¹⁵&nbsp;cm⁻³
         </>
       ),
-    },
-    {
-      kind: 'sketch',
-      prompt: 'שרטטו את פרופיל המיעוט בצד n תחת הממתח האחורי.',
-      render: () => <MinorityInjectionProfile Va={-0.5} Na={Na} Nd={Nd} mat={Si} />,
-    },
-  ]
-
-  // problem 3 — electron/hole split ratio
-  const Dp = diffusionCoeff(Si.mup, T)
-  const Lp = diffusionLength(Dp, Si.taup)
-  const ratio = c.JsN / c.JsP
-  const p3: Part[] = [
-    {
-      kind: 'numeric',
-      prompt: 'חשבו את היחס $J_{S,n}/J_{S,p}$.',
-      tex: '\\dfrac{J_{S,n}}{J_{S,p}}=\\dfrac{D_n/(L_nN_A)}{D_p/(L_pN_D)}',
-      sub: `= \\dfrac{${Dn.toFixed(0)}/(${sciTex(Ln)}\\cdot10^{16})}{${Dp.toFixed(0)}/(${sciTex(Lp)}\\cdot10^{17})}`,
-      res: <>×{ratio < 100 ? ratio.toFixed(1) : ratio.toExponential(1)}</>,
       accent: ACCENT.amber,
-    },
-    {
-      kind: 'concept',
-      prompt: 'מה צריך לשנות כדי שהזרקת ה*חורים* תשלוט במקום זאת?',
-      answer: (
+      note: (
         <>
-          להפוך את יחס הסימום: לעשות את צד <b>n</b> מסומם-פחות (<Tex>{'N_D<N_A'}</Tex>). אז{' '}
-          <Tex>{'J_{S,p}\\propto 1/N_D'}</Tex> גובר.
+          מתחילים מחוק המסות <Tex>{'n_{p0}=n_i^2/N_a'}</Tex> ומזרם הדיודה הארוכה{' '}
+          <Tex>{'J_n=\\tfrac{eD_n n_{p0}}{L_n}(e^{eV_a/kT}-1)'}</Tex>, ומחלצים את <Tex>{'N_a'}</Tex>; באותו אופן{' '}
+          <Tex>{'N_d'}</Tex> מזרם החורים. הצד שאמור לתת זרם <b>גדול יותר</b> (אלקטרונים) צריך אילוח <b>נמוך יותר</b>.
         </>
       ),
     },
@@ -256,29 +236,20 @@ export default function PracticeTab() {
     <div className="flex flex-col gap-5">
       <Panel title="איך לעבוד עם הלשונית">
         <p className="leading-relaxed text-slate-600">
-          כל תרגיל בנוי מ<b>סעיפים</b> (א, ב, ג…). נסו לפתור כל סעיף בעצמכם — כולל את סעיפי ה<b>שרטוט</b> —
-          ורק אז «פתרון» להשוואה. המספרים מחושבים מהפיזיקה, אז אפשר לאמת אותם בארגז החול.
+          להלן <b>השאלה מתוך תרגול 1</b> של הקורס (שאלה 2 — שלא נפתרה בתרגול עצמו), סעיף-סעיף. נסו לפתור
+          כל סעיף בעצמכם ורק אז «פתרון» להשוואה. אחר-כך ענו על השאלות המהירות <b>לפני</b> חשיפת התשובה.
         </p>
       </Panel>
 
-      <Problem titleHe="תרגיל 1 — זרם הרוויה והזרם הקדמי" parts={p1}>
+      <Problem titleHe="תרגיל — אילוח מצפיפויות זרם" source="מתוך תרגול 1 · שאלה 2 (לא נפתרה בתרגול)" parts={q2} formulas={q2Formulas}>
         <p className="mt-2 leading-relaxed text-slate-700">
-          צומת <b>סיליקון</b> ב-<span dir="ltr"><Tex>{'300\\,\\mathrm{K}'}</Tex></span> עם{' '}
-          <span dir="ltr"><Tex>{'N_A=10^{16}'}</Tex></span>,{' '}
-          <span dir="ltr"><Tex>{'N_D=10^{17}\\,\\mathrm{cm^{-3}}'}</Tex></span>.
+          נתונה דיודת <b>PN מסיליקון</b> בטמפרטורת החדר, במתח קדמי <span dir="ltr"><Tex>{'V_a=0.65\\,\\mathrm{V}'}</Tex></span>:
         </p>
-      </Problem>
-
-      <Problem titleHe="תרגיל 2 — הזרם האחורי הרווי" parts={p2}>
-        <p className="mt-2 leading-relaxed text-slate-700">
-          אותו צומת, הפעם תחת ממתח אחורי <span dir="ltr"><Tex>{'V_A=-0.5\\,\\mathrm{V}'}</Tex></span>.
-        </p>
-      </Problem>
-
-      <Problem titleHe="תרגיל 3 — פיצול אלקטרונים/חורים" parts={p3}>
-        <p className="mt-2 leading-relaxed text-slate-700">
-          לאותו צומת — מהו היחס בין שתי תרומות ההזרקה לזרם הרוויה?
-        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <span className={chipCls} dir="ltr"><Tex>{'D_n = 25\\,\\mathrm{cm^2/s}'}</Tex></span>
+          <span className={chipCls} dir="ltr"><Tex>{'D_p = 10\\,\\mathrm{cm^2/s}'}</Tex></span>
+          <span className={chipCls} dir="ltr"><Tex>{'\\tau_{n0}=\\tau_{p0}=5\\times10^{-7}\\,\\mathrm{s}'}</Tex></span>
+        </div>
       </Problem>
 
       <Panel title="שאלות מהירות">

@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom'
 import { usePrintMode } from '@/core/platform/printMode'
 import ExplainerPrint from '@/core/platform/ExplainerPrint'
 import IntroTab from './tabs/IntroTab'
+import SrhModelTab from './tabs/SrhModelTab'
 import RecombinationTab from './tabs/RecombinationTab'
 import HighInjectionTab from './tabs/HighInjectionTab'
 import SeriesResistanceTab from './tabs/SeriesResistanceTab'
@@ -10,10 +11,11 @@ import FullPictureTab from './tabs/FullPictureTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'intro' | 'recombination' | 'highInjection' | 'seriesR' | 'switching' | 'full' | 'practice' | 'summary'
+type TabId = 'intro' | 'srh' | 'recombination' | 'highInjection' | 'seriesR' | 'switching' | 'full' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'intro', labelHe: 'מבוא — מהאידיאלי למציאות', icon: '📘' },
+  { id: 'srh', labelHe: 'מודל SRH', icon: '🪤' },
   { id: 'recombination', labelHe: 'זרם רקומבינציה', icon: '♻️' },
   { id: 'highInjection', labelHe: 'הזרקה חזקה', icon: '🌊' },
   { id: 'seriesR', labelHe: 'התנגדות טורית', icon: '🧱' },
@@ -25,6 +27,7 @@ const TABS: { id: TabId; labelHe: string; icon: string }[] = [
 
 const PANELS: Record<TabId, React.FC> = {
   intro: IntroTab,
+  srh: SrhModelTab,
   recombination: RecombinationTab,
   highInjection: HighInjectionTab,
   seriesR: SeriesResistanceTab,
