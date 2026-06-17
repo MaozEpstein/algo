@@ -6,12 +6,10 @@ import CompareTab from './tabs/CompareTab'
 import BandsTab from './tabs/BandsTab'
 import RegimesTab from './tabs/RegimesTab'
 import SandboxTab from './tabs/SandboxTab'
-import TheoryTab from './tabs/TheoryTab'
-import OxideChargesTab from './tabs/OxideChargesTab'
 import PracticeTab from './tabs/PracticeTab'
 import SummaryTab from './tabs/SummaryTab'
 
-type TabId = 'intro' | 'compare' | 'bands' | 'regimes' | 'sandbox' | 'theory' | 'oxide' | 'practice' | 'summary'
+type TabId = 'intro' | 'compare' | 'bands' | 'regimes' | 'sandbox' | 'practice' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'intro', labelHe: 'מבוא ומבנה', icon: '📘' },
@@ -19,8 +17,6 @@ const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'bands', labelHe: 'דיאגרמת-פסים ו-flat-band', icon: '📊' },
   { id: 'regimes', labelHe: 'שלושת המשטרים', icon: '🔀' },
   { id: 'sandbox', labelHe: 'ארגז-חול', icon: '🎛️' },
-  { id: 'theory', labelHe: 'תיאוריה', icon: '🧮' },
-  { id: 'oxide', labelHe: 'מטעני-תחמוצת', icon: '🧲' },
   { id: 'practice', labelHe: 'תרגול', icon: '✏️' },
   { id: 'summary', labelHe: 'סיכום', icon: '📋' },
 ]
@@ -31,8 +27,6 @@ const PANELS: Record<TabId, React.FC> = {
   bands: BandsTab,
   regimes: RegimesTab,
   sandbox: SandboxTab,
-  theory: TheoryTab,
-  oxide: OxideChargesTab,
   practice: PracticeTab,
   summary: SummaryTab,
 }

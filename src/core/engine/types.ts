@@ -279,6 +279,10 @@ export interface LectureModule {
   number: number
   /** Display label for the lecture number, e.g. '3 · חלק ב׳'. Falls back to String(number). */
   numberLabelHe?: string
+  /** Lesson-level name (shared by all parts of one lesson), e.g. 'קבל MOS' — used as the
+   *  group header in the course-home list view. Set only on multi-part lessons; falls back
+   *  to `titleHe` for single-part lessons. */
+  lessonHe?: string
   titleHe: string
   subtitleEn: string
   /** Which visual representations to render in the DualView. */

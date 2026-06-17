@@ -15,6 +15,7 @@ export const recurrencesLecture: LectureModule = {
   id: 'recurrences',
   number: 3.2,
   numberLabelHe: '3 · חלק ב׳',
+  lessonHe: 'אלגוריתמים רקורסיביים ונוסחאות נסיגה',
   titleHe: 'נוסחאות נסיגה',
   subtitleEn: 'Recurrence Relations',
   views: [],

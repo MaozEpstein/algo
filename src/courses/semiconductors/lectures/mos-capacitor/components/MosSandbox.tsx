@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Tex from '@/core/components/Tex'
 import Slider from '../../../components/Slider'
+import PlayButton from '../../../components/PlayButton'
+import { useAutoSweep } from '../../../components/useAutoSweep'
 import {
   MATERIALS,
   METALS,
@@ -55,6 +57,7 @@ export default function MosSandbox() {
   const vmin = VFB - 2.5
   const vmax = VT + 2.5
   const frac = (v: number) => Math.max(0, Math.min(1, (v - vmin) / (vmax - vmin)))
+  const sweep = useAutoSweep({ min: vmin, max: vmax, value: vg, onChange: setVg })
 
   const presets: { r: Exclude<Regime, 'flat'>; v: number }[] = [
     { r: 'accumulation', v: Math.max(vmin, VFB - 1.5) },
@@ -66,7 +69,10 @@ export default function MosSandbox() {
     <div className="flex flex-col gap-4">
       {/* quick-jump state buttons */}
       <div>
-        <p className="mb-1.5 text-sm font-semibold text-slate-500">קפיצה מהירה למצב:</p>
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-slate-500">קפיצה מהירה למצב:</p>
+          <PlayButton playing={sweep.playing} onClick={sweep.toggle} label="הרצת מתח-שער" />
+        </div>
         <div className="grid grid-cols-3 gap-2.5">
           {presets.map((p) => {
             const a = REGIME_ACCENT[p.r]
@@ -75,7 +81,7 @@ export default function MosSandbox() {
               <button
                 key={p.r}
                 type="button"
-                onClick={() => setVg(Number(p.v.toFixed(2)))}
+                onClick={() => sweep.setManual(Number(p.v.toFixed(2)))}
                 className={`group flex items-center justify-center gap-1.5 rounded-xl border-2 px-3 py-2.5 text-center font-bold shadow-sm transition active:translate-y-0 active:shadow-sm hover:-translate-y-0.5 hover:shadow-md ${a.border} ${active ? `${a.bg} ${a.text} ring-2 ring-offset-1 ring-slate-300` : 'bg-white text-slate-700 hover:bg-slate-50'}`}
               >
                 <span aria-hidden className="text-base leading-none opacity-70 transition group-hover:opacity-100">⤵</span>
@@ -91,7 +97,7 @@ export default function MosSandbox() {
 
       {/* sliders */}
       <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-3">
-        <Slider label={<>מתח שער · <Tex>{'V_G'}</Tex></>} value={vg} min={Number(vmin.toFixed(2))} max={Number(vmax.toFixed(2))} step={0.05} onChange={setVg} display={`${vg.toFixed(2)} V`} />
+        <Slider label={<>מתח שער · <Tex>{'V_G'}</Tex></>} value={vg} min={Number(vmin.toFixed(2))} max={Number(vmax.toFixed(2))} step={0.05} onChange={sweep.setManual} display={`${vg.toFixed(2)} V`} />
         <Slider label={<>סימום מצע · <Tex>{'N_A'}</Tex></>} value={logNa} min={15} max={18} step={0.1} onChange={setLogNa} display={`10^${logNa.toFixed(1)} cm⁻³`} />
         <Slider label={<>עובי אוקסיד · <Tex>{'t_{ox}'}</Tex></>} value={toxNm} min={3} max={60} step={1} onChange={setToxNm} display={`${toxNm} nm`} />
       </div>
@@ -114,6 +120,12 @@ export default function MosSandbox() {
             <text x={20 + frac(VFB) * 560} y={11} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 9.5, fontWeight: 700 }}>V<tspan dy={2} style={{ fontSize: 7 }}>FB</tspan></text>
             <line x1={20 + frac(VT) * 560} y1={14} x2={20 + frac(VT) * 560} y2={40} stroke="#64748b" strokeWidth={1.25} />
             <text x={20 + frac(VT) * 560} y={11} textAnchor="middle" className="fill-slate-500" style={{ fontSize: 9.5, fontWeight: 700 }}>V<tspan dy={2} style={{ fontSize: 7 }}>T</tspan></text>
+            {/* comet trail (auto-sweep) */}
+            {sweep.playing && sweep.trail.map((tv, i) => (
+              i === 0 ? null : (
+                <circle key={i} cx={20 + frac(tv) * 560} cy={28} r={Math.max(1.5, 6 - i * 0.35)} fill="#1e293b" opacity={0.35 * (1 - i / sweep.trail.length)} />
+              )
+            ))}
             {/* current V_G marker */}
             <circle cx={20 + frac(vg) * 560} cy={28} r={7} fill="#1e293b" stroke="#fff" strokeWidth={2} />
           </svg>

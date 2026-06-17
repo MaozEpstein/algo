@@ -14,6 +14,7 @@ export const schottkyDiodeLecture: LectureModule = {
   id: 'schottky-diode',
   number: 2.3,
   numberLabelHe: '2 · חלק ג׳',
+  lessonHe: 'דיודת PN',
   titleHe: 'דיודת שוטקי',
   subtitleEn: 'The Schottky Diode',
   views: [],

@@ -14,6 +14,7 @@ export const pnJunctionEqLecture: LectureModule = {
   id: 'pn-junction-equilibrium',
   number: 1.1,
   numberLabelHe: '1 · חלק א׳',
+  lessonHe: 'צומת PN',
   titleHe: 'צומת PN — בשיווי משקל',
   subtitleEn: 'PN Junction at Equilibrium',
   views: [],

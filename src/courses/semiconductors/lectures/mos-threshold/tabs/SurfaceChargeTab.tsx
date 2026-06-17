@@ -4,8 +4,8 @@ import ProofModal from '../components/ProofModal'
 import PsiAxisMap from '../components/PsiAxisMap'
 import SurfaceChargeChart from '../components/SurfaceChargeChart'
 
-/** Lesson 6 — the rigorous MOS-capacitor theory (assumptions → definitions → ψ_s states → Q_s → V_T). */
-export default function TheoryTab() {
+/** Lesson 6ב — the rigorous surface charge: assumptions → definitions → ψ_s states → exact Q_s(ψ_s). */
+export default function SurfaceChargeTab() {
   return (
     <div className="flex flex-col gap-5">
       <Panel title="הנחות-היסוד של המודל">
@@ -70,26 +70,11 @@ export default function TheoryTab() {
           </ProofModal>
         </div>
         <SurfaceChargeChart />
-      </Panel>
-
-      <Panel title={<>מתח-הסף <Tex>{'V_T'}</Tex></>}>
-        <p className="leading-relaxed text-slate-700">
-          מתח-השער הדרוש לתחילת <b>היפוך חזק</b> (<Tex>{'\\psi_s=2\\phi_F'}</Tex>):
-        </p>
-        <div className="my-3 rounded-xl border-2 border-emerald-300 bg-emerald-50/60 p-4 text-center">
-          <Tex block>{'V_T = V_{FB} + 2\\phi_F + \\dfrac{|Q_{D,\\max}|}{C_{ox}}'}</Tex>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3 text-center text-sm">
+          <div className="rounded-xl border-s-4 border-rose-300 bg-rose-50/50 p-2"><b className="text-rose-700">הצטברות</b><br /><Tex>{'\\propto e^{q|\\psi_s|/2kT}'}</Tex></div>
+          <div className="rounded-xl border-s-4 border-amber-300 bg-amber-50/50 p-2"><b className="text-amber-700">מחסור</b><br /><Tex>{'\\sqrt{2q\\varepsilon_sN_A\\psi_s}=Q_{dep}'}</Tex></div>
+          <div className="rounded-xl border-s-4 border-emerald-300 bg-emerald-50/50 p-2"><b className="text-emerald-700">היפוך</b><br /><Tex>{'\\propto e^{q\\psi_s/2kT}'}</Tex></div>
         </div>
-        <ProofModal title="גזירת מתח-הסף" label="הצג הוכחה">
-          <p>מאיזון המתחים והמטענים, מתח-השער הכללי הוא:</p>
-          <Tex block>{'V_G = V_{FB} - \\dfrac{Q_s}{C_{ox}} + \\psi_s'}</Tex>
-          <p className="mt-2">בסף ההיפוך החזק <Tex>{'\\psi_s=2\\phi_F'}</Tex>, ומטען-המל"מ הוא מטען-המחסור המרבי:</p>
-          <Tex block>{'Q_{D,\\max}=-\\,q N_A W_{\\max},\\quad W_{\\max}=\\sqrt{\\dfrac{2\\varepsilon_s\\,(2\\phi_F)}{qN_A}}'}</Tex>
-          <p className="mt-2">הצבה (עם <Tex>{'Q_s=Q_{D,\\max}<0'}</Tex>) נותנת:</p>
-          <Tex block>{'V_T = V_{FB} + 2\\phi_F + \\dfrac{|Q_{D,\\max}|}{C_{ox}}'}</Tex>
-        </ProofModal>
-        <p className="mt-3 text-sm leading-relaxed text-slate-500">
-          (כאן <Tex>{'V_{FB}'}</Tex> הוא מתח ה-flat-band; מעבר ל-<Tex>{'V_T'}</Tex> נוצר ערוץ-ההיפוך — בדיוק תעלת ה-MOSFET.)
-        </p>
       </Panel>
     </div>
   )

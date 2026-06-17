@@ -13,6 +13,7 @@ export const ohmicContactLecture: LectureModule = {
   id: 'ohmic-contact',
   number: 2.4,
   numberLabelHe: '2 · חלק ד׳',
+  lessonHe: 'דיודת PN',
   titleHe: 'מגע אוהמי',
   subtitleEn: 'The Ohmic Contact',
   views: [],

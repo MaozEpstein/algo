@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { COURSES } from './courses'
 import { coursePath } from './links'
 import SettingsButton from './SettingsButton'
+import { useContentWidthClass } from './prefs'
 
 /** The site's eye mark (matches the favicon) — the brand logo. */
 function EyeMark({ className }: { className?: string }) {
@@ -23,8 +24,9 @@ function EyeMark({ className }: { className?: string }) {
 
 /** The platform landing page: a menu of all courses (one site, one design). */
 export default function CoursePicker() {
+  const widthClass = useContentWidthClass()
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6">
+    <div className={`mx-auto flex w-full ${widthClass} flex-col gap-10 px-4 py-12 sm:px-6`}>
       <header className="text-center">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-sky-100 px-4 py-1.5 text-sm font-semibold text-sky-700">
           🎬 לראות, לא לקרוא
@@ -41,7 +43,7 @@ export default function CoursePicker() {
         </div>
       </header>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {COURSES.map((c) => (
           <Link
             key={c.id}

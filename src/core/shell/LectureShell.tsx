@@ -5,6 +5,7 @@ import { useCourse } from '@/core/platform/CourseProvider'
 import { coursePath, lecturePath, printPath } from '@/core/platform/links'
 import { useFeature } from '@/core/platform/features'
 import { useProgress } from '@/core/platform/progress'
+import { useContentWidthClass } from '@/core/platform/prefs'
 import ModeSelector from './ModeSelector'
 import LectureProgressFooter from './LectureProgressFooter'
 import SaveScope from './SaveScope'
@@ -23,6 +24,7 @@ export default function LectureShell() {
   const [sp] = useSearchParams()
   const tab = sp.get('tab') ?? undefined
   const lecture = lectureId ? course.LECTURES[lectureId] : undefined
+  const widthClass = useContentWidthClass()
 
   // Invisible auto-progress: first visit marks the lecture "in-learning" (only when the feature is on
   // and no status is set yet). No visible chrome inside the lesson — just a side effect.
@@ -41,7 +43,7 @@ export default function LectureShell() {
   const Content = lecture.summary
   if (lecture.explainer) {
     return (
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6">
+      <div className={`mx-auto flex w-full ${widthClass} flex-col gap-5 px-4 py-6 sm:px-6`}>
         <LectureHeader lecture={lecture} />
         <main>
           <HoverDictScope>

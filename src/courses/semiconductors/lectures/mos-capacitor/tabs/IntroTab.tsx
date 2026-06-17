@@ -6,6 +6,18 @@ import MosStructure from '../components/MosStructure'
 export default function IntroTab() {
   return (
     <div className="flex flex-col gap-5">
+      <Panel title="מטרת החלק — התמונה הסטטית האיכותית">
+        <div className="rounded-2xl border-s-4 border-sky-400 bg-sky-50/60 p-4 leading-relaxed text-slate-700">
+          <p>
+            זהו <b>חלק א׳</b> של שיעור קבל ה-MOS. כאן נבין <b>איכותית</b> את המבנה ואת שלושת משטרי-הפעולה
+            (הצטברות / מחסור / היפוך) — מה קורה למטענים ולפסים בכל מתח-שער. זו <b>תמונת DC</b> סטטית.
+          </p>
+          <p className="mt-2 text-sm text-slate-600">
+            בחלק ב׳ נכמת (<Tex>{'Q_s,\\,V_T'}</Tex>, מטעני-אוקסיד), ובחלק ג׳ נעבור ל-<b>AC</b> ולקיבול (<Tex>{'C\\text{-}V'}</Tex>).
+          </p>
+        </div>
+      </Panel>
+
       <Panel title="מהו קבל MOS?">
         <p className="leading-relaxed text-slate-700">
           <b>קבל MOS</b> (Metal-Oxide-Semiconductor) הוא מבנה תלת-שכבתי: <b>מתכת</b> (השער) ← <b>תחמוצת מבודדת</b>
@@ -29,7 +41,7 @@ export default function IntroTab() {
           <li><b>שלושת המשטרים</b> — לכל אחד דיאגרמת-פסים, פרופיל-מטען וסכמת-שכבות.</li>
           <li><b>ארגז-חול אינטראקטיבי</b> — גוררים <Tex>{'V_G'}</Tex> ורואים הכול משתנה.</li>
         </ul>
-        <p className="mt-2 text-sm text-slate-500">(מתח-הסף <Tex>{'V_T'}</Tex>, אופיין ה-C-V ומטעני-האוקסיד — בחלק ב׳.)</p>
+        <p className="mt-2 text-sm text-slate-500">(מתח-הסף <Tex>{'V_T'}</Tex> ומטעני-האוקסיד — בחלק ב׳; אופיין ה-C-V וה-AC — בחלק ג׳.)</p>
       </Panel>
     </div>
   )

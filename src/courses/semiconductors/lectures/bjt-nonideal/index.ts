@@ -15,6 +15,7 @@ export const bjtNonidealLecture: LectureModule = {
   id: 'bjt-nonideal',
   number: 3.3,
   numberLabelHe: '3 · חלק ג׳',
+  lessonHe: 'טרנזיסטור דו-קוטבי (BJT)',
   titleHe: 'טרנזיסטור דו-קוטבי (BJT) — אפקטים לא-אידיאליים ומודלים',
   subtitleEn: 'BJT: Non-Ideal Effects & Models',
   views: [],

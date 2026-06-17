@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
+import PlayButton from '../../../components/PlayButton'
+import { useAutoSweep } from '../../../components/useAutoSweep'
 import BiasedBandDiagram from '../components/BiasedBandDiagram'
 import Readout from '../components/Readout'
 import JunctionElectrostatics from '../../../viz/JunctionElectrostatics'
@@ -69,6 +71,7 @@ export default function SandboxTab() {
   }, [Na, Nd, mat])
   const capA = capPerArea(mat.epsR, state.d)
   const factor = Math.exp(vaEff / thermalVoltage(300))
+  const sweep = useAutoSweep({ min: -5, max: vMax, value: vaEff, onChange: (v) => setVa(Math.min(v, vMax)) })
   const activePreset = PRESETS.find((p) => Math.abs(p.va - vaEff) < 1e-9)
 
   return (
@@ -98,9 +101,9 @@ export default function SandboxTab() {
 
         {/* presets */}
         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-slate-500">
-            <span aria-hidden>🎛️</span>
-            מצבי ממתח
+          <div className="mb-2.5 flex items-center justify-between gap-2 text-sm font-semibold text-slate-500">
+            <span className="flex items-center gap-2"><span aria-hidden>🎛️</span> מצבי ממתח</span>
+            <PlayButton playing={sweep.playing} onClick={sweep.toggle} label="הרצת ממתח" />
           </div>
           <div className="flex flex-wrap gap-2">
             {PRESETS.map((p) => {
@@ -108,7 +111,7 @@ export default function SandboxTab() {
               return (
                 <button
                   key={p.labelHe}
-                  onClick={() => setVa(p.va)}
+                  onClick={() => sweep.setManual(p.va)}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 ${
                     active
                       ? 'bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-violet-500/30'
@@ -153,7 +156,7 @@ export default function SandboxTab() {
                 min={-5}
                 max={Number(vMax.toFixed(2))}
                 step={0.05}
-                onChange={(v) => setVa(Math.min(v, vMax))}
+                onChange={sweep.setManual}
                 display={fmtVolt(vaEff)}
               />
               <Slider

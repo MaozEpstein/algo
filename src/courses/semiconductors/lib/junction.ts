@@ -874,6 +874,100 @@ export function mosFlatBandShift(NssPerCm2: number, Cox: number): number {
   return (-Q * NssPerCm2) / Cox
 }
 
+// ---- MOS capacitance — lesson 6 חלק ג׳ (C-V / AC) --------------------------
+/** Depletion (semiconductor) capacitance per area C_dep = ε_s/W (F/cm²). →∞ as ψ_s→0. */
+export function mosDepletionCapacitance(psiS: number, Na: number, epsR: number): number {
+  const w = mosDepletionWidth(psiS, Na, epsR)
+  if (w <= 0) return Infinity
+  return capPerArea(epsR, w)
+}
+
+/**
+ * Small-signal semiconductor capacitance C_s = −dQ_s/dψ_s (F/cm²), a symmetric numerical
+ * derivative of the exact |Q_s|(ψ_s). Large (exponential) in accumulation and strong inversion,
+ * and ≈ε_s/W = C_dep through depletion — the term that loads C_ox in series.
+ */
+export function mosSemiconductorCap(psiS: number, Na: number, ni: number, epsR: number, T = 300): number {
+  const h = Math.max(1e-4, Math.abs(psiS) * 1e-3)
+  const qp = mosSurfaceCharge(psiS + h, Na, ni, epsR, T)
+  const qm = mosSurfaceCharge(psiS - h, Na, ni, epsR, T)
+  return Math.abs(qp - qm) / (2 * h)
+}
+
+/** Parameters shared by the C-V helpers. */
+export interface MosCvParams {
+  Na: number
+  ni: number
+  epsR: number
+  Cox: number
+  phiF: number
+  VFB: number
+  T?: number
+}
+
+/** Series combination of two per-area capacitances, 1/C = 1/C₁ + 1/C₂ (F/cm²). */
+const series = (c1: number, c2: number): number => (c1 * c2) / (c1 + c2)
+
+/**
+ * Low-frequency gate capacitance C(V_G): the minority (inversion) charge follows the AC signal,
+ * so C = C_ox in accumulation, C = series(C_ox, C_dep) through depletion (falling as W grows),
+ * and recovers to C_ox once strongly inverted. This is the textbook "LF" C-V curve.
+ */
+export function mosCapLF(VG: number, p: MosCvParams): number {
+  const { Na, epsR, Cox, phiF, VFB, T = 300 } = p
+  const VT = mosThreshold(VFB, phiF, mosDepletionCharge(2 * phiF, Na, epsR), Cox)
+  if (VG <= VFB) return Cox // accumulation
+  if (VG >= VT) {
+    // strong inversion: minority follows at LF and C recovers C_ox — but smoothly, as the
+    // inversion charge grows over a few kT/q (not a discontinuous jump from C_min).
+    const Cmin = series(Cox, mosDepletionCapacitance(2 * phiF, Na, epsR))
+    return Cox - (Cox - Cmin) * Math.exp(-(VG - VT) / (8 * thermalVoltage(T)))
+  }
+  const psiS = mosSurfacePotential(VG, VFB, Na, epsR, Cox, phiF)
+  return series(Cox, mosDepletionCapacitance(psiS, Na, epsR))
+}
+
+/**
+ * High-frequency gate capacitance C(V_G): the minority charge cannot follow a fast AC signal,
+ * so above threshold the capacitance stays pinned at C_min = series(C_ox, C_dep,max) instead of
+ * recovering to C_ox. Identical to LF below threshold.
+ */
+export function mosCapHF(VG: number, p: MosCvParams): number {
+  const { Na, epsR, Cox, phiF, VFB } = p
+  const VT = mosThreshold(VFB, phiF, mosDepletionCharge(2 * phiF, Na, epsR), Cox)
+  const Cmin = series(Cox, mosDepletionCapacitance(2 * phiF, Na, epsR))
+  if (VG <= VFB) return Cox
+  if (VG >= VT) return Cmin
+  const psiS = mosSurfacePotential(VG, VFB, Na, epsR, Cox, phiF)
+  return series(Cox, mosDepletionCapacitance(psiS, Na, epsR))
+}
+
+/**
+ * Deep-depletion gate capacitance C(V_G): a fast voltage ramp gives the inversion layer no time
+ * to form, so ψ_s keeps growing past 2φ_F, W exceeds W_max, and C keeps falling below C_min.
+ * Modelled by removing the ψ_s clamp (depletion-approximation quadratic continued past threshold).
+ */
+export function mosCapDeepDepletion(VG: number, p: MosCvParams): number {
+  const { Na, epsR, Cox } = p
+  if (VG <= p.VFB) return Cox
+  // unclamped surface potential (no pinning at 2φ_F)
+  const dv = VG - p.VFB
+  const gamma = Math.sqrt(2 * Q * epsR * EPS0 * Na) / Cox
+  const root = (-gamma + Math.sqrt(gamma * gamma + 4 * dv)) / 2
+  const psiS = root * root
+  return series(Cox, mosDepletionCapacitance(psiS, Na, epsR))
+}
+
+/** Sample a C-V curve C(V_G)/C_ox over a V_G array for a given measurement mode. */
+export function mosCVCurve(
+  vgArray: number[],
+  p: MosCvParams,
+  mode: 'LF' | 'HF' | 'DD',
+): { vg: number; c: number }[] {
+  const fn = mode === 'LF' ? mosCapLF : mode === 'HF' ? mosCapHF : mosCapDeepDepletion
+  return vgArray.map((vg) => ({ vg, c: fn(vg, p) }))
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

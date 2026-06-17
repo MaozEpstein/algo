@@ -3,6 +3,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Tex from '@/core/components/Tex'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
+import PlayButton from '../../../components/PlayButton'
+import { useAutoSweep } from '../../../components/useAutoSweep'
 import Readout from '../components/Readout'
 import ContactBandDiagram from '../components/ContactBandDiagram'
 import { MATERIALS, contactBarrier, contactKind, type CarrierType } from '../../../lib/junction'
@@ -54,7 +56,9 @@ export default function SandboxTab() {
     }
   }, [type, phiM, phiS])
 
+  const sweep = useAutoSweep({ min: -0.4, max: 0.6, value: Va, onChange: setVa })
   const applyPreset = (p: Preset) => {
+    sweep.stop()
     setType(p.type)
     setPhiM(p.phiM)
     setPhiS(p.phiS)
@@ -62,6 +66,10 @@ export default function SandboxTab() {
     setActivePreset(p.labelHe)
   }
   const clear = () => setActivePreset(null)
+  const togglePlay = () => {
+    if (!sweep.playing) clear()
+    sweep.toggle()
+  }
 
   // 2×2 matrix cell helper — which case for (row type, column sign)
   const cellKind = (t: CarrierType, gt: boolean) => contactKind(t, gt ? 1 : 0, gt ? 0 : 1) // gt: φ_m>φ_s
@@ -142,8 +150,9 @@ export default function SandboxTab() {
         </div>
 
         <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-slate-600">
-            <span aria-hidden>🎛️</span> 8 מצבים בסיסיים (4 × קדמי/אחורי)
+          <div className="mb-2.5 flex items-center justify-between gap-2 text-sm font-semibold text-slate-600">
+            <span className="flex items-center gap-2"><span aria-hidden>🎛️</span> 8 מצבים בסיסיים (4 × קדמי/אחורי)</span>
+            <PlayButton playing={sweep.playing} onClick={togglePlay} label="הרצת ממתח" />
           </div>
           <div className="flex flex-col gap-2">
             {[PRESETS.slice(0, 4), PRESETS.slice(4, 8)].map((row, ri) => (
@@ -195,7 +204,7 @@ export default function SandboxTab() {
               </div>
               <Slider label={<>פונקציית עבודה מתכת · <Tex>{'\\varphi_m'}</Tex></>} value={phiM} min={3.9} max={5.8} step={0.05} onChange={(v) => { setPhiM(v); clear() }} display={`${phiM.toFixed(2)} eV`} />
               <Slider label={<>פונקציית עבודה מל"מ · <Tex>{'\\varphi_s'}</Tex></>} value={phiS} min={+(CHI + 0.1).toFixed(2)} max={+(CHI + EG - 0.1).toFixed(2)} step={0.02} onChange={(v) => { setPhiS(v); clear() }} display={`${phiS.toFixed(2)} eV`} />
-              <Slider label={<>ממתח · <Tex>{'V_A'}</Tex></>} value={Va} min={-0.4} max={0.6} step={0.02} onChange={(v) => { setVa(v); clear() }} display={fmtV(Va)} />
+              <Slider label={<>ממתח · <Tex>{'V_A'}</Tex></>} value={Va} min={-0.4} max={0.6} step={0.02} onChange={(v) => { sweep.setManual(v); clear() }} display={fmtV(Va)} />
               <p className="text-xs leading-relaxed text-slate-500">
                 הממתח משפיע על המחסום רק במצב <b>מיישר</b> (קדמי מקטין, אחורי מגדיל). במצב <b>אוהמי</b> הזרם זורם חופשי.
               </p>

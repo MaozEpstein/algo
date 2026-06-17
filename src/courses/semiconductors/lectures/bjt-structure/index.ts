@@ -17,6 +17,7 @@ export const bjtStructureLecture: LectureModule = {
   id: 'bjt-structure',
   number: 3.1,
   numberLabelHe: '3 · חלק א׳',
+  lessonHe: 'טרנזיסטור דו-קוטבי (BJT)',
   titleHe: 'טרנזיסטור דו-קוטבי (BJT) — מבנה ופעולה',
   subtitleEn: 'BJT: Structure & Operation',
   views: [],

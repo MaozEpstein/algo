@@ -14,6 +14,7 @@ export const idealDiodeLecture: LectureModule = {
   id: 'ideal-diode',
   number: 2.1,
   numberLabelHe: '2 · חלק א׳',
+  lessonHe: 'דיודת PN',
   titleHe: 'דיודת PN — דיודה אידיאלית',
   subtitleEn: 'The Ideal Diode',
   views: [],

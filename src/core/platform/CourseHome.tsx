@@ -6,25 +6,11 @@ import { useFeature } from './features'
 import { useProgress, summarize, cycleStatus, STATUS_META, type Status } from './progress'
 import { useSavedItems } from './savedItems'
 import SettingsButton from './SettingsButton'
+import { paletteFor } from './lessonPalette'
+import { usePrefs, setPref, useContentWidthClass } from './prefs'
+import CourseLessonList from './CourseLessonList'
 
-/** A subtle per-lesson colour palette. Each lesson (the integer part of its `number`,
- *  so all parts of one lesson share a hue) maps to one entry; the list cycles for
- *  courses with many lessons. Tints are intentionally faint — just enough to tell
- *  lessons apart at a glance. Class strings are literal so Tailwind keeps them. */
-const PALETTE = [
-  { card: 'border-sky-200 bg-gradient-to-br from-sky-50/60 to-white hover:border-sky-300', circle: 'bg-sky-100', label: 'text-sky-500', cta: 'text-sky-600' },
-  { card: 'border-emerald-200 bg-gradient-to-br from-emerald-50/60 to-white hover:border-emerald-300', circle: 'bg-emerald-100', label: 'text-emerald-500', cta: 'text-emerald-600' },
-  { card: 'border-amber-200 bg-gradient-to-br from-amber-50/60 to-white hover:border-amber-300', circle: 'bg-amber-100', label: 'text-amber-500', cta: 'text-amber-600' },
-  { card: 'border-rose-200 bg-gradient-to-br from-rose-50/60 to-white hover:border-rose-300', circle: 'bg-rose-100', label: 'text-rose-500', cta: 'text-rose-600' },
-  { card: 'border-teal-200 bg-gradient-to-br from-teal-50/60 to-white hover:border-teal-300', circle: 'bg-teal-100', label: 'text-teal-500', cta: 'text-teal-600' },
-  { card: 'border-indigo-200 bg-gradient-to-br from-indigo-50/60 to-white hover:border-indigo-300', circle: 'bg-indigo-100', label: 'text-indigo-500', cta: 'text-indigo-600' },
-  { card: 'border-fuchsia-200 bg-gradient-to-br from-fuchsia-50/60 to-white hover:border-fuchsia-300', circle: 'bg-fuchsia-100', label: 'text-fuchsia-500', cta: 'text-fuchsia-600' },
-  { card: 'border-cyan-200 bg-gradient-to-br from-cyan-50/60 to-white hover:border-cyan-300', circle: 'bg-cyan-100', label: 'text-cyan-500', cta: 'text-cyan-600' },
-] as const
-
-const paletteFor = (n: number) => PALETTE[(Math.max(1, Math.floor(n)) - 1) % PALETTE.length]
-
-/** A course's landing page: the lecture grid (+ optional overview hub card). */
+/** A course's landing page: the lecture grid or collapsible list (+ optional overview hub). */
 export default function CourseHome() {
   const { courseId, course } = useCourse()
   const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet, syllabus: Syllabus, calculator: hasCalculator, constants: hasConstants } = course
@@ -33,9 +19,11 @@ export default function CourseHome() {
   const progress = useProgress(courseId)
   const summary = summarize(progress.map, LECTURE_LIST.map((l) => l.id))
   const savedCount = useSavedItems().listByCourse(courseId).length
+  const homeView = usePrefs().homeView
+  const widthClass = useContentWidthClass()
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6">
+    <div className={`mx-auto flex w-full ${widthClass} flex-col gap-10 px-4 py-12 sm:px-6`}>
       <header className="text-center">
         <Link
           to="/"
@@ -95,6 +83,22 @@ export default function CourseHome() {
             </Link>
           )}
           <SettingsButton />
+          <div className="inline-flex items-center gap-0.5 rounded-full border border-slate-200 bg-white p-0.5 shadow-sm" role="group" aria-label="תצוגת שיעורים">
+            {([
+              { v: 'cards', icon: '▦', label: 'תצוגת כרטיסים' },
+              { v: 'list', icon: '☰', label: 'תצוגת רשימה' },
+            ] as const).map((o) => (
+              <button
+                key={o.v}
+                onClick={() => setPref('homeView', o.v)}
+                aria-pressed={homeView === o.v}
+                title={o.label}
+                className={`grid h-8 w-8 place-items-center rounded-full text-sm transition ${homeView === o.v ? 'bg-slate-800 text-white shadow' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'}`}
+              >
+                <span aria-hidden>{o.icon}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {progressOn && summary.total > 0 && (
@@ -117,7 +121,10 @@ export default function CourseHome() {
         </div>
       )}
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {homeView === 'list' ? (
+        <CourseLessonList courseId={courseId} lectures={LECTURE_LIST} hasOverview={!!Overview} progressOn={progressOn} />
+      ) : (
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {Overview && (
           <Link
             to={overviewPath(courseId)}
@@ -176,6 +183,7 @@ export default function CourseHome() {
           )
         })}
       </div>
+      )}
     </div>
   )
 }

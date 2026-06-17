@@ -97,25 +97,16 @@ export default function SummaryTab() {
         </ul>
       </Panel>
 
-      <Panel title={<>תיאוריה — מטען פני-השטח <Tex>{'Q_s'}</Tex></>}>
-        <div className="overflow-x-auto rounded-xl bg-slate-50 p-4 text-center">
-          <Tex block>{'|Q_s| = \\sqrt{\\,2\\varepsilon_s q V_T\\left[\\,N_A\\!\\left(e^{-\\beta\\psi_s}+\\beta\\psi_s-1\\right) + \\dfrac{n_i^2}{N_A}\\!\\left(e^{\\beta\\psi_s}-\\beta\\psi_s-1\\right)\\right]}'}</Tex>
-        </div>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3 text-center text-sm">
-          <div className="rounded-xl border-s-4 border-rose-300 bg-rose-50/50 p-2"><b className="text-rose-700">הצטברות</b><br /><Tex>{'\\propto e^{q|\\psi_s|/2kT}'}</Tex></div>
-          <div className="rounded-xl border-s-4 border-amber-300 bg-amber-50/50 p-2"><b className="text-amber-700">מחסור</b><br /><Tex>{'\\propto\\sqrt{\\psi_s}'}</Tex></div>
-          <div className="rounded-xl border-s-4 border-emerald-300 bg-emerald-50/50 p-2"><b className="text-emerald-700">היפוך</b><br /><Tex>{'\\propto e^{q\\psi_s/2kT}'}</Tex></div>
-        </div>
-      </Panel>
-
       <Panel title="ראו בעיניים">
         <div className="flex flex-wrap gap-2">
           <DeepLink tab="compare">קבל-לוחות מול MOS</DeepLink>
           <DeepLink tab="regimes">שלושת המשטרים</DeepLink>
-          <DeepLink tab="theory">תיאוריה ו-Q_s</DeepLink>
-          <DeepLink tab="oxide">מטעני-תחמוצת</DeepLink>
           <DeepLink tab="sandbox">ארגז-החול האינטראקטיבי</DeepLink>
         </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+          ממשיכים? המשך טבעי — <b>חלק ב׳</b> (מטען פני-השטח <Tex>{'Q_s'}</Tex>, מתח-הסף <Tex>{'V_T'}</Tex> ומטעני-תחמוצת),
+          ואז <b>חלק ג׳</b> (קיבול ה-MOS ואופיין <Tex>{'C\\text{-}V'}</Tex>).
+        </p>
       </Panel>
 
       <Panel title="טעויות נפוצות">

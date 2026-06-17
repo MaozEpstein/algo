@@ -8,12 +8,14 @@ import MosCapacitorExplainer from './MosCapacitorExplainer'
  * the flat-band voltage V_FB=φ_MS undoes that bend. As V_G rises the surface passes through
  * accumulation (holes pile up), depletion (a negative ionised-acceptor space-charge region of
  * width W=√(2ε_sψ_s/qN_A)), and inversion (an electron channel forms, ψ_s pins at 2φ_F). The
- * heart of the MOSFET. (Threshold V_T, the C-V characteristic and oxide charges are part ב.)
+ * heart of the MOSFET. This is the qualitative DC picture; threshold V_T and oxide charges are
+ * part ב, and the C-V / AC picture is part ג.
  */
 export const mosCapacitorLecture: LectureModule = {
   id: 'mos-capacitor',
   number: 6.1,
   numberLabelHe: '6 · חלק א׳',
+  lessonHe: 'קבל MOS',
   titleHe: 'קבל MOS — מבנה ומשטרי פעולה',
   subtitleEn: 'The MOS Capacitor: Structure & Operating Regimes',
   views: [],

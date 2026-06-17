@@ -14,6 +14,7 @@ export const divideAndConquerLecture: LectureModule = {
   id: 'divide-and-conquer',
   number: 3.1,
   numberLabelHe: '3 · חלק א׳',
+  lessonHe: 'אלגוריתמים רקורסיביים ונוסחאות נסיגה',
   titleHe: 'אלגוריתמים רקורסיביים',
   subtitleEn: 'Merge-Sort & Hanoi',
   views: ['array'],

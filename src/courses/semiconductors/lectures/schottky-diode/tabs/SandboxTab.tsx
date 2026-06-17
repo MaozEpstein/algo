@@ -3,6 +3,8 @@ import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
+import PlayButton from '../../../components/PlayButton'
+import { useAutoSweep } from '../../../components/useAutoSweep'
 import Readout from '../components/Readout'
 import MetalSemiconductorBandDiagram from '../components/MetalSemiconductorBandDiagram'
 import SchottkyIVCurve from '../components/SchottkyIVCurve'
@@ -42,6 +44,7 @@ export default function SandboxTab() {
   const mat = MATERIALS[matKey]
   const Nd = 10 ** expNd
   const st = useMemo(() => schottkyState(metal, mat, Nd, Va), [metal, mat, Nd, Va])
+  const sweep = useAutoSweep({ min: -0.4, max: 0.6, value: Va, onChange: setVa })
 
   const applyPreset = (p: Preset) => {
     setMetalKey(p.metal)
@@ -56,8 +59,9 @@ export default function SandboxTab() {
     <div className="flex flex-col gap-5">
       <Panel title="ארגז חול — מתכת, חומר, סימום">
         <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-slate-600">
-            <span aria-hidden>🎛️</span> מצבים מוכרים
+          <div className="mb-2.5 flex items-center justify-between gap-2 text-sm font-semibold text-slate-600">
+            <span className="flex items-center gap-2"><span aria-hidden>🎛️</span> מצבים מוכרים</span>
+            <PlayButton playing={sweep.playing} onClick={sweep.toggle} label="הרצת ממתח" />
           </div>
           <div className="flex flex-wrap gap-2">
             {PRESETS.map((p) => (
@@ -111,7 +115,7 @@ export default function SandboxTab() {
                 ))}
               </div>
               <Slider label={<>סימום · <Tex>{'N_D'}</Tex></>} value={expNd} min={15} max={19} onChange={(v) => { setExpNd(v); clear() }} display={<Tex>{`${fmtDoping(Nd)}\\,\\mathrm{cm^{-3}}`}</Tex>} />
-              <Slider label={<>ממתח · <Tex>{'V_A'}</Tex></>} value={Va} min={-0.4} max={0.6} step={0.02} onChange={setVa} display={fmtVolt(Va)} />
+              <Slider label={<>ממתח · <Tex>{'V_A'}</Tex></>} value={Va} min={-0.4} max={0.6} step={0.02} onChange={sweep.setManual} display={fmtVolt(Va)} />
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-medium text-slate-600">ממתח מהיר:</span>
                 {([
@@ -123,7 +127,7 @@ export default function SandboxTab() {
                   return (
                     <button
                       key={bq.he}
-                      onClick={() => setVa(bq.v)}
+                      onClick={() => sweep.setManual(bq.v)}
                       className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
                         on ? 'border-amber-500 bg-amber-500 text-white shadow' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                       }`}
@@ -160,7 +164,7 @@ export default function SandboxTab() {
               <p className="mb-1 text-center text-xs font-semibold text-slate-400">
                 <span className="text-slate-500">אופיין I–V · זרם–מתח</span> · חצי-לוגריתמי
               </p>
-              <SchottkyIVCurve metal={metal} mat={mat} Va={Va} mode="log" showTurnOn />
+              <SchottkyIVCurve metal={metal} mat={mat} Va={Va} mode="log" showTurnOn trail={sweep.playing ? sweep.trail : undefined} pulsing={sweep.playing} />
             </div>
           </div>
         </div>

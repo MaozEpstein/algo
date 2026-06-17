@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import { OPEN_SETTINGS } from './types'
 import { FEATURES, settingsStore, isFeatureEnabled, setFeature } from './features'
-import { usePrefs, setPref, TEXT_SCALE_HE, DENSITY_HE, FONT_HE, type TextScale, type Density, type FontPref } from './prefs'
+import { usePrefs, setPref, TEXT_SCALE_HE, DENSITY_HE, FONT_HE, HOME_VIEW_HE, CONTENT_WIDTH_HE, type TextScale, type Density, type FontPref, type HomeView, type ContentWidth } from './prefs'
 import { printPath } from './links'
 
 function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
@@ -76,6 +76,8 @@ export default function SettingsModal() {
                 <Row title="גופן" control={<Segmented<FontPref> value={prefs.font} onChange={(v) => setPref('font', v)} options={(['default', 'assistant', 'rubik', 'serif'] as FontPref[]).map((v) => ({ v, label: FONT_HE[v] }))} />} />
                 <Row title="גודל טקסט" control={<Segmented<TextScale> value={prefs.textScale} onChange={(v) => setPref('textScale', v)} options={(['sm', 'base', 'lg', 'xl'] as TextScale[]).map((v) => ({ v, label: TEXT_SCALE_HE[v] }))} />} />
                 <Row title="צפיפות" control={<Segmented<Density> value={prefs.density} onChange={(v) => setPref('density', v)} options={(['comfortable', 'compact'] as Density[]).map((v) => ({ v, label: DENSITY_HE[v] }))} />} />
+                <Row title="תצוגת שיעורים" desc="עמוד הבית של הקורס — כרטיסים או רשימה מתקפלת." control={<Segmented<HomeView> value={prefs.homeView} onChange={(v) => setPref('homeView', v)} options={(['cards', 'list'] as HomeView[]).map((v) => ({ v, label: HOME_VIEW_HE[v] }))} />} />
+                <Row title="רוחב תוכן" desc="כמה מרוחב המסך התוכן ינצל." control={<Segmented<ContentWidth> value={prefs.contentWidth ?? 'wide'} onChange={(v) => setPref('contentWidth', v)} options={(['comfortable', 'wide', 'full'] as ContentWidth[]).map((v) => ({ v, label: CONTENT_WIDTH_HE[v] }))} />} />
                 <Row title="הפחתת אנימציה" desc="ביטול מעברים ואנימציות בכל המערכת." control={<Toggle on={prefs.reduceMotion} label="הפחתת אנימציה" onClick={() => setPref('reduceMotion', !prefs.reduceMotion)} />} />
               </ul>
 

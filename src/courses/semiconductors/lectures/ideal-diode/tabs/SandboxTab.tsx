@@ -3,6 +3,8 @@ import Tex from '@/core/components/Tex'
 import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import Slider from '../../../components/Slider'
+import PlayButton from '../../../components/PlayButton'
+import { useAutoSweep } from '../../../components/useAutoSweep'
 import Readout from '../components/Readout'
 import IVCurve from '../components/IVCurve'
 import MinorityInjectionProfile from '../../pn-junction-bias/components/MinorityInjectionProfile'
@@ -49,6 +51,7 @@ export default function SandboxTab() {
     return { Js: c.Js, J: c.J, factor: Math.exp(Va / thermalVoltage(T)), Lp, Ln }
   }, [Na, Nd, mat, Va, T])
 
+  const sweep = useAutoSweep({ min: -1, max: 0.8, value: Va, onChange: setVa })
   const activePreset = PRESETS.find((p) => Math.abs(p.va - Va) < 1e-9)
 
   return (
@@ -69,9 +72,9 @@ export default function SandboxTab() {
         </div>
 
         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-slate-500">
-            <span aria-hidden>🎛️</span>
-            מצבי ממתח
+          <div className="mb-2.5 flex items-center justify-between gap-2 text-sm font-semibold text-slate-500">
+            <span className="flex items-center gap-2"><span aria-hidden>🎛️</span> מצבי ממתח</span>
+            <PlayButton playing={sweep.playing} onClick={sweep.toggle} label="הרצה" />
           </div>
           <div className="flex flex-wrap gap-2">
             {PRESETS.map((p) => {
@@ -79,7 +82,7 @@ export default function SandboxTab() {
               return (
                 <button
                   key={p.labelHe}
-                  onClick={() => setVa(p.va)}
+                  onClick={() => sweep.setManual(p.va)}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 ${
                     active
                       ? 'bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-violet-500/30'
@@ -121,7 +124,7 @@ export default function SandboxTab() {
                 min={-1}
                 max={0.8}
                 step={0.01}
-                onChange={setVa}
+                onChange={sweep.setManual}
                 display={fmtVolt(Va)}
               />
               <Slider
@@ -162,7 +165,7 @@ export default function SandboxTab() {
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-3">
               <p className="mb-1 text-center text-xs font-semibold text-slate-400">אופיין ה-I–V (לינארי)</p>
-              <IVCurve Na={Na} Nd={Nd} mat={mat} Va={Va} T={T} mode="linear" />
+              <IVCurve Na={Na} Nd={Nd} mat={mat} Va={Va} T={T} mode="linear" trail={sweep.playing ? sweep.trail : undefined} pulsing={sweep.playing} />
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-3">
               <p className="mb-1 text-center text-xs font-semibold text-slate-400">פרופיל המיעוט המוזרק</p>

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import {
   diodeCurrents,
   schottkyBarrier,
@@ -22,6 +23,10 @@ interface Props {
   mode?: 'log' | 'linear'
   comparePN?: { Na: number; Nd: number }
   showTurnOn?: boolean
+  /** recent V_A values (newest first) — fading comet trail during auto-sweep */
+  trail?: number[]
+  /** pulsing halo around the operating point during auto-sweep */
+  pulsing?: boolean
 }
 
 const W = 460
@@ -38,7 +43,7 @@ const VIOLET = '#7c3aed'
 const SLATE = '#94a3b8'
 const ROSE = '#f43f5e'
 
-export default function SchottkyIVCurve({ metal, mat, Va, T = 300, mode = 'log', comparePN, showTurnOn }: Props) {
+export default function SchottkyIVCurve({ metal, mat, Va, T = 300, mode = 'log', comparePN, showTurnOn, trail, pulsing }: Props) {
   const VT = thermalVoltage(T)
   const phiB = schottkyBarrier(metal.phiM, mat.chi)
   const Jst = thermionicJst(mat.astar, phiB, T)
@@ -112,7 +117,28 @@ export default function SchottkyIVCurve({ metal, mat, Va, T = 300, mode = 'log',
         {/* the Schottky characteristic */}
         <path d={sample(Jsch)} fill="none" stroke={VIOLET} strokeWidth={2.75} strokeLinejoin="round" />
         <text x={xOf(0.3)} y={yOf(Jsch(0.3)) - 6} className="fill-violet-600" style={{ fontSize: 12, fontWeight: 700 }}>שוטקי</text>
-        <circle cx={xOf(vOp)} cy={yOf(Jsch(vOp))} r={4} fill={VIOLET} />
+
+        {/* comet trail (auto-sweep) */}
+        {trail && trail.map((tv, i) => (
+          i === 0 ? null : (
+            <circle key={i} cx={xOf(Math.max(vMin, Math.min(vMax, tv)))} cy={yOf(Jsch(Math.max(vMin, Math.min(vMax, tv))))} r={Math.max(1.2, 4 - i * 0.25)} fill={VIOLET} opacity={0.4 * (1 - i / trail.length)} />
+          )
+        ))}
+
+        {/* operating point (+ pulsing halo) */}
+        {pulsing && (
+          <motion.circle
+            cx={xOf(vOp)}
+            cy={yOf(Jsch(vOp))}
+            fill="none"
+            stroke={VIOLET}
+            strokeWidth={1.75}
+            initial={{ r: 4, opacity: 0.6 }}
+            animate={{ r: [4, 14], opacity: [0.6, 0] }}
+            transition={{ duration: 1.3, repeat: Infinity, ease: 'easeOut' }}
+          />
+        )}
+        <circle cx={xOf(vOp)} cy={yOf(Jsch(vOp))} r={4.5} fill={VIOLET} stroke="#fff" strokeWidth={1.5} />
 
         <text x={(mL + x0) / 2} y={mT + 15} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 12, fontWeight: 700 }}>אחורי</text>
         <text x={(x0 + W - mR) / 2} y={mT + 15} textAnchor="middle" className="fill-amber-600" style={{ fontSize: 12, fontWeight: 700 }}>קדמי</text>

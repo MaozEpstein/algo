@@ -16,6 +16,7 @@ export const bjtCurrentsGainLecture: LectureModule = {
   id: 'bjt-currents-gain',
   number: 3.2,
   numberLabelHe: '3 · חלק ב׳',
+  lessonHe: 'טרנזיסטור דו-קוטבי (BJT)',
   titleHe: 'טרנזיסטור דו-קוטבי (BJT) — זרמים והגבר',
   subtitleEn: 'BJT: Currents & Gain',
   views: [],

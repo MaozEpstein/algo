@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { diodeCurrents, thermalVoltage, type Material } from '../../../lib/junction'
 
 /**
@@ -14,6 +15,10 @@ interface Props {
   Va: number
   T?: number
   mode?: 'linear' | 'log'
+  /** recent V_A values (newest first) — fading comet trail during auto-sweep */
+  trail?: number[]
+  /** pulsing halo around the operating point during auto-sweep */
+  pulsing?: boolean
 }
 
 const W = 460
@@ -25,7 +30,7 @@ const mB = 42
 const PW = W - mL - mR
 const PH = H - mT - mB
 
-export default function IVCurve({ Na, Nd, mat, Va, T = 300, mode = 'linear' }: Props) {
+export default function IVCurve({ Na, Nd, mat, Va, T = 300, mode = 'linear', trail, pulsing }: Props) {
   const VT = thermalVoltage(T)
   const Js = diodeCurrents(Na, Nd, mat, 0, T).Js
   const Jref = 100 // A/cm² — top of the linear axis / forward reference
@@ -94,8 +99,27 @@ export default function IVCurve({ Na, Nd, mat, Va, T = 300, mode = 'linear' }: P
         {/* the characteristic */}
         <path d={path} fill="none" stroke="#7c3aed" strokeWidth={2.75} strokeLinejoin="round" />
 
-        {/* operating point */}
-        <circle cx={xOf(vOp)} cy={yOf(Jof(vOp))} r={4} fill="#7c3aed" />
+        {/* comet trail (auto-sweep) */}
+        {trail && trail.map((tv, i) => (
+          i === 0 ? null : (
+            <circle key={i} cx={xOf(Math.max(vMin, Math.min(vMax, tv)))} cy={yOf(Jof(Math.max(vMin, Math.min(vMax, tv))))} r={Math.max(1.2, 4 - i * 0.25)} fill="#7c3aed" opacity={0.4 * (1 - i / trail.length)} />
+          )
+        ))}
+
+        {/* operating point (+ pulsing halo) */}
+        {pulsing && (
+          <motion.circle
+            cx={xOf(vOp)}
+            cy={yOf(Jof(vOp))}
+            fill="none"
+            stroke="#7c3aed"
+            strokeWidth={1.75}
+            initial={{ r: 4, opacity: 0.6 }}
+            animate={{ r: [4, 14], opacity: [0.6, 0] }}
+            transition={{ duration: 1.3, repeat: Infinity, ease: 'easeOut' }}
+          />
+        )}
+        <circle cx={xOf(vOp)} cy={yOf(Jof(vOp))} r={4.5} fill="#7c3aed" stroke="#fff" strokeWidth={1.5} />
 
         {/* region labels */}
         <text x={(mL + x0) / 2} y={mT + 14} textAnchor="middle" className="fill-sky-600" style={{ fontSize: 11, fontWeight: 700 }}>

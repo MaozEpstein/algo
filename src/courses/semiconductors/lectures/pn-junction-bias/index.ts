@@ -15,6 +15,7 @@ export const pnJunctionBiasLecture: LectureModule = {
   id: 'pn-junction-bias',
   number: 1.2,
   numberLabelHe: '1 · חלק ב׳',
+  lessonHe: 'צומת PN',
   titleHe: 'צומת PN — תחת ממתח',
   subtitleEn: 'PN Junction Under Applied Bias',
   views: [],
