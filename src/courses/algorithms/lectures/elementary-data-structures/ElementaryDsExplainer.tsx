@@ -11,12 +11,12 @@ import SummaryTab from './tabs/SummaryTab'
 type TabId = 'ds' | 'direct' | 'hashfn' | 'chaining' | 'open' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
-  { id: 'ds', labelHe: 'מחסנית ותור', icon: '🧱' },
-  { id: 'direct', labelHe: 'מיעון ישיר', icon: '🎯' },
-  { id: 'hashfn', labelHe: 'פונקציות גיבוב', icon: '#️⃣' },
-  { id: 'chaining', labelHe: 'שרשור', icon: '🔗' },
-  { id: 'open', labelHe: 'מיעון פתוח', icon: '📥' },
-  { id: 'summary', labelHe: 'סיכום והשוואה', icon: '📊' },
+  { id: 'ds', labelHe: 'מחסנית ותור — Stack & Queue', icon: '🧱' },
+  { id: 'direct', labelHe: 'מיעון ישיר — Direct Addressing', icon: '🎯' },
+  { id: 'hashfn', labelHe: 'פונקציות גיבוב — Hash Functions', icon: '#️⃣' },
+  { id: 'chaining', labelHe: 'שרשור — Chaining', icon: '🔗' },
+  { id: 'open', labelHe: 'מיעון פתוח — Open Addressing', icon: '📥' },
+  { id: 'summary', labelHe: 'סיכום והשוואה — Summary', icon: '📊' },
 ]
 
 const PANELS: Record<TabId, React.FC> = {

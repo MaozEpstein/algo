@@ -10,11 +10,11 @@ import SummaryTab from './tabs/SummaryTab'
 type TabId = 'lowerbound' | 'counting' | 'radix' | 'bucket' | 'summary'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
-  { id: 'lowerbound', labelHe: 'חסם תחתון', icon: '🌳' },
+  { id: 'lowerbound', labelHe: 'חסם תחתון — Lower Bound', icon: '🌳' },
   { id: 'counting', labelHe: 'מיון מנייה — Counting Sort', icon: '🔢' },
   { id: 'radix', labelHe: 'מיון בסיס — Radix Sort', icon: '🔟' },
   { id: 'bucket', labelHe: 'מיון דלי — Bucket Sort', icon: '🪣' },
-  { id: 'summary', labelHe: 'סיכום והשוואה', icon: '📊' },
+  { id: 'summary', labelHe: 'סיכום והשוואה — Summary', icon: '📊' },
 ]
 
 const PANELS: Record<TabId, React.FC> = {
