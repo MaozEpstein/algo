@@ -59,9 +59,18 @@ export default function FlowView({ frame, instant }: { frame: Frame; instant?: b
   return (
     <div className="ltr w-full overflow-x-auto" dir="ltr">
       <div className="relative mx-auto" style={{ width: scene.width, height: scene.height }}>
-        {/* static zone boxes (lanes / buckets / count bins) */}
-        {scene.boxes.map((b, i) => (
-          <div key={`box-${i}`} className="absolute" style={{ left: b.x, top: b.y, width: b.w, height: b.h }}>
+        {/* zone boxes (lanes / buckets / count bins). Keyed by position so a box
+            that first appears in a frame (e.g. a C cell being allocated) pops in,
+            while boxes that persist across frames don't re-animate. */}
+        {scene.boxes.map((b) => (
+          <motion.div
+            key={`box-${b.x}-${b.y}`}
+            className="absolute"
+            style={{ left: b.x, top: b.y, width: b.w, height: b.h }}
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={instant ? { duration: 0 } : { duration: 0.3, ease: 'backOut' }}
+          >
             {b.labelTop && (
               <div className="absolute -top-5 left-0 w-full text-center font-mono text-[10px] text-slate-400">
                 {b.labelTop}
@@ -79,7 +88,7 @@ export default function FlowView({ frame, instant }: { frame: Frame; instant?: b
                 {b.labelBottom}
               </div>
             )}
-          </div>
+          </motion.div>
         ))}
 
         {/* value chips — one per stable id, animate to (x, y) */}

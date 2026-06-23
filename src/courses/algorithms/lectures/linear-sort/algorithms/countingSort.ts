@@ -41,11 +41,14 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     ptrA?: number // A index being read (1-indexed)
     activeVal?: number // active count bin (key value)
     ptrB?: number // target output slot
+    cLabel?: string // heading for the C row (its current meaning)
+    cShown?: number // how many C cells have been created so far (default: all k)
   }): FlowScene => {
+    const cShown = opts.cShown ?? k
     const boxes: FlowBox[] = []
     for (let i = 1; i <= n; i++)
       boxes.push({ x: xOf(i), y: AY, w: CELL, h: CELL, tone: 'lane', labelTop: i === 1 ? 'A · קלט' : undefined })
-    for (let v = 1; v <= k; v++)
+    for (let v = 1; v <= cShown; v++)
       boxes.push({
         x: xOf(v),
         y: CY,
@@ -53,7 +56,8 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
         h: CELL,
         tone: opts.activeVal === v ? 'active' : 'count',
         value: String(C[v]),
-        labelTop: `=${v}`,
+        labelTop: v === 1 ? (opts.cLabel ?? 'C') : undefined,
+        labelBottom: `=${v}`,
       })
     for (let i = 1; i <= n; i++)
       boxes.push({
@@ -82,11 +86,19 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
 
   b.setPhase('אתחול')
   b.emit({
-    codeLine: 3,
-    narration: `מאתחלים מערך מונים C בגודל k=${k} (אינדקסים 1..${k}) לאפסים. אין השוואות בין איברים!`,
-    scene: scene({}),
-    vars: [vv('k', k, 'bound')],
+    codeLine: 2,
+    narration: `יוצרים מערך עזר חדש C באורך k=${k} — תא אחד לכל ערך מפתח אפשרי (1..${k}), ולא לכל איבר בקלט. (לכן |C|=k, בעוד |A|=|B|=n=${n}.) התאים ייווצרו אחד-אחד:`,
+    scene: scene({ cLabel: 'C · נוצר', cShown: 0 }),
+    vars: [vv('k', k, 'bound'), vv('n', n, 'bound')],
   })
+  for (let i = 1; i <= k; i++) {
+    b.emit({
+      codeLine: 3,
+      narration: `נוצר תא חדש ומאותחל לאפס: C[${i}] = 0.`,
+      scene: scene({ activeVal: i, cLabel: 'C · נוצר', cShown: i }),
+      vars: [vv('k', k, 'bound'), vi('i', i, 'i')],
+    })
+  }
 
   // 1) count occurrences
   b.setPhase('ספירה')
@@ -96,7 +108,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     b.emit({
       codeLine: 5,
       narration: `סופרים: A[${j}]=${v} ⇐ מגדילים את C[${v}] ל-${C[v]}.`,
-      scene: scene({ ptrA: j, activeVal: v }),
+      scene: scene({ ptrA: j, activeVal: v, cLabel: 'C · מונים' }),
       vars: [vv('k', k, 'bound'), vi('j', j, 'i'), vv('v', v, 'pivot'), vv('C[v]', C[v], 'k')],
     })
   }
@@ -108,7 +120,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     b.emit({
       codeLine: 7,
       narration: `סכומי-רישא: C[${v}] += C[${v - 1}] ⇒ C[${v}]=${C[v]} = כמה איברים ≤ ${v} (האינדקס האחרון בפלט עבור ${v}).`,
-      scene: scene({ activeVal: v }),
+      scene: scene({ activeVal: v, cLabel: 'C · סכומי-רישא' }),
       vars: [vv('k', k, 'bound'), vv('v', v, 'pivot'), vv('C[v]', C[v], 'k')],
     })
   }
@@ -122,7 +134,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     b.emit({
       codeLine: 9,
       narration: `מציבים מימין לשמאל: A[${j}]=${v} → B[${target}] (כי C[${v}]=${target}).`,
-      scene: scene({ ptrA: j, activeVal: v, ptrB: target }),
+      scene: scene({ ptrA: j, activeVal: v, ptrB: target, cLabel: 'C · סכומי-רישא' }),
       vars: [
         vv('k', k, 'bound'),
         vi('j', j, 'i'),
@@ -137,7 +149,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     b.emit({
       codeLine: 10,
       narration: `מקטינים C[${v}] ל-${C[v]} — כך ${v} הבא יישב שמאלה יותר, והסדר נשמר (יציב).`,
-      scene: scene({ activeVal: v }),
+      scene: scene({ activeVal: v, cLabel: 'C · סכומי-רישא' }),
       vars: [vv('k', k, 'bound'), vv('v', v, 'pivot'), vv('C[v]', C[v], 'k')],
     })
   }
@@ -147,7 +159,7 @@ export function runCountingSort(input: AlgorithmInput): Frame[] {
     codeLine: null,
     action: { kind: 'done' },
     narration: 'סיום — B ממוין! ספרנו וחילקנו בלי שום השוואה: O(n+k).',
-    scene: scene({}),
+    scene: scene({ cLabel: 'C' }),
     vars: [vv('k', k, 'bound')],
   })
   return b.build()

@@ -23,12 +23,24 @@ export default function CountingTab() {
           הופכים את הספירות ל<b>סכומי-רישא</b> (כמה איברים ≤ כל ערך) — וזה בדיוק האינדקס שאליו כל ערך
           צריך להגיע בפלט. מציבים <b>מימין לשמאל</b> כדי לשמור על יציבות.
         </p>
+        <p className="mt-2 leading-relaxed text-slate-600">
+          שימו לב לאורכים: הקלט והפלט הם <Tex>{'A[1..n]'}</Tex> ו-<Tex>{'B[1..n]'}</Tex> (תא לכל
+          איבר), אבל מערך המונים <Tex>{'C[1..k]'}</Tex> אורכו <Tex>k</Tex> — <b>תא לכל ערך אפשרי</b>,
+          לא לכל איבר. לכן הוא יכול להיות קצר או ארוך מ-<Tex>A</Tex>.
+        </p>
         <div className="mt-4 border-t border-slate-100 pt-4">
           <ComplexityProofButton algo={countingSortSpec} />
         </div>
       </Panel>
 
-      <SortDemo titleHe="מיון מנייה — Counting Sort" block={countingSortBlock} run={runCountingSort} presets={PRESETS} varsPlacement="side" />
+      <SortDemo
+        titleHe="מיון מנייה — Counting Sort"
+        block={countingSortBlock}
+        run={runCountingSort}
+        presets={PRESETS}
+        varsPlacement="side"
+        editable={{ min: 2, max: 8, minValue: 1, maxValue: 6 }}
+      />
     </div>
   )
 }
