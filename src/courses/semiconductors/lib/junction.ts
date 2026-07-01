@@ -968,6 +968,165 @@ export function mosCVCurve(
   return vgArray.map((vg) => ({ vg, c: fn(vg, p) }))
 }
 
+// ---- MOSFET transistor — lesson 7 ------------------------------------------
+/**
+ * Process/geometry transconductance factor of a MOSFET (book):
+ *   k = (W/L)·μ*·C_ox   (A/V²).
+ * μ* is the channel mobility (cm²/V·s), C_ox the oxide capacitance per area (F/cm²),
+ * W/L the width-to-length aspect ratio. Some texts split it as k' = μ*·C_ox (the
+ * "process transconductance") times W/L — this returns the full device k.
+ */
+export function mosfetK(WoverL: number, mobility: number, Cox: number): number {
+  return WoverL * mobility * Cox
+}
+
+/**
+ * Drain saturation (pinch-off) voltage: the channel first vanishes at the drain when
+ * the local gate overdrive there hits zero, i.e. V_DS,sat = V_GS − V_T (the overdrive).
+ * Zero below threshold (device is off).
+ */
+export function mosfetVdsat(VGS: number, VT: number): number {
+  return Math.max(0, VGS - VT)
+}
+
+/**
+ * Operating region of an (enhancement n-channel) MOSFET from the biases:
+ *  - cutoff:      V_GS ≤ V_T           (no inversion channel — off)
+ *  - triode:      V_DS < V_GS − V_T    (channel open along its whole length — "linear"/ohmic)
+ *  - saturation:  V_DS ≥ V_GS − V_T    (channel pinched at the drain — current ~constant)
+ */
+export function mosfetRegion(VGS: number, VDS: number, VT: number): 'cutoff' | 'triode' | 'saturation' {
+  if (VGS <= VT) return 'cutoff'
+  return VDS < mosfetVdsat(VGS, VT) ? 'triode' : 'saturation'
+}
+
+/**
+ * Full drain current I_DS(V_GS, V_DS) of an enhancement n-channel MOSFET (gradual-channel
+ * model, book), piecewise and continuous at the knee V_DS = V_DS,sat = V_GS − V_T:
+ *   cutoff (V_GS ≤ V_T):                    0
+ *   triode (V_DS < V_ov):  k·[(V_ov)·V_DS − V_DS²/2]    with V_ov = V_GS − V_T
+ *   saturation (V_DS ≥ V_ov):               (k/2)·V_ov²
+ * At V_DS = V_ov the triode branch equals (k/2)·V_ov², joining the plateau smoothly.
+ * k = (W/L)·μ*·C_ox. Channel-length modulation is ignored (ideal, flat saturation).
+ */
+export function mosfetDrainCurrent(VGS: number, VDS: number, VT: number, k: number): number {
+  const vov = VGS - VT
+  if (vov <= 0) return 0
+  const vds = Math.max(0, VDS)
+  if (vds < vov) return k * (vov * vds - (vds * vds) / 2)
+  return (k / 2) * vov * vov
+}
+
+/**
+ * Saturation (transfer-characteristic) drain current, the square law:
+ *   I_DS,sat = (k/2)·(V_GS − V_T)²,   0 below threshold.
+ */
+export function mosfetSatCurrent(VGS: number, VT: number, k: number): number {
+  const vov = VGS - VT
+  if (vov <= 0) return 0
+  return (k / 2) * vov * vov
+}
+
+/**
+ * Small-signal transconductance g_m = ∂I_DS/∂V_GS (at fixed V_DS):
+ *   saturation:  g_m = k·(V_GS − V_T) = √(2 k I_DS)
+ *   triode:      g_m = k·V_DS
+ * Zero in cutoff.
+ */
+export function mosfetGm(VGS: number, VDS: number, VT: number, k: number): number {
+  const region = mosfetRegion(VGS, VDS, VT)
+  if (region === 'cutoff') return 0
+  return region === 'triode' ? k * VDS : k * (VGS - VT)
+}
+
+/**
+ * Small-signal output (drain) conductance g_ds = ∂I_DS/∂V_DS (at fixed V_GS):
+ *   triode:      g_ds = k·(V_GS − V_T − V_DS)
+ *   saturation:  g_ds = 0   (ideal, no channel-length modulation)
+ * Zero in cutoff.
+ */
+export function mosfetGds(VGS: number, VDS: number, VT: number, k: number): number {
+  const region = mosfetRegion(VGS, VDS, VT)
+  if (region === 'triode') return k * (VGS - VT - VDS)
+  return 0
+}
+
+// ---- MOSFET non-ideal / modern effects — lesson 7 part ב׳ ------------------
+/**
+ * Saturation drain current with channel-length modulation (the practical/engineering form,
+ * Neamen Eq. 11.12): I_DS = (k/2)(V_GS − V_T)²·(1 + λ·V_DS). The triode branch is unchanged;
+ * only the saturation plateau tilts up with slope set by λ (the channel-length-modulation
+ * parameter, 1/V). λ→0 recovers the ideal flat saturation.
+ */
+export function mosfetDrainCurrentCLM(VGS: number, VDS: number, VT: number, k: number, lambda: number): number {
+  const vov = VGS - VT
+  if (vov <= 0) return 0
+  const vds = Math.max(0, VDS)
+  if (vds < vov) return k * (vov * vds - (vds * vds) / 2) // triode — unaffected
+  return (k / 2) * vov * vov * (1 + lambda * vds)
+}
+
+/**
+ * Small-signal output resistance from channel-length modulation (Neamen Eq. 11.13b):
+ *   r_o ≈ 1/(λ·I_D).  Infinite when λ→0 (ideal). I_D is the saturation drain current (A).
+ */
+export function mosfetOutputResistance(ID: number, lambda: number): number {
+  if (lambda <= 0 || ID <= 0) return Infinity
+  return 1 / (lambda * ID)
+}
+
+/**
+ * Body-effect coefficient (body factor) γ = √(2 q ε_s N_A)/C_ox  (units √V). Sets how strongly
+ * a source-to-body reverse bias raises the threshold voltage.
+ */
+export function mosfetBodyFactor(Na: number, epsR: number, Cox: number): number {
+  return Math.sqrt(2 * Q * epsR * EPS0 * Na) / Cox
+}
+
+/**
+ * Threshold voltage under a source-to-body reverse bias V_SB (body effect, Neamen §10):
+ *   V_T = V_T0 + γ(√(2φ_F + V_SB) − √(2φ_F)).
+ * Reduces to V_T0 at V_SB = 0; increases with V_SB (for an n-channel device). V_SB clamped ≥ 0.
+ */
+export function mosfetThresholdBody(VT0: number, gamma: number, phiF: number, VSB: number): number {
+  const vsb = Math.max(0, VSB)
+  return VT0 + gamma * (Math.sqrt(2 * phiF + vsb) - Math.sqrt(2 * phiF))
+}
+
+/**
+ * Subthreshold swing S = [d(log₁₀ I_D)/dV_GS]⁻¹ = 2.3·m·(kT/q)  (V/decade), where the body-effect
+ * ideality factor m = 1 + C_dep/C_ox ≥ 1. At room temperature the ideal limit (m = 1) is the
+ * famous ~60 mV/decade. Returns volts per decade.
+ */
+export function mosfetSubthresholdSwing(m: number, T = 300): number {
+  return Math.log(10) * m * thermalVoltage(T)
+}
+
+/**
+ * Effective mobility with surface-scattering degradation in the linear region (SPICE-style
+ * θ-model used in the class): μ_eff = μ_0 / (1 + θ·(V_GS − V_T)). Below threshold returns μ_0.
+ * θ is the mobility-degradation parameter (1/V).
+ */
+export function mosfetMobilityDegraded(mu0: number, theta: number, VGS: number, VT: number): number {
+  const vov = VGS - VT
+  if (vov <= 0) return mu0
+  return mu0 / (1 + theta * vov)
+}
+
+/**
+ * Velocity-saturation-limited saturation current: the drift velocity clamps at v_sat, so
+ * I_DS,sat = Q_inv·v_drift·W becomes LINEAR in the overdrive (V_GS − V_T) instead of square-law.
+ * Two textbook conventions differ by a factor of two (average vs. peak channel velocity):
+ *   halfFactor = true  → (W/2)·C_ox·(V_GS − V_T)·v_sat   (class summary)
+ *   halfFactor = false →  W ·C_ox·(V_GS − V_T)·v_sat     (Neamen Eq. 11.17)
+ * W is the channel width (cm), C_ox in F/cm², v_sat in cm/s. Zero below threshold.
+ */
+export function mosfetVsatCurrent(W: number, Cox: number, VGS: number, VT: number, vsat: number, halfFactor = false): number {
+  const vov = VGS - VT
+  if (vov <= 0) return 0
+  return (halfFactor ? 0.5 : 1) * W * Cox * vov * vsat
+}
+
 // ---- display helpers -------------------------------------------------------
 export const cmToNm = (cm: number): number => cm * 1e7
 export const cmToMicron = (cm: number): number => cm * 1e4

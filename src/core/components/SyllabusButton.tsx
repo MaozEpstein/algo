@@ -53,7 +53,7 @@ export default function SyllabusButton({ lessons }: { lessons: SyllabusLesson[] 
             onClick={() => setOpen(false)}
           >
             <motion.div
-              className="max-h-[85vh] w-full max-w-3xl overflow-auto rounded-3xl bg-slate-50 shadow-2xl"
+              className="max-h-[88vh] w-full max-w-6xl overflow-auto rounded-3xl bg-slate-50 shadow-2xl"
               initial={{ scale: 0.94, y: 12 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.94, y: 12 }}
@@ -73,7 +73,7 @@ export default function SyllabusButton({ lessons }: { lessons: SyllabusLesson[] 
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4 p-6">
+              <div className="grid grid-cols-1 items-start gap-4 p-6 lg:grid-cols-2">
                 {lessons.map((lesson) => (
                   <div key={lesson.n + lesson.title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="mb-2 flex items-center gap-2">
@@ -102,7 +102,7 @@ export default function SyllabusButton({ lessons }: { lessons: SyllabusLesson[] 
                     )}
                   </div>
                 ))}
-                <p className="text-center text-xs text-slate-400">הסילבוס יתעדכן עם הוספת כל שיעור / חלק.</p>
+                <p className="text-center text-xs text-slate-400 lg:col-span-2">הסילבוס יתעדכן עם הוספת כל שיעור / חלק.</p>
               </div>
             </motion.div>
           </motion.div>

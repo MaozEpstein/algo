@@ -87,6 +87,23 @@ const LESSONS: SyllabusLesson[] = [
       },
     ],
   },
+  {
+    n: 'שיעור 7',
+    title: 'טרנזיסטור MOS (MOSFET)',
+    done: true,
+    parts: [
+      {
+        label: 'חלק א׳ · מבנה, פעולה ואופיינים',
+        desc: 'שכבת-ההיפוך הופכת לערוץ מוליך בין מקור לניקוז; היווצרות הערוץ ועודף-המתח המקומי $Q_n(y)=-C_{ox}(V_{GS}-V_T-V(y))$, צביטה ורוויה ($V_{DS,sat}=V_{GS}-V_T$); גזירת אופיין-הזרם — טריודה ורוויה ($I_{DS}=\\tfrac{k}{2}(V_{GS}-V_T)^2$, $k=\\tfrac{W}{L}\\mu^*C_{ox}$); אופייני מוצא/העברה, NMOS/PMOS ואנהנסמנט/דיפלישן, ומודל אותות-קטנים $g_m$ עם קו-עומס.',
+        done: true,
+      },
+      {
+        label: 'חלק ב׳ · ההתקן המודרני (אפקטים לא-אידיאליים) ו-CMOS',
+        desc: 'סטיות מהמודל האידיאלי: התקצרות-תעלה $I_{DS}=\\tfrac{k}{2}(V_{GS}-V_T)^2(1+\\lambda V_{DS})$ ו-$r_o\\approx1/\\lambda I_D$; אפקט המצע $V_T=V_{T0}+\\gamma(\\sqrt{2\\phi_F+V_{SB}}-\\sqrt{2\\phi_F})$; זרם תת-סף (דיפוזיה) ונדנוד-הסף $S\\approx m\\cdot60$ mV/dec; הדרדרות-ניידות $\\mu_{eff}=\\mu_0/(1+\\theta(V_{GS}-V_T))$; רוויית-מהירות ($I_{DS,sat}\\propto W C_{ox}(V_{GS}-V_T)v_{sat}$, לינארי); וטכנולוגיית CMOS.',
+        done: true,
+      },
+    ],
+  },
 ]
 
 export default function Syllabus() {

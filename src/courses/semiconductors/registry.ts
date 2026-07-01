@@ -13,6 +13,8 @@ import { jfetLecture } from '@/courses/semiconductors/lectures/jfet'
 import { mosCapacitorLecture } from '@/courses/semiconductors/lectures/mos-capacitor'
 import { mosThresholdLecture } from '@/courses/semiconductors/lectures/mos-threshold'
 import { mosCapacitanceLecture } from '@/courses/semiconductors/lectures/mos-capacitance'
+import { mosfetLecture } from '@/courses/semiconductors/lectures/mosfet'
+import { mosfetNonidealLecture } from '@/courses/semiconductors/lectures/mosfet-nonideal'
 
 /** The single wiring point for the semiconductors course. Adding a lecture =
  *  import it and add it here. */
@@ -31,6 +33,8 @@ export const LECTURES: Record<string, LectureModule> = {
   [mosCapacitorLecture.id]: mosCapacitorLecture,
   [mosThresholdLecture.id]: mosThresholdLecture,
   [mosCapacitanceLecture.id]: mosCapacitanceLecture,
+  [mosfetLecture.id]: mosfetLecture,
+  [mosfetNonidealLecture.id]: mosfetNonidealLecture,
 }
 
 export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(
