@@ -6,6 +6,12 @@ import SyllabusButton, { type SyllabusLesson } from '@/core/components/SyllabusB
  */
 const LESSONS: SyllabusLesson[] = [
   {
+    n: 'מבט-על',
+    title: 'סינתזה — המפה של הקורס',
+    done: true,
+    desc: 'שיעור-על חוצה-קורס: מפת-קורס אינטראקטיבית (איך נבנית ההבנה שלב-אחר-שלב), קומפנדיום האפקטים הלא-אידיאליים לפי משפחות (Early ≡ התקצרות-תעלה, מנגנוני-פריצה, אפקטי שדה-גבוה), "חוק אחד הרבה התקנים" ($e^{qV/kT}$, $\\rho\\to E\\to V$, שלד $g_m/r_o$), השוואת BJT/JFET/MOSFET, ואטלס דיאגרמות-פסים.',
+  },
+  {
     n: 'שיעור 1',
     title: 'צומת PN',
     done: true,

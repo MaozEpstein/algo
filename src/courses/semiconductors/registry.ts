@@ -1,4 +1,5 @@
 import type { LectureModule } from '@/core/engine/types'
+import { overviewLecture } from '@/courses/semiconductors/lectures/overview'
 import { pnJunctionEqLecture } from '@/courses/semiconductors/lectures/pn-junction-equilibrium'
 import { pnJunctionBiasLecture } from '@/courses/semiconductors/lectures/pn-junction-bias'
 import { idealDiodeLecture } from '@/courses/semiconductors/lectures/ideal-diode'
@@ -19,6 +20,7 @@ import { mosfetNonidealLecture } from '@/courses/semiconductors/lectures/mosfet-
 /** The single wiring point for the semiconductors course. Adding a lecture =
  *  import it and add it here. */
 export const LECTURES: Record<string, LectureModule> = {
+  [overviewLecture.id]: overviewLecture,
   [pnJunctionEqLecture.id]: pnJunctionEqLecture,
   [pnJunctionBiasLecture.id]: pnJunctionBiasLecture,
   [idealDiodeLecture.id]: idealDiodeLecture,
