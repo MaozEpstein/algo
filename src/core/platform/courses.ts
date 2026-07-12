@@ -20,11 +20,18 @@ export const COURSES: CourseManifest[] = [
     subtitleEn: 'Semiconductor Devices',
     accent: 'violet',
   },
+  {
+    id: 'statistics',
+    titleHe: 'שיטות סטטיסטיות בהנדסה ומדעי המחשב',
+    subtitleEn: 'Statistical Methods in Engineering and Computer Science',
+    accent: 'emerald',
+  },
 ]
 
 export const COURSE_LOADERS: Record<string, () => Promise<{ default: CourseModule }>> = {
   algorithms: () => import('@/courses/algorithms'),
   semiconductors: () => import('@/courses/semiconductors'),
+  statistics: () => import('@/courses/statistics'),
 }
 
 export const getManifest = (id: string): CourseManifest | undefined =>

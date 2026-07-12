@@ -25,6 +25,15 @@
     direction: ltr;
     unicode-bidi: isolate;
   }
+
+  /* Scrollable without visible scrollbar chrome (e.g. long KaTeX rows) */
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* old Edge */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chromium/WebKit */
+  }
 }
 
 @layer components {
