@@ -60,6 +60,18 @@ const SECTIONS: Section[] = [
       { name: 'דגימה בטרנספורם ההפוך', tex: 'X=F_X^{-1}(U),\\quad F_X(X)\\sim U[0,1]' },
     ],
   },
+  {
+    title: '5 · בדיקת השערות',
+    rows: [
+      { name: 'מבחן יחס הנראות', tex: 'T(x)=\\tfrac{f(x;H_1)}{f(x;H_0)}\\ \\gtrless_{H_0}^{H_1}\\ \\eta' },
+      { name: 'ניימן-פירסון', tex: '\\max_R P_D\\ \\text{s.t.}\\ P_{FA}\\le\\alpha' },
+      { name: 'פונקציית Q', tex: 'Q(a)=\\int_a^\\infty \\tfrac{1}{\\sqrt{2\\pi}}e^{-t^2/2}dt,\\ \\ Q(-a)=1-Q(a)' },
+      { name: 'גילוי גאוסי', tex: 'P_D=Q\\big(Q^{-1}(P_{FA})-\\sqrt{n\\mu^2/\\sigma^2}\\big)' },
+      { name: 'מסנן מותאם', tex: 'T=x^\\top\\Sigma^{-1}s,\\ \\ d^2=s^\\top\\Sigma^{-1}s' },
+      { name: 'גלאי אנרגיה', tex: 'T=\\|x\\|^2,\\ \\ T;H_0\\sim\\sigma^2\\chi^2_d' },
+      { name: 'כלל MAP (בייסיאני)', tex: 'T(x)\\ \\gtrless\\ \\tfrac{P(H_0)}{P(H_1)}' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */
