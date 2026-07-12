@@ -113,7 +113,7 @@ export default function MomentsExplorer() {
         ))}
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full">
+      <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto block w-full" style={{ maxWidth: 470 }}>
         {/* ±σ spread band */}
         <rect x={sx(bandLo)} y={PAD.t} width={Math.max(0, sx(bandHi) - sx(bandLo))} height={IH} fill="#fbbf24" fillOpacity={0.14} />
         <line x1={PAD.l} y1={baseY} x2={W - PAD.r} y2={baseY} stroke="#cbd5e1" />

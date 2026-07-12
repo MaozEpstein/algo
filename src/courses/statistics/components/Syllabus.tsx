@@ -27,6 +27,7 @@ const LESSONS: SyllabusLesson[] = [
   {
     n: 'שיעור 3',
     title: 'פונקציות של משתנים מקריים',
+    done: true,
     desc: 'פונקציה הפיכה ופונקציה לא-הפיכה של משתנה יחיד, פונקציות של מספר משתנים, תוחלת של פונקציה, דגימה בטרנספורם ההפוך (inverse transform sampling) וזרימות מנרמלות (normalizing flows).',
   },
   {

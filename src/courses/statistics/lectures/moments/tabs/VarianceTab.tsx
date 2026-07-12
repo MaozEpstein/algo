@@ -110,7 +110,7 @@ export default function VarianceTab() {
         example={
           <p>
             אם <span dir="ltr"><Tex>{'Y=2X+1'}</Tex></span> אז <span dir="ltr"><Tex>{'\\rho=+1'}</Tex></span> (קשר לינארי מושלם);
-            אם <span dir="ltr"><Tex>{'Y=X^2'}</Tex></span> עם $X$ סימטרי סביב 0 — <span dir="ltr"><Tex>{'\\rho=0'}</Tex></span> למרות תלות חזקה.
+            אם <span dir="ltr"><Tex>{'Y=X^2'}</Tex></span> עם <Tex>{'X'}</Tex> סימטרי סביב 0 — <span dir="ltr"><Tex>{'\\rho=0'}</Tex></span> למרות תלות חזקה.
           </p>
         }
         proof={rhoProof}
