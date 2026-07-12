@@ -84,6 +84,19 @@ const SECTIONS: Section[] = [
       { name: 'עקביות (KL)', tex: 'D_{KL}(f_1,f_2)=E_{f_1}[\\log\\tfrac{f_1}{f_2}]\\ge 0' },
     ],
   },
+  {
+    title: '7 · ריבועים פחותים',
+    rows: [
+      { name: 'מודל ומטרה', tex: 'y=H\\theta+n,\\ \\ \\min_\\theta\\|y-H\\theta\\|^2' },
+      { name: 'משוואות נורמליות', tex: 'H^\\top H\\,\\theta=H^\\top y' },
+      { name: 'פתרון LS', tex: '\\hat\\theta_{LS}=(H^\\top H)^{-1}H^\\top y' },
+      { name: 'התאמת קו', tex: '\\hat\\theta_1=\\tfrac{\\sum(x_i-\\bar x)(y_i-\\bar y)}{\\sum(x_i-\\bar x)^2},\\ \\hat\\theta_0=\\bar y-\\hat\\theta_1\\bar x' },
+      { name: 'קווריאנס', tex: '\\mathrm{Cov}(\\hat\\theta)=\\sigma^2(H^\\top H)^{-1}' },
+      { name: 'Ridge', tex: '\\hat\\theta=(H^\\top H+\\lambda I)^{-1}H^\\top y' },
+      { name: 'ירידת גרדיאנט', tex: '\\theta_{k+1}=\\theta_k-\\mu\\cdot 2H^\\top(H\\theta_k-y)' },
+      { name: 'חסין (L1)', tex: '\\min_\\theta\\sum_i|y_i-\\theta|\\Rightarrow\\hat\\theta=\\mathrm{median}(y)' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */
