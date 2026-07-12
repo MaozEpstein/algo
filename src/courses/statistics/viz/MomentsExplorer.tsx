@@ -43,24 +43,23 @@ export default function MomentsExplorer() {
   const [pp, setPp] = useState(0.4)
   const [theta, setTheta] = useState(0.6)
 
-  const dist = DISTS.find((d) => d.id === id)!
-
   const model = useMemo(() => {
+    const P = (p: Record<string, number>) => p // unify the params type across branches
     switch (id) {
       case 'uniform':
-        return { continuous: true, xmin: Math.min(a, b) - 1, xmax: Math.max(a, b) + 1, f: (x: number) => uniformPdf(x, Math.min(a, b), Math.max(a, b)), params: { a, b } }
+        return { continuous: true, xmin: Math.min(a, b) - 1, xmax: Math.max(a, b) + 1, f: (x: number) => uniformPdf(x, Math.min(a, b), Math.max(a, b)), params: P({ a, b }) }
       case 'exp':
-        return { continuous: true, xmin: 0, xmax: 6 / lambda, f: (x: number) => expPdf(x, lambda), params: { lambda } }
+        return { continuous: true, xmin: 0, xmax: 6 / lambda, f: (x: number) => expPdf(x, lambda), params: P({ lambda }) }
       case 'gauss':
-        return { continuous: true, xmin: m - 4 * sigma, xmax: m + 4 * sigma, f: (x: number) => gaussianPdf(x, m, sigma), params: { m, sigma } }
+        return { continuous: true, xmin: m - 4 * sigma, xmax: m + 4 * sigma, f: (x: number) => gaussianPdf(x, m, sigma), params: P({ m, sigma }) }
       case 'poisson': {
         const kmax = Math.max(6, Math.ceil(lambda + 4 * Math.sqrt(lambda)))
-        return { continuous: false, xmin: -0.5, xmax: kmax + 0.5, kmax, f: (k: number) => poissonPmf(k, lambda), params: { lambda } }
+        return { continuous: false, xmin: -0.5, xmax: kmax + 0.5, kmax, f: (k: number) => poissonPmf(k, lambda), params: P({ lambda }) }
       }
       case 'binomial':
-        return { continuous: false, xmin: -0.5, xmax: n + 0.5, kmax: n, f: (k: number) => binomialPmf(k, n, pp), params: { n, p: pp } }
+        return { continuous: false, xmin: -0.5, xmax: n + 0.5, kmax: n, f: (k: number) => binomialPmf(k, n, pp), params: P({ n, p: pp }) }
       case 'bernoulli':
-        return { continuous: false, xmin: -0.5, xmax: 1.5, kmax: 1, f: (k: number) => bernoulliPmf(k, theta), params: { theta } }
+        return { continuous: false, xmin: -0.5, xmax: 1.5, kmax: 1, f: (k: number) => bernoulliPmf(k, theta), params: P({ theta }) }
     }
   }, [id, a, b, lambda, m, sigma, n, pp, theta])
 
