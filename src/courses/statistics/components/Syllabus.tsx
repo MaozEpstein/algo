@@ -45,6 +45,7 @@ const LESSONS: SyllabusLesson[] = [
   {
     n: 'שיעור 6',
     title: 'נראות מרבית',
+    done: true,
     desc: 'אמידת פרמטרים ואמדים; שיטת הנראות המרבית (Maximum Likelihood) — פונקציית הנראות, האמד המרבי ותכונותיו.',
   },
   {

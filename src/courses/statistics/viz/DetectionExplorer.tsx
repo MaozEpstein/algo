@@ -84,7 +84,7 @@ export default function DetectionExplorer() {
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         {/* densities */}
         <div>
-          <svg viewBox={`0 0 ${DW} ${DH}`} className="w-full">
+          <svg viewBox={`0 0 ${DW} ${DH}`} className="mx-auto block w-full" style={{ maxWidth: 480 }}>
             <line x1={DP.l} y1={baseY} x2={DW - DP.r} y2={baseY} stroke="#cbd5e1" />
             {/* shaded regions */}
             {bayes ? (

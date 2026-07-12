@@ -72,6 +72,18 @@ const SECTIONS: Section[] = [
       { name: 'כלל MAP (בייסיאני)', tex: 'T(x)\\ \\gtrless\\ \\tfrac{P(H_0)}{P(H_1)}' },
     ],
   },
+  {
+    title: '6 · נראות מרבית',
+    rows: [
+      { name: 'הטיה ושונות', tex: '\\mathrm{bias}=E[\\hat\\theta]-\\theta,\\ \\ \\mathrm{var}=E[(E-E[E])^2]' },
+      { name: 'פירוק MSE', tex: '\\mathrm{MSE}=\\mathrm{bias}^2+\\mathrm{var}' },
+      { name: 'אמד נראות מרבית', tex: '\\hat\\theta_{ML}=\\arg\\max_\\theta\\textstyle\\sum_i\\log f(y_i;\\theta)' },
+      { name: 'MLE ברנולי', tex: '\\hat\\theta=\\tfrac1N\\textstyle\\sum y_i,\\ \\ \\mathrm{Var}=\\tfrac{\\theta(1-\\theta)}{N}' },
+      { name: 'MLE גאוסי (σ̂² מוטה)', tex: '\\hat\\mu=\\overline y,\\ \\ \\hat\\sigma^2=\\tfrac1N\\textstyle\\sum(y_i-\\hat\\mu)^2,\\ E[\\hat\\sigma^2]=\\tfrac{N-1}{N}\\sigma^2' },
+      { name: 'MLE מעריכי/אחיד', tex: '\\hat\\theta_{\\exp}=\\overline y,\\ \\ \\hat\\theta_{U(0,\\theta)}=\\max_i y_i' },
+      { name: 'עקביות (KL)', tex: 'D_{KL}(f_1,f_2)=E_{f_1}[\\log\\tfrac{f_1}{f_2}]\\ge 0' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */

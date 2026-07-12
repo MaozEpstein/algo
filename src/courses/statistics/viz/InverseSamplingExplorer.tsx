@@ -115,7 +115,7 @@ export default function InverseSamplingExplorer() {
         ))}
       </div>
 
-      <svg viewBox={`0 0 ${W} ${Hh}`} className="mx-auto block w-full" style={{ maxWidth: 360 }}>
+      <svg viewBox={`0 0 ${W} ${Hh}`} className="mx-auto block w-full" style={{ maxWidth: 430 }}>
         {/* U axis + CDF plot frame */}
         <line x1={PAD.l} y1={PAD.t} x2={PAD.l} y2={PAD.t + PH} stroke="#cbd5e1" />
         <line x1={PAD.l} y1={PAD.t + PH} x2={W - PAD.r} y2={PAD.t + PH} stroke="#cbd5e1" />

@@ -149,7 +149,7 @@ export default function TransformExplorer() {
         </div>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${Hh}`} className="mx-auto block w-full" style={{ maxWidth: 400 }}>
+      <svg viewBox={`0 0 ${W} ${Hh}`} className="mx-auto block w-full" style={{ maxWidth: 460 }}>
         {/* axes of the g-plot */}
         <line x1={LM} y1={0} x2={LM} y2={PLOT_H} stroke="#cbd5e1" />
         <line x1={LM} y1={PLOT_H} x2={W} y2={PLOT_H} stroke="#cbd5e1" />

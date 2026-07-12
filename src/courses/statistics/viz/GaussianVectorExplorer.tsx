@@ -90,7 +90,7 @@ export default function GaussianVectorExplorer() {
         <button onClick={() => setCounter(true)} className={`rounded-xl px-3 py-1.5 text-sm font-semibold transition ${counter ? 'bg-emerald-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>דוגמה נגדית (Y=SX)</button>
       </div>
 
-      <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto block w-full" style={{ maxWidth: 380 }}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto block w-full" style={{ maxWidth: 420 }}>
         {/* plot frame */}
         <line x1={LM} y1={PT} x2={LM} y2={PT + PH} stroke="#cbd5e1" />
         <line x1={LM} y1={PT + PH} x2={W - PR} y2={PT + PH} stroke="#cbd5e1" />
