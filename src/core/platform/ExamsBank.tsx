@@ -4,6 +4,7 @@ import { useCourse } from './CourseProvider'
 import { coursePath, examViewPath, revisionViewPath } from './links'
 import { useFeature } from './features'
 import { useProgress, cycleStatus, summarize, STATUS_META, type Status } from './progress'
+import ExamCategoriesModal from './ExamCategoriesModal'
 import type { ExamEntry } from './types'
 
 /**
@@ -25,7 +26,9 @@ export default function ExamsBank() {
   const { courseId, course } = useCourse()
   const exams = course.exams ?? []
   const revision = course.revision ?? []
+  const categories = course.examCategories ?? []
   const [year, setYear] = useState<number | 'all'>('all')
+  const [catsOpen, setCatsOpen] = useState(false)
   const progressOn = useFeature('progress')
   const progress = useProgress(courseId)
 
@@ -48,6 +51,16 @@ export default function ExamsBank() {
         <p className="mt-2 leading-relaxed text-slate-500">
           מבחני עבר עם פתרונות — נפתחים כקובץ המקור המלא. {exams.length} מבחנים.
         </p>
+
+        {categories.length > 0 && (
+          <button
+            onClick={() => setCatsOpen(true)}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
+          >
+            <span aria-hidden>📊</span>
+            טבלה לפי קטגוריה
+          </button>
+        )}
 
         {progressOn && summary.total > 0 && (
           <div className="mx-auto mt-5 max-w-md">
@@ -137,6 +150,15 @@ export default function ExamsBank() {
           })}
         </div>
       )}
+
+      <ExamCategoriesModal
+        open={catsOpen}
+        onClose={() => setCatsOpen(false)}
+        courseId={courseId}
+        categories={categories}
+        exams={exams}
+        studyGuide={course.examStudyGuide}
+      />
     </div>
   )
 }

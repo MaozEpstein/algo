@@ -3,6 +3,8 @@ import { LECTURES, LECTURE_LIST } from './registry'
 import Syllabus from './components/Syllabus'
 import FormulaSheet from './components/FormulaSheet'
 import { statisticsExams } from './exams'
+import { statisticsExamCategories } from './examCategories'
+import { statisticsExamStudyGuide } from './examStudyGuide'
 
 /**
  * Statistical Methods in Engineering and Computer Science. Source material:
@@ -23,6 +25,8 @@ const statisticsCourse: CourseModule = {
   syllabus: Syllabus,
   formulaSheet: FormulaSheet,
   exams: statisticsExams,
+  examCategories: statisticsExamCategories,
+  examStudyGuide: statisticsExamStudyGuide,
 }
 
 export default statisticsCourse

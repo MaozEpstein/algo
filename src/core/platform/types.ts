@@ -44,6 +44,48 @@ export interface CourseModule {
   /** Optional lecturer revision/practice-question PDFs, shown as a section inside
    *  the exam bank. The PDFs live in public/docs/revision/<courseId>/. */
   revision?: RevisionDoc[]
+  /** Optional taxonomy of exam questions by recurring style/template — surfaced as
+   *  a "טבלה לפי קטגוריה" modal on the exam bank. */
+  examCategories?: ExamCategory[]
+  /** Optional "hot formulas & insights" study guide — a second tab in that modal. */
+  examStudyGuide?: ExamStudyGuide
+}
+
+/** The most-used formulas + understanding-theorems across the exam solutions. */
+export interface ExamStudyGuide {
+  /** Ranked most-used → least. `tex` is a KaTeX block; `detailHe` may embed $…$. */
+  formulas: { titleHe: string; tex: string; detailHe: string; usageHe: string }[]
+  insights: { titleHe: string; detailHe: string; usageHe: string }[]
+  /** The universal 3-beat solution flow, shown as an intro banner. */
+  masterBeats: { titleHe: string; textHe: string }[]
+  /** Per-template step-by-step solution recipes. */
+  recipes: SolutionRecipe[]
+}
+
+/** One recurring solution procedure (per question-template). */
+export interface SolutionRecipe {
+  templateId: string
+  titleHe: string
+  countHe: string
+  steps: RecipeStep[]
+}
+
+/** One step in a recipe. `kind` colours/labels it; `textHe` may embed $…$; `tex` is an optional KaTeX block. */
+export interface RecipeStep {
+  kind: 'model' | 'formula' | 'substitute' | 'theorem' | 'result'
+  textHe: string
+  tex?: string
+}
+
+/** One recurring exam-question template (style), with the questions that match it. */
+export interface ExamCategory {
+  /** Short code, e.g. 'T3'. */
+  id: string
+  titleHe: string
+  /** One line: what characterizes the pattern. */
+  markerHe: string
+  /** The matching questions across the exam bank. `examId` matches an ExamEntry id. */
+  instances: { examId: string; q: string }[]
 }
 
 /**
