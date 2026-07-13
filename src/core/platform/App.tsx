@@ -9,6 +9,8 @@ import CourseHome from './CourseHome'
 import SettingsModal from './SettingsModal'
 import SavedListPage from './SavedListPage'
 import PrintView from './PrintView'
+import ExamsBank from './ExamsBank'
+import ExamViewer from './ExamViewer'
 import { coursePath } from './links'
 
 // Match the deploy base (e.g. '/algo' on GitHub Pages) so routes resolve under
@@ -71,6 +73,8 @@ export default function App() {
                     <Route path="saved" element={<SavedListPage />} />
                     <Route path="print" element={<PrintView />} />
                     <Route path="overview" element={<CourseOverview />} />
+                    <Route path="exams" element={<ExamsBank />} />
+                    <Route path="exams/:examId" element={<ExamViewer />} />
                     <Route path="lecture/:lectureId" element={<LectureShell />} />
                     <Route path="lecture/:lectureId/:mode" element={<LectureShell />} />
                     <Route path="*" element={<Navigate to="." replace />} />

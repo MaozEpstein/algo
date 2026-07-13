@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useCourse } from './CourseProvider'
-import { lecturePath, overviewPath, savedListPath } from './links'
+import { lecturePath, overviewPath, savedListPath, examsPath } from './links'
 import { OPEN_FORMULA_SHEET, OPEN_CALCULATOR, OPEN_CONSTANTS } from './types'
 import { useFeature } from './features'
 import { useProgress, summarize, cycleStatus, STATUS_META, type Status } from './progress'
@@ -13,7 +13,7 @@ import CourseLessonList from './CourseLessonList'
 /** A course's landing page: the lecture grid or collapsible list (+ optional overview hub). */
 export default function CourseHome() {
   const { courseId, course } = useCourse()
-  const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet, syllabus: Syllabus, calculator: hasCalculator, constants: hasConstants } = course
+  const { manifest, LECTURE_LIST, Overview, formulaSheet: hasFormulaSheet, syllabus: Syllabus, calculator: hasCalculator, constants: hasConstants, exams } = course
   const progressOn = useFeature('progress')
   const savedOn = useFeature('savedList')
   const progress = useProgress(courseId)
@@ -41,6 +41,16 @@ export default function CourseHome() {
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {Syllabus && <Syllabus />}
+          {exams && exams.length > 0 && (
+            <Link
+              to={examsPath(courseId)}
+              title="בנק מבחנים"
+              className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-4 py-1.5 text-sm font-semibold text-sky-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-100"
+            >
+              <span aria-hidden>📄</span>
+              בנק מבחנים
+            </Link>
+          )}
           {hasFormulaSheet && (
             // the modal itself lives in CourseProvider (so it's reachable from any
             // page); this button just asks it to open — same as pressing Ctrl+Shift+S

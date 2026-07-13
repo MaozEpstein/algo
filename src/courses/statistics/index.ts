@@ -2,6 +2,7 @@ import type { CourseModule } from '@/core/platform/types'
 import { LECTURES, LECTURE_LIST } from './registry'
 import Syllabus from './components/Syllabus'
 import FormulaSheet from './components/FormulaSheet'
+import { statisticsExams } from './exams'
 
 /**
  * Statistical Methods in Engineering and Computer Science. Source material:
@@ -21,6 +22,7 @@ const statisticsCourse: CourseModule = {
   LECTURE_LIST,
   syllabus: Syllabus,
   formulaSheet: FormulaSheet,
+  exams: statisticsExams,
 }
 
 export default statisticsCourse

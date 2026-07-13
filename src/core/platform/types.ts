@@ -36,6 +36,26 @@ export interface CourseModule {
   calculator?: ComponentType
   /** Optional constants-table modal — opened via the OPEN_CONSTANTS event. */
   constants?: ComponentType
+  /** Optional bank of past-exam source PDFs — a designed gallery + full-screen
+   *  viewer at /c/<course>/exams. The PDFs live in public/docs/exams/<courseId>/. */
+  exams?: ExamEntry[]
+}
+
+/**
+ * One past exam in a course's exam bank. The PDFs are static assets under
+ * `public/docs/exams/<courseId>/` (ASCII slugs), rendered in the browser's native
+ * viewer by ExamViewer. `moed`: a/b/c = מועד א׳/ב׳/ג׳, s = מועד מיוחד.
+ */
+export interface ExamEntry {
+  /** URL slug + stable key, e.g. '2022-moed-c'. */
+  id: string
+  year: number
+  moed: 'a' | 'b' | 'c' | 's'
+  titleHe: string
+  /** Exam PDF file name inside public/docs/exams/<courseId>/. */
+  examFile: string
+  /** Optional solution PDF file name (same folder). */
+  solutionFile?: string
 }
 
 /**
