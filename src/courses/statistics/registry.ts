@@ -9,6 +9,7 @@ import { mleLecture } from './lectures/maximum-likelihood'
 import { lsLecture } from './lectures/least-squares'
 import { bayesLecture } from './lectures/bayesian-statistics'
 import { linBayesLecture } from './lectures/linear-bayesian-estimation'
+import { randomProcessLecture } from './lectures/random-processes'
 
 /** The single wiring point for the statistics course. Adding a lecture =
  *  import it and add it here (one line per lesson), exactly as the
@@ -24,6 +25,7 @@ export const LECTURES: Record<string, LectureModule> = {
   [lsLecture.id]: lsLecture,
   [bayesLecture.id]: bayesLecture,
   [linBayesLecture.id]: linBayesLecture,
+  [randomProcessLecture.id]: randomProcessLecture,
 }
 
 export const LECTURE_LIST: LectureModule[] = Object.values(LECTURES).sort(

@@ -121,6 +121,20 @@ const SECTIONS: Section[] = [
       { name: 'שני חיישנים', tex: '\\hat y=\\mu+\\tfrac{(x_1-\\mu)/\\sigma_1^2+(x_2-\\mu)/\\sigma_2^2}{1/\\sigma_1^2+1/\\sigma_2^2+1/\\sigma^2}' },
     ],
   },
+  {
+    title: '10 · תהליכים מקריים',
+    rows: [
+      { name: 'תהליך מקרי', tex: 'x(t,\\zeta):\\mathbb{R}\\times\\Omega\\to\\mathbb{R}' },
+      { name: 'פונקציית התוחלת', tex: 'm_X(t)=E[X(t)]' },
+      { name: 'תהליך i.i.d', tex: 'P(X_{i_1},\\dots,X_{i_k})=\\textstyle\\prod_j P(X_{i_j})' },
+      { name: 'מונה (Ex 33)', tex: 'X_n\\sim\\mathrm{Bin}(n,p),\\ E=np,\\ \\mathrm{Var}=np(1-p)' },
+      { name: 'XOR (Ex 34)', tex: 'P(X_n{=}1)=\\tfrac12[1-(1-2p)^n]' },
+      { name: 'התפלגות סוף-ממדית', tex: 'F(t_1,\\dots,t_N;x)=P(X(t_1)\\le x_1,\\dots)' },
+      { name: 'תהליך גאוסי', tex: '[x(t_1),\\dots,x(t_k)]\\ \\text{Gaussian vector}' },
+      { name: 'סטציונריות צרה (SSS)', tex: 'F_{x(t_i)}=F_{x(t_i+\\tau)}\\ \\ \\forall\\tau' },
+      { name: 'סטציונריות אסימפטוטית', tex: '\\lim_{T\\to\\infty}F_{x(t_i+T)}=F_k' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */
