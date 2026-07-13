@@ -97,6 +97,18 @@ const SECTIONS: Section[] = [
       { name: 'חסין (L1)', tex: '\\min_\\theta\\sum_i|y_i-\\theta|\\Rightarrow\\hat\\theta=\\mathrm{median}(y)' },
     ],
   },
+  {
+    title: '8 · סטטיסטיקה בייסיאנית',
+    rows: [
+      { name: 'בייס', tex: 'f(\\theta\\mid y)=\\tfrac{f(y\\mid\\theta)f(\\theta)}{f(y)}' },
+      { name: 'סיכון בייסיאני', tex: '\\hat\\theta\\Leftarrow\\min_{\\hat\\theta(\\cdot)}E[c(\\hat\\theta-\\theta)]' },
+      { name: 'MMSE (עלות ריבועית)', tex: '\\hat\\theta_{MMSE}=E[\\theta\\mid Y=y]' },
+      { name: 'אורתוגונליות', tex: 'E[g(Y)(\\hat\\theta-\\theta)]=0\\ \\ \\forall g' },
+      { name: 'MAP (עלות 0-1)', tex: '\\hat\\theta_{MAP}=\\arg\\max_\\theta f(y\\mid\\theta)f(\\theta)' },
+      { name: 'חציון (עלות |·|)', tex: 'F_{\\theta\\mid Y}(\\hat\\theta\\mid y)=\\tfrac12' },
+      { name: 'MMSE גאוסי', tex: '\\hat Y=\\tfrac{\\sigma_y^2}{\\sigma_y^2+\\sigma_w^2}X+\\tfrac{\\sigma_w^2}{\\sigma_y^2+\\sigma_w^2}\\mu_y' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */

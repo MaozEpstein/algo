@@ -15,33 +15,46 @@ export default function DistributionsTab() {
   return (
     <div className="flex flex-col gap-5">
       <Panel title="טבלת השוואה">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[820px] border-collapse text-sm">
+        <div className="hide-scrollbar overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+          <table className="w-full min-w-[980px] border-collapse text-sm">
             <thead>
-              <tr className="border-b-2 border-slate-200 text-slate-500">
+              {/* group row */}
+              <tr className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <th colSpan={5} className="border-b border-slate-200 bg-emerald-50/70 px-4 py-1.5 text-center text-emerald-700">הגדרה וצפיפות</th>
+                <th colSpan={3} className="border-b border-s-2 border-slate-200 bg-amber-50/60 px-4 py-1.5 text-center text-amber-700">מומנטים</th>
+                <th className="border-b border-s-2 border-slate-200 bg-violet-50/60 px-4 py-1.5 text-center text-violet-700">טרנספורם</th>
+              </tr>
+              {/* column row */}
+              <tr className="bg-slate-50 text-slate-500">
                 <Th>התפלגות</Th>
                 <Th>פרמטרים</Th>
                 <Th>תומך</Th>
                 <Th>PDF / PMF</Th>
-                <Th>E[X]</Th>
-                <Th>E[X²]</Th>
-                <Th>Var(X)</Th>
+                <Th tex="F_X\;(\text{CDF})" divider />
+                <Th tex="\mathbb{E}[X]" />
+                <Th tex="\mathbb{E}[X^2]" />
+                <Th tex="\mathrm{Var}(X)" divider />
                 <Th>פונקציה אופיינית</Th>
               </tr>
             </thead>
             <tbody>
-              {[...DISTRIBUTIONS, MVN].map((d) => (
-                <tr key={d.id} className="border-b border-slate-100 align-middle">
-                  <td className="py-2 pe-3">
-                    <span className="font-semibold text-slate-800">{d.nameHe}</span>{' '}
-                    <span className="text-slate-400" dir="ltr"><Tex>{d.tex}</Tex></span>
+              {[...DISTRIBUTIONS, MVN].map((d, i) => (
+                <tr key={d.id} className={`border-t border-slate-100 align-middle transition hover:bg-emerald-50/40 ${i % 2 ? 'bg-slate-50/40' : 'bg-white'}`}>
+                  <td className="whitespace-nowrap border-e-2 border-e-emerald-100 bg-white/60 px-4 py-3 text-center">
+                    <div className="font-bold text-slate-800">{d.nameHe}</div>
+                    <div className="text-xs text-slate-400" dir="ltr"><Tex>{d.tex}</Tex></div>
                   </td>
                   <Td tex={d.paramsTex} />
                   <Td tex={d.supportTex} />
-                  <Td tex={d.pdfTex} />
+                  <Td tex={d.pdfTex} small={d.id === 'gauss' || d.id === 'mvn'} />
+                  {d.cdfTex ? (
+                    <Td tex={d.cdfTex} divider />
+                  ) : (
+                    <td className="border-e-2 border-slate-200 px-4 py-3 text-center text-xs italic text-slate-400">{d.kind === 'discrete' ? 'פונקציית מדרגות' : '—'}</td>
+                  )}
                   <Td tex={d.meanTex} />
                   <Td tex={d.m2Tex} />
-                  <Td tex={d.varTex} />
+                  <Td tex={d.varTex} divider />
                   <Td tex={d.cfTex} />
                 </tr>
               ))}
@@ -164,13 +177,17 @@ function Row({ label, tex }: { label: string; tex: string }) {
   )
 }
 
-function Th({ children }: { children: React.ReactNode }) {
-  return <th className="whitespace-nowrap py-2 pe-3 text-start font-semibold">{children}</th>
-}
-function Td({ tex }: { tex: string }) {
+function Th({ children, tex, divider = false }: { children?: React.ReactNode; tex?: string; divider?: boolean }) {
   return (
-    <td className="py-2 pe-3">
-      <span dir="ltr"><Tex>{tex}</Tex></span>
+    <th className={`whitespace-nowrap px-4 py-2 text-center text-xs font-bold tracking-wide ${divider ? 'border-e-2 border-slate-200' : ''}`}>
+      {tex ? <span dir="ltr"><Tex>{tex}</Tex></span> : children}
+    </th>
+  )
+}
+function Td({ tex, divider = false, small = false }: { tex: string; divider?: boolean; small?: boolean }) {
+  return (
+    <td className={`px-4 py-3 text-center leading-relaxed ${divider ? 'border-e-2 border-slate-200' : ''}`}>
+      <span dir="ltr" className={small ? 'text-[0.88em]' : ''}><Tex>{tex}</Tex></span>
     </td>
   )
 }
