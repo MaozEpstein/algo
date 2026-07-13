@@ -15,6 +15,9 @@ import { useCourse } from '@/core/platform/CourseProvider'
 
 type Part = 0 | 1 | 2 // 0=RV & vectors, 1=detection & estimation, 2=random processes
 
+/** Exam-importance tier (from the solution analysis): 3=must, 2=important, 1=foundation. */
+type Tier = 1 | 2 | 3
+
 interface MapNode {
   id: string
   title: string
@@ -24,6 +27,10 @@ interface MapNode {
   cy: number
   lectureId: string
   part: Part
+  /** Weight in the exams. */
+  tier: Tier
+  /** One-line exam-importance note (shown in the focus-mode tooltip). */
+  examInfoHe: string
 }
 interface MapEdge {
   from: string
@@ -32,21 +39,28 @@ interface MapEdge {
 
 export const NODES: MapNode[] = [
   // חלק א׳ — משתנים מקריים ווקטורים
-  { id: 'rv', title: 'משתנים מקריים', sub: 'שיעור 1', icon: '🎲', cx: 460, cy: 52, lectureId: 'random-variables', part: 0 },
-  { id: 'mom', title: 'מומנטים', sub: 'שיעור 2', icon: '📊', cx: 300, cy: 150, lectureId: 'moments', part: 0 },
-  { id: 'func', title: 'פונקציות של מ״מ', sub: 'שיעור 3', icon: '🔀', cx: 620, cy: 150, lectureId: 'functions-of-rvs', part: 0 },
-  { id: 'mvn', title: 'נורמלי רב-ממדי', sub: 'שיעור 4', icon: '🧭', cx: 460, cy: 248, lectureId: 'multivariate-normal', part: 0 },
+  { id: 'rv', title: 'משתנים מקריים', sub: 'שיעור 1', icon: '🎲', cx: 460, cy: 52, lectureId: 'random-variables', part: 0, tier: 1, examInfoHe: 'המנוע — Bayes, התניה, פואסון/גאומטרי. משמש כמעט בכל שאלה, אך נדיר כשאלה עצמאית.' },
+  { id: 'mom', title: 'מומנטים', sub: 'שיעור 2', icon: '📊', cx: 300, cy: 150, lectureId: 'moments', part: 0, tier: 1, examInfoHe: 'עמוד השדרה — שלב 1 של כל מתכון (E, Var, Cov, φ). נדיר כשאלה שלמה.' },
+  { id: 'func', title: 'פונקציות של מ״מ', sub: 'שיעור 3', icon: '🔀', cx: 620, cy: 150, lectureId: 'functions-of-rvs', part: 0, tier: 1, examInfoHe: 'נקודתי — טרנספורמציות (X², X³, אינדיקטורים, יעקוביאן). מופיע מדי פעם.' },
+  { id: 'mvn', title: 'נורמלי רב-ממדי', sub: 'שיעור 4', icon: '🧭', cx: 460, cy: 248, lectureId: 'multivariate-normal', part: 0, tier: 2, examInfoHe: 'המנוע של T3/T4 — תוחלת מותנית גאוסית. מאפשר, כמעט לא נבחן ישירות.' },
   // חלק ב׳ — גילוי ואמידה
-  { id: 'hyp', title: 'בדיקת השערות', sub: 'שיעור 5', icon: '⚖️', cx: 180, cy: 350, lectureId: 'hypothesis-testing', part: 1 },
-  { id: 'ml', title: 'נראות מרבית', sub: 'שיעור 6', icon: '🎯', cx: 460, cy: 350, lectureId: 'maximum-likelihood', part: 1 },
-  { id: 'ls', title: 'ריבועים פחותים', sub: 'שיעור 7', icon: '📏', cx: 745, cy: 350, lectureId: 'least-squares', part: 1 },
-  { id: 'bayes', title: 'סטטיסטיקה בייסיאנית', sub: 'שיעור 8', icon: '🔁', cx: 320, cy: 452, lectureId: 'bayesian-statistics', part: 1 },
-  { id: 'lbayes', title: 'אמידה בייסיאנית לינארית', sub: 'שיעור 9', icon: '📐', cx: 620, cy: 452, lectureId: 'linear-bayesian-estimation', part: 1 },
+  { id: 'hyp', title: 'בדיקת השערות', sub: 'שיעור 5', icon: '⚖️', cx: 180, cy: 350, lectureId: 'hypothesis-testing', part: 1, tier: 3, examInfoHe: 'T5 · גילוי — 6 שאלות עצמאיות (LRT + P_D/P_FA + GLRT).' },
+  { id: 'ml', title: 'נראות מרבית', sub: 'שיעור 6', icon: '🎯', cx: 460, cy: 350, lectureId: 'maximum-likelihood', part: 1, tier: 2, examInfoHe: 'T1 · נראות מרבית — 6 שאלות + חלקי ML בתוך T2/T4.' },
+  { id: 'ls', title: 'ריבועים פחותים', sub: 'שיעור 7', icon: '📏', cx: 745, cy: 350, lectureId: 'least-squares', part: 1, tier: 2, examInfoHe: 'T2 · מודל לינארי — 5 שאלות (ML/LS/BLUE).' },
+  { id: 'bayes', title: 'סטטיסטיקה בייסיאנית', sub: 'שיעור 8', icon: '🔁', cx: 320, cy: 452, lectureId: 'bayesian-statistics', part: 1, tier: 3, examInfoHe: 'T3 · בייסיאני — 11 שאלות, הקלאסטר הכי גדול. כמעט בכל מבחן.' },
+  { id: 'lbayes', title: 'אמידה בייסיאנית לינארית', sub: 'שיעור 9', icon: '📐', cx: 620, cy: 452, lectureId: 'linear-bayesian-estimation', part: 1, tier: 3, examInfoHe: 'LMMSE — הנוסחה הכי שמישה, ~15 שאלות (T3 + prior של T2 + ניבוי T4).' },
   // חלק ג׳ — תהליכים מקריים
-  { id: 'rp', title: 'תהליכים מקריים', sub: 'שיעור 10', icon: '〰️', cx: 250, cy: 556, lectureId: 'random-processes', part: 2 },
-  { id: 'rpmom', title: 'מומנטים של ת״מ', sub: 'שיעור 11', icon: '📈', cx: 460, cy: 556, lectureId: 'moments-of-random-processes', part: 2 },
-  { id: 'rpex', title: 'דוגמאות לת״מ', sub: 'שיעור 12', icon: '🌊', cx: 680, cy: 556, lectureId: 'linear-random-processes', part: 2 },
+  { id: 'rp', title: 'תהליכים מקריים', sub: 'שיעור 10', icon: '〰️', cx: 250, cy: 556, lectureId: 'random-processes', part: 2, tier: 3, examInfoHe: 'T4 · תהליכים מקריים — 10 שאלות. שאלת Q3 כמעט בכל מבחן.' },
+  { id: 'rpmom', title: 'מומנטים של ת״מ', sub: 'שיעור 11', icon: '📈', cx: 460, cy: 556, lectureId: 'moments-of-random-processes', part: 2, tier: 3, examInfoHe: 'ליבת T4 — אוטו-קורלציה, WSS, ניבוי. חלק מ-10 שאלות התהליכים.' },
+  { id: 'rpex', title: 'דוגמאות לת״מ', sub: 'שיעור 12', icon: '🌊', cx: 680, cy: 556, lectureId: 'linear-random-processes', part: 2, tier: 2, examInfoHe: 'AR / וינר / קלמן — צומח; 2025 בשני המועדים (~5 שאלות).' },
 ]
+
+/** Per-tier label + dots + accent for the exam-focus overlay. */
+const TIER_META: Record<Tier, { he: string; dots: string; chip: string; dot: string }> = {
+  3: { he: 'חובה למבחן', dots: '●●●', chip: 'bg-rose-100 text-rose-700 ring-rose-200', dot: '#f43f5e' },
+  2: { he: 'חשוב', dots: '●●', chip: 'bg-amber-100 text-amber-700 ring-amber-200', dot: '#f59e0b' },
+  1: { he: 'תשתית', dots: '●', chip: 'bg-slate-100 text-slate-600 ring-slate-200', dot: '#94a3b8' },
+}
 
 const EDGES: MapEdge[] = [
   { from: 'rv', to: 'mom' },
@@ -102,6 +116,8 @@ export default function CourseMap() {
   const { course } = useCourse()
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [examFocus, setExamFocus] = useState(false)
+  const [hoverId, setHoverId] = useState<string | null>(null)
   const built = new Set(course.LECTURE_LIST.map((l) => l.id))
 
   useEffect(() => {
@@ -153,6 +169,12 @@ export default function CourseMap() {
               onClick={() => { setPlaying(false); setStep(STEPS.length - 1) }}
               className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-200"
             >הצג הכול</button>
+            <button
+              onClick={() => { setExamFocus((v) => !v); if (!examFocus) setStep(STEPS.length - 1) }}
+              aria-pressed={examFocus}
+              title="הדגשת השיעורים לפי משקלם במבחנים"
+              className={`rounded-lg px-3 py-1.5 text-sm font-bold transition ${examFocus ? 'bg-rose-500 text-white shadow hover:bg-rose-600' : 'border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100'}`}
+            >🎯 מיקוד למבחן</button>
           </div>
           <div className="flex items-center gap-1.5">
             {STEPS.map((s, i) => (
@@ -176,8 +198,19 @@ export default function CourseMap() {
 
       {/* the graph */}
       <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-card">
-        <div className="ltr w-full" dir="ltr">
-          <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full" style={{ maxWidth: W }}>
+        {examFocus && (
+          <div className="mb-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs">
+            <span className="font-semibold text-slate-500">חשיבות למבחן:</span>
+            {([3, 2, 1] as const).map((t) => (
+              <span key={t} className="inline-flex items-center gap-1 text-slate-500">
+                <span style={{ color: TIER_META[t].dot }}>{TIER_META[t].dots}</span> {TIER_META[t].he}
+              </span>
+            ))}
+            <span className="text-slate-400">· עמדו על שיעור למידע</span>
+          </div>
+        )}
+        <div className="relative mx-auto w-full" style={{ maxWidth: W }} dir="ltr">
+          <svg viewBox={`0 0 ${W} ${H}`} className="ltr block w-full">
             <defs>
               <marker id="mapArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
                 <path d="M1,1 L6,4 L1,7" fill="none" stroke="#94a3b8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
@@ -206,14 +239,18 @@ export default function CourseMap() {
             <AnimatePresence>
               {NODES.filter(shown).map((n) => {
                 const isBuilt = built.has(n.lectureId)
+                const dim = examFocus ? (n.tier === 3 ? 1 : n.tier === 2 ? 0.82 : 0.42) : 1
+                const hot = examFocus && n.tier === 3
                 return (
                   <motion.g
                     key={n.id}
                     initial={reduce ? false : { opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    animate={{ opacity: dim, scale: 1 }}
                     transition={{ duration: 0.35, type: 'spring', stiffness: 220, damping: 20 }}
                     style={{ cursor: isBuilt ? 'pointer' : 'default' }}
                     onClick={() => isBuilt && navigate(lecturePath('statistics', n.lectureId))}
+                    onMouseEnter={() => examFocus && setHoverId(n.id)}
+                    onMouseLeave={() => examFocus && setHoverId(null)}
                   >
                     <rect
                       x={n.cx - NW / 2}
@@ -222,8 +259,8 @@ export default function CourseMap() {
                       height={NH}
                       rx={10}
                       fill={isBuilt ? PART_FILL[n.part] : PLANNED_FILL}
-                      stroke={isBuilt ? PART_STROKE[n.part] : PLANNED_STROKE}
-                      strokeWidth={1.75}
+                      stroke={hot ? TIER_META[3].dot : isBuilt ? PART_STROKE[n.part] : PLANNED_STROKE}
+                      strokeWidth={hot ? 2.75 : 1.75}
                       strokeDasharray={isBuilt ? undefined : '5 4'}
                     />
                     <text x={n.cx - NW / 2 + 12} y={n.cy - 2} style={{ fontSize: 15 }}>{n.icon}</text>
@@ -231,11 +268,36 @@ export default function CourseMap() {
                     <text x={n.cx + 12} y={n.cy + 12} textAnchor="middle" style={{ fontSize: 8.5, fill: isBuilt ? '#475569' : '#cbd5e1' }}>
                       {n.sub}{isBuilt ? ' ✓' : ' · בקרוב'}
                     </text>
+                    {/* tier dots badge (focus mode) */}
+                    {examFocus && Array.from({ length: n.tier }, (_, di) => (
+                      <circle key={di} cx={n.cx + NW / 2 - 9 - di * 8} cy={n.cy - NH / 2 + 9} r={3} fill={TIER_META[n.tier].dot} />
+                    ))}
                   </motion.g>
                 )
               })}
             </AnimatePresence>
           </svg>
+
+          {/* exam-importance tooltip (focus mode, hover) */}
+          {examFocus && hoverId && (() => {
+            const n = nodeOf(hoverId)
+            const below = n.cy < 150
+            return (
+              <div
+                className={`pointer-events-none absolute z-20 w-56 -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-3 text-right shadow-xl ${below ? 'translate-y-2' : '-translate-y-full'}`}
+                style={{ left: `${(n.cx / W) * 100}%`, top: `${((below ? n.cy + NH / 2 : n.cy - NH / 2) / H) * 100}%`, marginTop: below ? 0 : -8 }}
+                dir="rtl"
+              >
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <span className="text-sm font-bold text-slate-800">{n.title}</span>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ${TIER_META[n.tier].chip}`}>
+                    <span style={{ color: TIER_META[n.tier].dot }}>{TIER_META[n.tier].dots}</span> {TIER_META[n.tier].he}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed text-slate-500">{n.examInfoHe}</p>
+              </div>
+            )
+          })()}
         </div>
         <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-slate-400">
           <span>לחצו על נושא <b className="text-slate-500">שנלמד</b> כדי לקפוץ לשיעור</span>
