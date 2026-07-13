@@ -149,6 +149,20 @@ const SECTIONS: Section[] = [
       { name: 'יציאת LTI', tex: 'E[Y]=(\\textstyle\\sum_i h_i)\\mu_X,\\ R_Y(k)=\\textstyle\\sum_i\\sum_j h_i h_j R_X[k+j-i]' },
     ],
   },
+  {
+    title: '12 · דוגמאות לתהליכים מקריים',
+    rows: [
+      { name: 'תהליך AR', tex: 'X_n=\\alpha X_{n-1}+W_n' },
+      { name: 'גבול תוחלת/שונות', tex: 'E[X_n]\\to\\tfrac{\\mu_W}{1-\\alpha},\\ \\mathrm{Var}(X_n)\\to\\tfrac{\\sigma_W^2}{1-\\alpha^2}' },
+      { name: 'גבול קווריאנס', tex: '\\mathrm{Cov}(X_n,X_{n+\\tau})\\to\\tfrac{\\sigma_W^2\\alpha^{|\\tau|}}{1-\\alpha^2}' },
+      { name: 'התחלה תואמת (SSS)', tex: '\\sigma_0^2=\\tfrac{\\sigma^2}{1-\\alpha^2}' },
+      { name: 'מסנן וינר', tex: 'h=R_Y^{-1}r_{XY}=(R_X+\\sigma_W^2 I)^{-1}r_{XY}' },
+      { name: 'קלמן — ניבוי', tex: '\\hat S_{n|n-1}=a\\hat S_{n-1|n-1},\\ P_{n|n-1}=a^2P_{n-1|n-1}+\\sigma_Q^2' },
+      { name: 'קלמן — עדכון', tex: 'K_n=\\tfrac{P_{n|n-1}}{P_{n|n-1}+\\sigma_R^2},\\ \\hat S_{n|n}=\\hat S_{n|n-1}+K_n(X_n-\\hat S_{n|n-1})' },
+      { name: 'קלמן — שגיאה', tex: 'P_{n|n}=P_{n|n-1}(1-K_n)' },
+      { name: 'ML עבור AR', tex: '\\hat\\alpha_{ML}=\\tfrac{\\sum X[i]X[i-1]}{\\sum X[i-1]^2}' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */
