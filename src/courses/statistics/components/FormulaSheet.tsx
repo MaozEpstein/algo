@@ -109,6 +109,18 @@ const SECTIONS: Section[] = [
       { name: 'MMSE גאוסי', tex: '\\hat Y=\\tfrac{\\sigma_y^2}{\\sigma_y^2+\\sigma_w^2}X+\\tfrac{\\sigma_w^2}{\\sigma_y^2+\\sigma_w^2}\\mu_y' },
     ],
   },
+  {
+    title: '9 · אמידה בייסיאנית לינארית',
+    rows: [
+      { name: 'אמד LMMSE (אפיני)', tex: '\\hat x(y)=\\mu_x+C_{xy}C_{yy}^{-1}(y-\\mu_y)' },
+      { name: 'משוואה נורמלית', tex: 'E[yy^\\top]\\,a=E[yX]' },
+      { name: 'אורתוגונליות', tex: 'E\\big[y\\,(a^\\top y-X)\\big]=0' },
+      { name: 'שונות השגיאה', tex: '\\mathrm{MSE}=C_{xx}-C_{xy}C_{yy}^{-1}C_{yx}' },
+      { name: 'סקלרי', tex: '\\hat x=\\mu_x+\\tfrac{\\sigma_{xy}}{\\sigma_y^2}(y-\\mu_y),\\ \\mathrm{mse}=(1-\\rho^2)\\sigma_x^2' },
+      { name: 'גאוסי ⇒ MMSE=LMMSE', tex: 'x,y\\ \\text{Gaussian}\\Rightarrow \\hat x_{MMSE}=\\hat x_{LMMSE}' },
+      { name: 'שני חיישנים', tex: '\\hat y=\\mu+\\tfrac{(x_1-\\mu)/\\sigma_1^2+(x_2-\\mu)/\\sigma_2^2}{1/\\sigma_1^2+1/\\sigma_2^2+1/\\sigma^2}' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */
