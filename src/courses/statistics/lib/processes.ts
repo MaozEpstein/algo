@@ -30,6 +30,33 @@ export function arAutocorr(lag: number, a: number, variance = 1): number {
   return (variance * a ** Math.abs(lag)) / (1 - a * a)
 }
 
+/** Random-phase cosine X(t)=cos(2πf t+Θ), Θ~U[−π,π] (Ex 41): R_X(τ)=½cos(2πf·τ). */
+export function cosineAutocorr(lag: number, f: number): number {
+  return 0.5 * Math.cos(2 * Math.PI * f * lag)
+}
+
+/** Random walk X[n]=Σ₁ⁿW[i], W white (Ex 43): R_X(n,m)=σ²·min(n,m). Not WSS. */
+export function randomWalkAutocorr(n: number, m: number, variance = 1): number {
+  return variance * Math.min(n, m)
+}
+
+/** Output mean of a stable LTI system y=h*x on a WSS input (Ex 45, eq. 319): E[Y]=(Σh[i])·μ_X. */
+export function ltiOutputMean(h: number[], muX: number): number {
+  return muX * h.reduce((s, hi) => s + hi, 0)
+}
+
+/**
+ * Output autocorrelation of a stable LTI system y[n]=Σ h[i]x[n−i] on a WSS input
+ * (Ex 45, eq. 320): R_Y(k)=Σᵢ Σⱼ h[i]h[j] R_X[k+j−i], where `rX` is the input
+ * autocorrelation function. `h` is indexed from tap 0.
+ */
+export function ltiOutputAutocorr(h: number[], rX: (lag: number) => number, lag: number): number {
+  let s = 0
+  for (let i = 0; i < h.length; i++)
+    for (let j = 0; j < h.length; j++) s += h[i] * h[j] * rX(lag + j - i)
+  return s
+}
+
 /** Deterministic uniform(0,1) stream from a seed (LCG) — reproducible realizations. */
 function lcg(seed: number): () => number {
   let s = seed >>> 0

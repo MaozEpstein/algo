@@ -135,6 +135,20 @@ const SECTIONS: Section[] = [
       { name: 'סטציונריות אסימפטוטית', tex: '\\lim_{T\\to\\infty}F_{x(t_i+T)}=F_k' },
     ],
   },
+  {
+    title: '11 · מומנטים של תהליכים מקריים',
+    rows: [
+      { name: 'פונקציית התוחלת', tex: '\\mu_X(t)=E[X(t)]' },
+      { name: 'אוטו-קורלציה', tex: 'R_X(t_1,t_2)=E[X(t_1)X(t_2)]=R_X(t_2,t_1)' },
+      { name: 'אוטו-קווריאנס', tex: 'C_X(t_1,t_2)=R_X-\\mu_X(t_1)\\mu_X(t_2)' },
+      { name: 'WSS (שני תנאים)', tex: '\\mu_X\\ \\text{const},\\ R_X(t_1,t_2)=R_X(\\tau)' },
+      { name: 'הספק, סימטריה וחסם', tex: 'R_X(0)=E[X^2]\\ge0,\\ R_X(\\tau)=R_X(-\\tau),\\ |R_X(\\tau)|\\le R_X(0)' },
+      { name: 'קוסינוס פאזה אקראית', tex: 'R_X(\\tau)=\\tfrac12\\cos(2\\pi\\tau)' },
+      { name: 'MA(1) / מהלך מקרי', tex: 'R_X=\\{2,1,0\\};\\quad R_X(n,m)=\\sigma^2\\min(n,m)' },
+      { name: 'AR(1)', tex: 'R_X(k)=\\tfrac{\\sigma^2}{1-\\alpha^2}\\alpha^{|k|}' },
+      { name: 'יציאת LTI', tex: 'E[Y]=(\\textstyle\\sum_i h_i)\\mu_X,\\ R_Y(k)=\\textstyle\\sum_i\\sum_j h_i h_j R_X[k+j-i]' },
+    ],
+  },
 ]
 
 /** True when focus is in a text field, so the shortcut doesn't hijack typing. */
