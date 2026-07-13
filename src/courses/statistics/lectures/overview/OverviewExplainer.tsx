@@ -3,18 +3,26 @@ import { usePrintMode } from '@/core/platform/printMode'
 import ExplainerPrint from '@/core/platform/ExplainerPrint'
 import MapTab from './tabs/MapTab'
 import DistributionsTab from './tabs/DistributionsTab'
+import CLTTab from './tabs/CLTTab'
+import ToolkitTab from './tabs/ToolkitTab'
+import NotationTab from './tabs/NotationTab'
 
-type TabId = 'map' | 'distributions'
+type TabId = 'map' | 'distributions' | 'clt' | 'toolkit' | 'notation'
 
 const TABS: { id: TabId; labelHe: string; icon: string }[] = [
   { id: 'map', labelHe: 'מפת הקורס', icon: '🗺️' },
   { id: 'distributions', labelHe: 'התפלגויות נפוצות', icon: '📊' },
-  // עתידי: קשרים בין נושאים, נוסחאון כללי…
+  { id: 'clt', labelHe: 'משפט הגבול המרכזי', icon: '🔔' },
+  { id: 'toolkit', labelHe: 'איזה כלי מתי', icon: '🧭' },
+  { id: 'notation', labelHe: 'סימונים', icon: '🔤' },
 ]
 
 const PANELS: Record<TabId, React.FC> = {
   map: MapTab,
   distributions: DistributionsTab,
+  clt: CLTTab,
+  toolkit: ToolkitTab,
+  notation: NotationTab,
 }
 
 const isTab = (v: string | null): v is TabId => TABS.some((t) => t.id === v)

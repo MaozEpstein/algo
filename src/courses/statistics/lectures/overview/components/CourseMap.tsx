@@ -44,8 +44,8 @@ export const NODES: MapNode[] = [
   { id: 'lbayes', title: 'אמידה בייסיאנית לינארית', sub: 'שיעור 9', icon: '📐', cx: 620, cy: 452, lectureId: 'linear-bayesian-estimation', part: 1 },
   // חלק ג׳ — תהליכים מקריים
   { id: 'rp', title: 'תהליכים מקריים', sub: 'שיעור 10', icon: '〰️', cx: 250, cy: 556, lectureId: 'random-processes', part: 2 },
-  { id: 'rpmom', title: 'מומנטים של ת״מ', sub: 'שיעור 11', icon: '📈', cx: 460, cy: 556, lectureId: 'rp-moments', part: 2 },
-  { id: 'rpex', title: 'דוגמאות לת״מ', sub: 'שיעור 12', icon: '🌊', cx: 680, cy: 556, lectureId: 'rp-examples', part: 2 },
+  { id: 'rpmom', title: 'מומנטים של ת״מ', sub: 'שיעור 11', icon: '📈', cx: 460, cy: 556, lectureId: 'moments-of-random-processes', part: 2 },
+  { id: 'rpex', title: 'דוגמאות לת״מ', sub: 'שיעור 12', icon: '🌊', cx: 680, cy: 556, lectureId: 'linear-random-processes', part: 2 },
 ]
 
 const EDGES: MapEdge[] = [

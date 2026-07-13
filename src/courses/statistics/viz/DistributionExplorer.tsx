@@ -140,6 +140,17 @@ export default function DistributionExplorer() {
   const Fval = model.cdf(model.continuous ? thr : Math.floor(thr))
   const kThr = Math.floor(thr)
 
+  // live E[X] and Var(X) for the selected distribution (from its parameters)
+  const moments = (() => {
+    if (dist === 'uniform') {
+      const lo = Math.min(a, b), hi = Math.max(a, b)
+      return { mean: (lo + hi) / 2, variance: (hi - lo) ** 2 / 12 }
+    }
+    if (dist === 'exp') return { mean: 1 / lambda, variance: 1 / (lambda * lambda) }
+    if (dist === 'gauss') return { mean: m, variance: sigma * sigma }
+    return { mean: lambda, variance: lambda } // poisson
+  })()
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
       {/* distribution picker */}
@@ -195,6 +206,13 @@ export default function DistributionExplorer() {
                 )
               })
             )}
+            {/* mean marker E[X] */}
+            {moments.mean >= xmin && moments.mean <= xmax && (
+              <>
+                <line x1={sx(moments.mean)} y1={PAD.t - 2} x2={sx(moments.mean)} y2={PAD.t + IH} stroke="#7c3aed" strokeWidth={1.5} />
+                <text x={sx(moments.mean)} y={PAD.t - 4} textAnchor="middle" fontSize="8" fill="#7c3aed">E[X]</text>
+              </>
+            )}
             {/* threshold line */}
             <line x1={sx(model.continuous ? thr : kThr)} y1={PAD.t} x2={sx(model.continuous ? thr : kThr)} y2={PAD.t + IH} stroke="#0f172a" strokeWidth={1.5} strokeDasharray="4 3" />
           </svg>
@@ -223,9 +241,14 @@ export default function DistributionExplorer() {
         </Chart>
       </div>
 
-      {/* readout */}
-      <div className="mt-3 rounded-xl bg-emerald-50 px-4 py-2 text-center text-emerald-900" dir="ltr">
-        <Tex>{`\\Pr(X \\le ${(model.continuous ? thr : kThr).toFixed(model.continuous ? 2 : 0)}) = F(x) = ${Fval.toFixed(3)}`}</Tex>
+      {/* readouts */}
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="rounded-xl bg-emerald-50 px-4 py-2 text-center text-emerald-900" dir="ltr">
+          <Tex>{`\\Pr(X \\le ${(model.continuous ? thr : kThr).toFixed(model.continuous ? 2 : 0)}) = F(x) = ${Fval.toFixed(3)}`}</Tex>
+        </div>
+        <div className="rounded-xl bg-violet-50 px-4 py-2 text-center text-violet-900" dir="ltr">
+          <Tex>{`\\mathbb{E}[X]=${moments.mean.toFixed(2)},\\ \\ \\mathrm{Var}(X)=${moments.variance.toFixed(2)}`}</Tex>
+        </div>
       </div>
 
       {/* controls */}

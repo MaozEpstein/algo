@@ -3,6 +3,7 @@ import RichText from '@/core/components/RichText'
 import Panel from '../../../components/Panel'
 import DistributionExplorer from '../../../viz/DistributionExplorer'
 import DistributionMiniPlot from '../../../viz/DistributionMiniPlot'
+import DistributionMap from '../../../viz/DistributionMap'
 import { DISTRIBUTIONS, MVN, INCIDENTAL, type DistDatum } from '../data/distributions'
 
 /**
@@ -113,22 +114,10 @@ export default function DistributionsTab() {
       </div>
 
       <Panel title="קשרים בין ההתפלגויות">
-        <ul className="space-y-2 leading-relaxed text-slate-700">
-          <li>
-            <b>ברנולי ← בינומי:</b> סכום של <Tex>{'n'}</Tex> משתני ברנולי בלתי-תלויים הוא{' '}
-            <Tex>{'\\mathrm{Bin}(n,p)'}</Tex> (לכן <Tex>{'\\mathbb{E}=np,\\ \\mathrm{Var}=np(1-p)'}</Tex>).
-          </li>
-          <li>
-            <b>גאוסי ← כי-בריבוע:</b> ריבוע של נורמלי סטנדרטי <Tex>{'Z^2'}</Tex> מתפלג{' '}
-            <Tex>{'\\chi^2_{(1)}'}</Tex>.
-          </li>
-          <li>
-            <b>נורמלי מרוכב ← ריילי:</b> הרדיוס של נורמלי מרוכב סימטרי מתפלג ריילי.
-          </li>
-          <li>
-            <b>הכל ← גאוסי:</b> משפט הגבול המרכזי — סכום של הרבה משתנים בלתי-תלויים שואף לגאוסי.
-          </li>
-        </ul>
+        <p className="mb-3 leading-relaxed text-slate-600">
+          כל ההתפלגויות קשורות בטרנספורמציות פשוטות. עברו עם העכבר על צומת כדי להאיר את קשריו:
+        </p>
+        <DistributionMap />
       </Panel>
     </div>
   )

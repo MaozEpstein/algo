@@ -229,28 +229,9 @@ export default function FormulaSheet() {
             </div>
 
             <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
-              {SECTIONS.map((sec) => (
-                <section key={sec.title}>
-                  <h4 className="mb-2 text-sm font-bold text-emerald-700">{sec.title}</h4>
-                  <div className="overflow-hidden rounded-xl border border-slate-200">
-                    {sec.rows.map((r, i) => (
-                      <div
-                        key={i}
-                        className={`flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2.5 ${i ? 'border-t border-slate-100' : ''}`}
-                      >
-                        <span className="text-sm font-semibold text-slate-700">{r.name}</span>
-                        <span className="hide-scrollbar max-w-full overflow-x-auto text-slate-800" dir="ltr">
-                          <Tex>{r.tex}</Tex>
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              ))}
-
-              {/* Distributions — reuse the overview's single-source data */}
+              {/* Distributions first — the most-used reference. Single-source data from the overview. */}
               <section>
-                <h4 className="mb-2 text-sm font-bold text-emerald-700">4 · התפלגויות נפוצות</h4>
+                <h4 className="mb-2 text-sm font-bold text-emerald-700">התפלגויות נפוצות</h4>
                 <div className="overflow-x-auto rounded-xl border border-slate-200">
                   <table className="w-full min-w-[560px] border-collapse text-sm">
                     <thead>
@@ -283,6 +264,25 @@ export default function FormulaSheet() {
                   היתר סטנדרטיות.
                 </p>
               </section>
+
+              {SECTIONS.map((sec) => (
+                <section key={sec.title}>
+                  <h4 className="mb-2 text-sm font-bold text-emerald-700">{sec.title}</h4>
+                  <div className="overflow-hidden rounded-xl border border-slate-200">
+                    {sec.rows.map((r, i) => (
+                      <div
+                        key={i}
+                        className={`flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2.5 ${i ? 'border-t border-slate-100' : ''}`}
+                      >
+                        <span className="text-sm font-semibold text-slate-700">{r.name}</span>
+                        <span className="hide-scrollbar max-w-full overflow-x-auto text-slate-800" dir="ltr">
+                          <Tex>{r.tex}</Tex>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
             </div>
           </motion.div>
         </motion.div>
