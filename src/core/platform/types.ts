@@ -37,8 +37,13 @@ export interface CourseModule {
   /** Optional constants-table modal — opened via the OPEN_CONSTANTS event. */
   constants?: ComponentType
   /** Optional bank of past-exam source PDFs — a designed gallery + full-screen
-   *  viewer at /c/<course>/exams. The PDFs live in public/docs/exams/<courseId>/. */
+   *  viewer at /c/<course>/exams. The PDFs live in public/docs/exams/<courseId>/.
+   *  `revision` docs (lecturer's practice questions) appear as a section on the
+   *  same exam-bank page. */
   exams?: ExamEntry[]
+  /** Optional lecturer revision/practice-question PDFs, shown as a section inside
+   *  the exam bank. The PDFs live in public/docs/revision/<courseId>/. */
+  revision?: RevisionDoc[]
 }
 
 /**
@@ -54,6 +59,21 @@ export interface ExamEntry {
   titleHe: string
   /** Exam PDF file name inside public/docs/exams/<courseId>/. */
   examFile: string
+  /** Optional solution PDF file name (same folder). */
+  solutionFile?: string
+}
+
+/**
+ * A lecturer revision / practice-question document (שאלות חזרה). Converted to PDF
+ * from the source (e.g. Word) and served from `public/docs/revision/<courseId>/`.
+ * Shown as a section inside the exam bank.
+ */
+export interface RevisionDoc {
+  /** URL slug + stable key, e.g. 'revision-1'. */
+  id: string
+  titleHe: string
+  /** Question PDF file name inside public/docs/revision/<courseId>/. */
+  file: string
   /** Optional solution PDF file name (same folder). */
   solutionFile?: string
 }

@@ -4,6 +4,7 @@ import FormulaSheet from './components/FormulaSheet'
 import Syllabus from './components/Syllabus'
 import Calculator from './components/Calculator'
 import Constants from './components/Constants'
+import { semiconductorsExams } from './exams'
 
 /**
  * Semiconductor Devices course. Source material: _source/חומרי קורסים/
@@ -24,6 +25,7 @@ const semiconductorsCourse: CourseModule = {
   syllabus: Syllabus,
   calculator: Calculator,
   constants: Constants,
+  exams: semiconductorsExams,
 }
 
 export default semiconductorsCourse
