@@ -62,10 +62,11 @@ export default function NonInvertibleTab() {
         n="משפט 3.2"
         kind="theorem"
         titleHe="שינוי משתנה רב-ממדי (יעקוביאן)"
-        tex="f_{Z_1Z_2}(z_1,z_2)=\big|\det J_h\big|\,f_{XY}\big(h(z_1,z_2)\big)"
+        tex="f_{\mathbf{Y}}(\mathbf{y})=f_{\mathbf{X}}\big(\mathbf{x}(\mathbf{y})\big)\cdot|J|"
         meaningHe={
-          'אותו רעיון כמו במקרה החד-ממדי, אבל "מתיחת הסקאלה" היא כעת <b>הדטרמיננטה של היעקוביאן</b> $|\\det J_h|$ ' +
-          '— גורם ה"מתיחת-נפח" המקומי של הטרנספורמציה ההפוכה $h$.'
+          'אותו רעיון כמו במקרה החד-ממדי, אבל "מתיחת הסקאלה" היא כעת <b>הדטרמיננטה של היעקוביאן</b> $|J|$ ' +
+          '— גורם ה"מתיחת-נפח" המקומי של הטרנספורמציה ההפוכה $\\mathbf{x}(\\mathbf{y})$. הנגזרת החד-ממדית $|x\'(y)|$ הופכת כאן ' +
+          'לדטרמיננטת מטריצת <b>כל</b> הנגזרות החלקיות.'
         }
         example={
           <p>
@@ -74,6 +75,27 @@ export default function NonInvertibleTab() {
           </p>
         }
       />
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+        <p className="mb-3 leading-relaxed text-slate-700">
+          כאשר <span dir="ltr"><Tex>{'J'}</Tex></span> (היעקוביאן) הוא ה<b>דטרמיננטה</b> של מטריצת הנגזרות החלקיות:
+        </p>
+        <div className="overflow-x-auto rounded-xl border border-emerald-100 bg-emerald-50/60 px-4 py-4 text-center">
+          <Tex block>
+            {'J=\\det\\begin{pmatrix}' +
+              '\\frac{\\partial x_1}{\\partial y_1} & \\frac{\\partial x_1}{\\partial y_2} & \\cdots & \\frac{\\partial x_1}{\\partial y_n} \\\\[4pt]' +
+              '\\frac{\\partial x_2}{\\partial y_1} & \\frac{\\partial x_2}{\\partial y_2} & \\cdots & \\frac{\\partial x_2}{\\partial y_n} \\\\[4pt]' +
+              '\\vdots & \\vdots & \\ddots & \\vdots \\\\[4pt]' +
+              '\\frac{\\partial x_n}{\\partial y_1} & \\frac{\\partial x_n}{\\partial y_2} & \\cdots & \\frac{\\partial x_n}{\\partial y_n}' +
+              '\\end{pmatrix}'}
+          </Tex>
+        </div>
+        <p className="mt-3 leading-relaxed text-slate-600">
+          כל שורה <span dir="ltr"><Tex>{'i'}</Tex></span> גוזרת רכיב אחד <span dir="ltr"><Tex>{'x_i'}</Tex></span> לפי כל
+          המשתנים <span dir="ltr"><Tex>{'y_1,\\dots,y_n'}</Tex></span>. הדטרמיננטה מודדת בכמה הטרנספורמציה{' '}
+          <b>מותחת או מכווצת נפח</b> מקומית — בדיוק כפי ש-<span dir="ltr"><Tex>{'|x\'(y)|'}</Tex></span> עשתה לאורך במקרה החד-ממדי.
+        </p>
+      </div>
 
       <DefinitionCard
         n="דוגמה 17"
